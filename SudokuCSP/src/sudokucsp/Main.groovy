@@ -18,6 +18,11 @@ class Main {
 
     void start(String[] args)
     {
+
+        //
+        // Formaliteiten om te kijken of alles klopt
+        //
+
         // kijken of er 2 command-line argumenten zijn
         if(args.size() != 2)
         {
@@ -42,11 +47,21 @@ class Main {
             output.delete()
         }
 
+
+
+        //
+        // Input lezen, solven, output schrijven
+        //
+
+        // input lezen
         def sudokus = input.readLines()
 
-        // solven
+        // bruikbare representatie van maken
+        SudokuFactory sf = new SudokuFactory()
 
-        // output schrijven
+        // testcase
+        // println sudokus[0]
+        // println sf.textToAssignment(sudokus[0])
 
     }
 
