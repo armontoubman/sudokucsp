@@ -16,6 +16,8 @@ class Main {
         new Main().start(args)
     }
 
+    // TODO kijken of multithreading kan
+    // zie Fibonacci with Executors (Groovy documentatie)
     void start(String[] args)
     {
 

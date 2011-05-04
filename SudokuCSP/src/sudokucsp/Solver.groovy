@@ -58,11 +58,18 @@ class Solver {
         def variables = getNotAssignedVariables(assignment)
         // alles assigned? klaar
         if(variables.size() == 0) return assignment
+        // pak cellnr
+        def x = variables[0]
         // voor alle waarden in het domein van x
-        assignment[variables[0]].each({
-                def testcopy = assignment
+        for(v in assignment[x])
+        {
+                def testcopy = assignment.clone()
                 // assign x deze waarde
-                testcopy[x] = [ it ]
+                testcopy[x] = [ v ]
+                
+                println testcopy
+                println ""
+                
                 // als de nieuwe assignment consistent is
                 if(consistent(testcopy))
                 {
@@ -74,7 +81,7 @@ class Solver {
                         return R
                     }
                 }
-        })
+        }
         // geen oplossing
         return null
     }
