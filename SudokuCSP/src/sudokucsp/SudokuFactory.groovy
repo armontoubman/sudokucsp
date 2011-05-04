@@ -20,6 +20,8 @@ class SudokuFactory {
     {
         // input: .94...13..............76..2.8..1.....32.........2...6.....5.4.......8..7..63.4..8
         // resultaat: [11:1..9, 12:[9], 13:[4], etc.
+        
+        input = input.trim()
 
         def assignment = [:];
 
@@ -55,7 +57,7 @@ class SudokuFactory {
 
     def assignmentToText(input)
     {
-
+        input
     }
 	
 }
