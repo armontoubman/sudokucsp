@@ -39,7 +39,19 @@ class Solver {
     * @param assignment (in)complete sudoku assignment
     * @return compleet ingevulde sudoku assignment
     */
-    // TODO uitvinden waarom ie null zegt voor alles
+    /* TODO testcopy local maken.
+     * Momenteel onthoudt testcopy alle [it]s die
+     * eraan toe zijn gevoegd wanneer
+     * assignment.each een variabel verder gaat.
+     * Hierdoor blijft de false waarde staan als
+     * niets meer past in een vakje. ergo: alles false
+     *
+     * bewijs:
+     * 11 = 2, 14 = 5, 15 = 6, 16 = 7 en dan 19 = 9
+     * Dit is false, maar niets anders past meer in 9, dus:
+     * 11 = 2, 14 = 5, 15 = 6, 16 = 8 en nog 19 = 9
+     * Nog steeds false door 19, etc tot assignment = null
+    */
     def bt(assignment)
     {
         // pak een variable die nog niet assigned is
