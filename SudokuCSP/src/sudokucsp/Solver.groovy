@@ -34,7 +34,7 @@ class Solver {
     end BT
     */
 
-    // TODO uitvinden waarom ie niet werkt
+    // TODO uitvinden waarom Armon 'm niet werkend kreeg
     def bt(assignment)
     {
         def variables = getNotAssignedVariables(assignment)
