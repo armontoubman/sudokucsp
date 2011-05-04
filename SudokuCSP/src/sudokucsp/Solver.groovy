@@ -34,27 +34,45 @@ class Solver {
     end BT
     */
 
-    // TODO uitvinden waarom Armon 'm niet werkend kreeg
+    /*
+    * Backtracking
+    * @param assignment (in)complete sudoku assignment
+    * @return compleet ingevulde sudoku assignment
+    */
+    // TODO uitvinden waarom ie null zegt voor alles
     def bt(assignment)
     {
+        // pak een variable die nog niet assigned is
         def variables = getNotAssignedVariables(assignment)
+        // alles assigned? klaar
         if(variables.size() == 0) return assignment
-        def x = variables[0]
-        assignment[x].each({
+        // voor alle waarden in het domein van x
+        assignment[variables[0]].each({
                 def testcopy = assignment
+                // assign x deze waarde
                 testcopy[x] = [ it ]
+                // als de nieuwe assignment consistent is
                 if(consistent(testcopy))
                 {
+                    // maak nieuwe branch
                     def R = bt(testcopy)
+                    // als deze branch niet faalt
                     if(R != null)
                     {
                         return R
                     }
                 }
         })
+        // geen oplossing
         return null
     }
 
+    /*
+    * Geeft de eerste variabele die nog niet assigned is
+    * oftewel een lijst (size > 1) met mogelijke waarden heeft
+    * @param incomplete assignment
+    * @return lijst met 1 element, cellnr
+    */
     def getNotAssignedVariables(assignment)
     {
         def result = []
@@ -69,37 +87,74 @@ class Solver {
         return result
     }
 
+    /*
+    * Kijkt of een sudoku assignment consistent is:
+    * elke waarde die assigned is mag maar 1x voorkomen in zijn rij en kolom
+    * @param incomplete sudoku assignment
+    * @return consistent of niet
+    */
     def consistent(s)
     {
-
+        // pak alle cells die assigned zijn
         def assigned = s.findAll{ it.value.size() == 1 }
+        // voor elke assigned cell
         return assigned.every{
+            // kijk of ie 1x voorkomt in zijn row en column
             onlyAppearsOnceInRow(it.value, it.key, s) && onlyAppearsOnceInColumn(it.value, it.key, s)
         }
     }
 
+    /*
+    * Kijkt of waarde x eenmaal voorkomt in de row van cell in assignment s
+    * @param x waarde
+    * @param cell cell
+    * @param s sudoku assignment
+    */
     def onlyAppearsOnceInRow(x, cell, s)
     {
+        // pak alle cells in de sudoku in dezelfde rij als cell
         def srow = s.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(cell) }
+        // controleer of x 1x voorkomt in deze cells
         def result = onlyAppearsOnceInRange(x, srow)
     }
 
+    /*
+    * Kijkt of waarde x eenmaal voorkomt in de column van cell in assignment s
+    * @param x waarde
+    * @param cell cell
+    * @param s sudoku assignment
+    */
     def onlyAppearsOnceInColumn(x, cell, s)
     {
+        // pak alle cells in de sudoku in dezelfde kolom als cell
         def scol = s.findAll{ getColFromCellNr(it.key) == getColFromCellNr(cell) }
+        // controleer of x 1x voorkomt in deze cells
         def result = onlyAppearsOnceInRange(x, scol)
     }
 
+    /*
+    * Kijkt of waarde x eenmaal of niet voorkomt in een groepje cells
+    * x waarde
+    * range groepje cells
+    */
     def onlyAppearsOnceInRange(x, range)
     {
         def result = range.values().toList().count(x) <= 1
     }
 
+    /*
+    * Haalt het rownr uit een cellnr
+    * i cellnr
+    */
     def getRowFromCellNr(i)
     {
         def row = Math.floor(i / 10)
     }
 
+    /*
+    * Haalt het colnr uit een cellnr
+    * i colnr
+    */
     def getColFromCellNr(i)
     {
          def col = i % 10
