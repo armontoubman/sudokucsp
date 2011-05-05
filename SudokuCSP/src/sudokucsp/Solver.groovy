@@ -39,18 +39,9 @@ class Solver {
     * @param assignment (in)complete sudoku assignment
     * @return compleet ingevulde sudoku assignment
     */
-    /* TODO testcopy local maken.
-     * Momenteel onthoudt testcopy alle [it]s die
-     * eraan toe zijn gevoegd wanneer
-     * assignment.each een variabel verder gaat.
-     * Hierdoor blijft de false waarde staan als
-     * niets meer past in een vakje. ergo: alles false
-     *
-     * bewijs:
-     * 11 = 2, 14 = 5, 15 = 6, 16 = 7 en dan 19 = 9
-     * Dit is false, maar niets anders past meer in 9, dus:
-     * 11 = 2, 14 = 5, 15 = 6, 16 = 8 en nog 19 = 9
-     * Nog steeds false door 19, etc tot assignment = null
+    /* TODO optimizen! Hij doet nu al 70 minuten oid en nog geen sudoku :P
+     * TODO add constraint propogation techniques etc. uit slides en hiero:
+     * http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
     */
     def bt(assignment)
     {
@@ -84,6 +75,45 @@ class Solver {
         }
         // geen oplossing
         return null
+    }
+
+    /* Arcconsistancy / Binary Constraint
+     *
+     *@param vi = index of 1st variable
+     *@param vj = index of 2nd variable
+     *@param assignment = current sudoku
+     *@return delete = boolean if something is deleted
+     *
+     *procedure REVISE(Vi,Vj)
+          DELETE <- false;
+          for each X in Di do
+            if there is no such Y in Dj such that (X,Y) is consistent,
+            then
+               delete X from Di;
+               DELETE <- true;
+            endif;
+          endfor;
+          return DELETE;
+        end REVISE
+
+     */
+    def revise(vi,vj,assignment){
+        delete = false; // initialize : nothing is deleted yet
+        a = assignment[vi].clone(); // clone, to keep the indexing correct
+        for(x in a){ // every value x from variable i
+            cons = false; // guilty until proven innocent
+            for(y in assignment[vj]){ // every value y from variable j
+                if(consistent(x,vi,y,vj)){ //restricten 2 waarden elkaar niet?
+                    cons = true; //dan is er iig 1 value y voor x, dus x is veilig
+                }
+            }
+            if(!cons){ //als er dus helemaal geen y value was die consistent was
+                assignment[vi].remove(assignment[vi].indexOf(x)); //delete x
+                delete = true; //we hebben wat gedelete
+            }
+         
+        }
+        return delete;
     }
 
     /*
@@ -121,6 +151,38 @@ class Solver {
             // kijk of ie 1x voorkomt in zijn row en column
             onlyAppearsOnceInRow(it.value, it.key, s) && onlyAppearsOnceInColumn(it.value, it.key, s)
         }
+    }
+
+    /*
+     *Kijkt of twee gegeven waardes uit de Sudoku consistent zijn:
+     *elke waarde mag maar 1x voorkomen in zijn rij en kolom
+     *@param x : value van variabele 1
+     *@param vx : cell/key van variabele 1
+     *@param y : value van variabele 2
+     *@param vy : cell/key van variabele 2
+     *@return boolean : of de column & row constraints kloppen
+     */
+    def consistent(x,vx,y,vy){
+        //innocent until proven guilty
+        col = true;
+        row = true;
+        //always consistent if not the same value...
+        if(x == y){
+            //Decypher rows & columns
+            rowX = getRowFromCellNr(vx);
+            colX = getColFromCellNr(vx);
+            rowY = getRowFromCellNr(vy);
+            colY = getColFromCellNr(vy);
+            //Check for inconsistencies
+            if(colX == colY){ //same column
+                col = false; //niet coLsistent ;)
+            }
+            if(rowX == rowY){ //same row
+                row = false; //niet consistent
+            }
+        }
+        //Consistent if all constraints are ok
+        return col && row
     }
 
     /*
