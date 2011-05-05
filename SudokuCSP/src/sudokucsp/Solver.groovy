@@ -77,6 +77,44 @@ class Solver {
         return null
     }
 
+    /*
+    * Constraint propogation: Forward Checking
+    * @param
+    * @return
+    *   PROCEDURE prop(j: INTEGER, VAR D: domains;
+    *                   VAR failure: BOOLEAN);
+    *   VAR k: INTEGER;
+    *   BEGIN
+    *       failure := FALSE;
+    *       k := j+1;
+    *       WHILE k <> n+1 AND NOT failure D0
+    *           revise(j,k,D);
+    *           failure := (D[k] = {});
+    *           k := k+1
+    *       END
+    *   END prop;
+    *
+    *   PROCEDURE revise(j,k: INTEGER, VAR D: domain);
+    *   BEGIN
+    *       D[k] := {d uit D[k] | {(x1,inst[1],...,(xj,inst[j]),(xk,d)}
+    *                               is a consistent instantiation}
+    *   END revise;
+    *
+    */
+    /* TODO Deze afmaken
+    */
+   def prop(j,D){ // D = assignment
+       failure = false;
+       k = j+1;
+       while(k != n+1 && !failure){
+           revise(j,k,D); //
+           failure = (D[k] == null); // no more possible values, stop!
+           k = k+1;
+       }
+       return failure
+   }
+
+
     /* Arcconsistancy / Binary Constraint
      *
      *@param vi = index of 1st variable
