@@ -57,7 +57,17 @@ class SudokuFactory {
 
     def assignmentToText(input)
     {
-        input
+        println input
+        /*def sb = ""
+        for(i in 1..9)
+        {
+            for(j in 1..9)
+            {
+                def v = input[i*10+j][0]
+                sb = sb+v
+            }
+        }
+        return sb*/
     }
 	
 }

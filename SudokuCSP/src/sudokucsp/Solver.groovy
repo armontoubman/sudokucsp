@@ -13,7 +13,7 @@ class Solver {
 
     Solver()
     {
-
+        
     }
 
     def solve(problem)
@@ -42,6 +42,7 @@ class Solver {
     /* TODO optimizen! Hij doet nu al 70 minuten oid en nog geen sudoku :P
      * TODO add constraint propogation techniques etc. uit slides en hiero:
      * http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
+     * TODO slim v kiezen om eerst te branchen
     */
     def bt(assignment)
     {
@@ -58,8 +59,8 @@ class Solver {
                 // assign x deze waarde
                 testcopy[x] = [ v ]
                 
-                println testcopy
-                println ""
+                //println testcopy
+                //println ""
                 
                 // als de nieuwe assignment consistent is
                 if(consistent(testcopy))
@@ -73,7 +74,6 @@ class Solver {
                     }
                 }
         }
-        // geen oplossing
         return null
     }
 
@@ -173,6 +173,24 @@ class Solver {
         }
         return result
     }
+    
+    /*
+     * Geeft een lijst met cells die assigned zijn en hun waarde
+     * @param assignment (in)complete assignment
+     * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 63, 5 ] ]
+     */
+    def getAssignedVariables(assignment)
+    {
+        def result = []
+        for(pair in assignment)
+        {
+            if(pair.value.size() == 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
 
     /*
     * Kijkt of een sudoku assignment consistent is:
@@ -222,6 +240,41 @@ class Solver {
         //Consistent if all constraints are ok
         return col && row
     }
+    
+    /*
+     * Pakt elke cell met 1 waarde en verwijdert die waarde uit de rest van de
+     * cells in dezelfde rij en kolom
+     * @param a incomplete assignment
+     * @return nieuwe assignment
+     */
+    def simpleRevise(assignment)
+    {
+            //println assignment
+            def assignedvars = getAssignedVariables(assignment)
+            for(av in assignedvars)
+            {
+                def cell = av[0]
+                def value = av[1][0]
+                def queue = []
+                
+                def col = getColFromCellNr(cell)
+                def row = getRowFromCellNr(cell)
+                for(i in 1..9)
+                {
+                    queue << row*10+i << i*10+col
+                }
+                queue.removeAll([cell])
+                
+                queue.each{
+                    if(assignment[it].contains(value) && assignment[it].size() > 1) {
+                        def temp = assignment[it] as ArrayList
+                        temp.remove(assignment[it].indexOf(value))
+                        assignment[it] = temp
+                    }
+                }
+            }
+            return assignment
+    }
 
     /*
     * Kijkt of waarde x eenmaal voorkomt in de row van cell in assignment s
@@ -267,7 +320,7 @@ class Solver {
     */
     def getRowFromCellNr(i)
     {
-        def row = Math.floor(i / 10)
+        def row = (int) Math.floor(i / 10)
     }
 
     /*
