@@ -13,11 +13,19 @@ class Sudoku {
     
     def assignment
     
+    /**
+     * Constructor
+     * @see textToAssignment
+     * @param input textuele representatie
+     */
     Sudoku(String input)
     {
         this.assignment = textToAssignment(input)
     }
     
+    /**
+     * Copy constructor
+     */
     Sudoku(Sudoku s)
     {
         this.assignment = s.assignment.clone()
@@ -92,15 +100,15 @@ class Sudoku {
     def setCell(c, vs)
     {
         this.assignment[c] = vs;
-    }
+    }    
 
-    /*
-    * Kijkt of de sudoku consistent is:
-    * (1) elke waarde is uit 1..9
-    * (2) elke waarde die assigned is mag maar 1x voorkomen in zijn rij en kolom
-    *
-    * @return consistent of niet
-    */
+    /**
+     * Kijkt of de sudoku consistent is:
+     * (1) elke waarde is uit 1..9
+     * (2) elke waarde die assigned is mag maar 1x voorkomen in zijn rij en kolom
+     *
+     * @return consistent of niet
+     */
     def isConsistent()
     {
         // (1)
@@ -119,12 +127,12 @@ class Sudoku {
         return one && two
     }
     
-    /*
-    * Geeft de eerste variabele die nog niet assigned is
-    * oftewel een lijst (size > 1) met mogelijke waarden heeft
-    * @param incomplete assignment
-    * @return lijst met 1 element, cellnr
-    */
+    /**
+     * Geeft de eerste variabele die nog niet assigned is
+     * oftewel een lijst (size > 1) met mogelijke waarden heeft
+     * @param incomplete assignment
+     * @return lijst met 1 element, cellnr
+     */
     def getNotAssignedVariables()
     {
         def result = []
@@ -139,7 +147,7 @@ class Sudoku {
         return result
     }
     
-    /*
+    /**
      * Geeft een lijst met cells die assigned zijn en hun waarde
      * @param assignment (in)complete assignment
      * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 63, 5 ] ]
@@ -157,11 +165,11 @@ class Sudoku {
         return result
     }
 
-    /*
-    * Kijkt of waarde x eenmaal voorkomt in de row van cell
-    * @param v waarde
-    * @param c cell
-    */
+    /**
+     * Kijkt of waarde x eenmaal voorkomt in de row van cell
+     * @param v waarde
+     * @param c cell
+     */
     def onlyAppearsOnceInRow(v, c)
     {
         // pak alle cells in de sudoku in dezelfde rij als cell
@@ -170,11 +178,11 @@ class Sudoku {
         def result = onlyAppearsOnceInRange(v, srow)
     }
 
-    /*
-    * Kijkt of waarde x eenmaal voorkomt in de column van cell
-    * @param v waarde
-    * @param c cell
-    */
+    /**
+     * Kijkt of waarde x eenmaal voorkomt in de column van cell
+     * @param v waarde
+     * @param c cell
+     */
     def onlyAppearsOnceInColumn(v, c)
     {
         // pak alle cells in de sudoku in dezelfde kolom als cell
@@ -183,29 +191,29 @@ class Sudoku {
         def result = onlyAppearsOnceInRange(v, scol)
     }
 
-    /*
-    * Kijkt of waarde x eenmaal of niet voorkomt in een groepje cells
-    * v waarde
-    * range groepje cells (deel van een Map)
-    */
+    /**
+     * Kijkt of waarde x eenmaal of niet voorkomt in een groepje cells
+     * v waarde
+     * range groepje cells (deel van een Map)
+     */
     def onlyAppearsOnceInRange(v, range)
     {
         def result = range.values().toList().count(v) <= 1
     }
 
-    /*
-    * Haalt het rownr uit een cellnr
-    * c cellnr
-    */
+    /**
+     * Haalt het rownr uit een cellnr
+     * c cellnr
+     */
     def getRowFromCellNr(c)
     {
         def row = (int) Math.floor(c / 10)
     }
 
-    /*
-    * Haalt het colnr uit een cellnr
-    * c cellnr
-    */
+    /**
+     * Haalt het colnr uit een cellnr
+     * c cellnr
+     */
     def getColFromCellNr(c)
     {
          def col = c % 10

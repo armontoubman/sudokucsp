@@ -29,16 +29,18 @@ class Solver {
     end BT
     */
 
-    /*
-    * Backtracking
-    * @param assignment (in)complete sudoku assignment
-    * @return compleet ingevulde sudoku assignment
-    */
-    /* TODO optimizen! Hij doet nu al 70 minuten oid en nog geen sudoku :P
+    /**
+     *
+     * Backtracking
+     * @param assignment (in)complete sudoku assignment
+     * @return compleet ingevulde sudoku assignment
+     */
+    /**
      * TODO add constraint propogation techniques etc. uit slides en hiero:
      * http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
-     * TODO slim v kiezen om eerst te branchen
-    */
+     * TODO http://www.learn-sudoku.com/basic-techniques.html
+     * TODO http://www.brainbashers.com/sudokuhelp.asp
+     */
     static def bt(Sudoku s, int depth)
     {
         // pak een variable die nog niet assigned is
