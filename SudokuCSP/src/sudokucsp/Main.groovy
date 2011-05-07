@@ -55,16 +55,12 @@ class Main {
         // Input lezen, solven, output schrijven
         //
 
-        // bruikbare representatie van sudokus maken
-        SudokuFactory sf = new SudokuFactory()
-        Solver solver = new Solver()
-
         // input lezen
         //input.eachLine{
-        input.readLines()[0..1].each{
-            def sudoku = sf.textToAssignment(it)
-            def solution = solver.solve(sudoku)
-            println sf.assignmentToText(solution)
+        input.readLines()[0..0].each{
+            Sudoku sudoku = new Sudoku(it)
+            Sudoku solution = Solver.solve(sudoku)
+            println solution.toString()
         }
 
     }
