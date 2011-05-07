@@ -20,7 +20,7 @@ class Sudoku {
     
     Sudoku(Sudoku s)
     {
-        this.assignment = s.assignment
+        this.assignment = s.assignment.clone()
     }
     
     def textToAssignment(input)
