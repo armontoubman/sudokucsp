@@ -194,19 +194,28 @@ class Solver {
 
     /*
     * Kijkt of een sudoku assignment consistent is:
-    * elke waarde die assigned is mag maar 1x voorkomen in zijn rij en kolom
+    * (1) elke waarde is uit 1..9
+    * (2) elke waarde die assigned is mag maar 1x voorkomen in zijn rij en kolom
+    *
     * @param incomplete sudoku assignment
     * @return consistent of niet
     */
     def consistent(s)
     {
+        // (1)
+        def one = s.every{
+            [1,2,3,4,5,6,7,8,9].containsAll(it.value)
+        }
+        // (2)
         // pak alle cells die assigned zijn
         def assigned = s.findAll{ it.value.size() == 1 }
         // voor elke assigned cell
-        return assigned.every{
+        def two = assigned.every{
             // kijk of ie 1x voorkomt in zijn row en column
             onlyAppearsOnceInRow(it.value, it.key, s) && onlyAppearsOnceInColumn(it.value, it.key, s)
         }
+
+        return one && two
     }
 
     /*
