@@ -140,7 +140,7 @@ class Sudoku {
         {
             if(pair.value.size() > 1)
             {
-                result << pair.key
+                result << [pair.key, pair.value]
                 //break // stoppen zodra de eerste gevonden is, sneller
             }
         }

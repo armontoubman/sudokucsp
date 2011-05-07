@@ -48,7 +48,7 @@ class Solver {
         // alles assigned? klaar
         if(variables.size() == 0) return s
         // pak cellnr
-        def c = variables[0]
+        def c = variables[0][0]
         
         // voor alle waarden in het domein van x
         for(v in s.getCell(c))
