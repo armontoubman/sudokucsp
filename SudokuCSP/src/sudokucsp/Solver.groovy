@@ -204,7 +204,7 @@ class Solver {
     {
         // (1)
         def one = s.every{
-            [1,2,3,4,5,6,7,8,9].containsAll(it.value)
+            [1,2,3,4,5,6,7,8,9].containsAll(it.value) && it.value.size() > 0
         }
         // (2)
         // pak alle cells die assigned zijn
