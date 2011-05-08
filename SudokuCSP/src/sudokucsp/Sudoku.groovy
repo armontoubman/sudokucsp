@@ -164,7 +164,7 @@ class Sudoku {
         }
         return result
     }
-
+    
     /**
      * Kijkt of waarde x eenmaal voorkomt in de row van cell
      * @param v waarde
@@ -200,6 +200,30 @@ class Sudoku {
     {
         def result = range.values().toList().count(v) <= 1
     }
+    
+    /**
+     * Kijkt of waarde x voorkomt in een groepje cells
+     * v waarde
+     * range groepje cells (deel van een Map)
+     */
+    def appearsInRange(v, range)
+    {
+        def result = range.values().toList().count(v) >= 1
+    }
+
+    /**
+     * Kijkt of waarde v in c inconsistentie zou geven
+     * @param v     : value voor de cell
+     * @param c     : cell number
+     * @return  boolean : true -> consistent
+     */
+    def ninjaConsistent(v,c){
+        // pak alle cells in de sudoku in dezelfde kolom als cell
+        def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+        // pak alle cells in de sudoku in dezelfde rij als cell
+        def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
+        return !appearsInRange(v,scol) && !appearsInRange(v,srow);
+    }
 
     /**
      * Haalt het rownr uit een cellnr
@@ -217,6 +241,25 @@ class Sudoku {
     def getColFromCellNr(c)
     {
          def col = c % 10
+    }
+
+    /* Revise:
+     * Zorgt dat binary constraints voldaan zijn, i.e. delete values
+     * @param c     :   cell number to be revised
+    */
+    def revise(c){
+        def delete = false; //Did we delete something?
+        def values = this.assignment[c] //obtain possible values
+        for(v in values){//for each possible value of cell
+            if(!ninjaConsistent([v],c)){//if value is not consistent with sudoku
+                values = values - [v] //remove value
+                delete = true;
+            }
+        }
+        //update mogelijke values in cell
+        this.assignment[c] = values
+        //return of er iets is aangepast (waarom?)
+        return delete;
     }
 	
 }

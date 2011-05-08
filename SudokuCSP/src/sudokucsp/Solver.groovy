@@ -49,7 +49,12 @@ class Solver {
         if(variables.size() == 0) return s
         // pak cellnr
         def c = variables[0][0]
-        
+
+        // first eliminate impossible strategies
+        // ookal hoef je dan ook niet consistentie te kijken fzo daarna...
+        // weird
+        s.revise(c)
+
         // voor alle waarden in het domein van x
         for(v in s.getCell(c))
         {
