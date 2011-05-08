@@ -50,9 +50,28 @@ class Solver {
         // pak cellnr
         def c = variables[0][0]
 
-        // first eliminate impossible strategies
-        // ookal hoef je dan ook niet consistentie te kijken fzo daarna...
-        // weird
+        /**
+         * first eliminate impossible strategies
+         * TODO maak hier AC-3 van ipv enkel revise
+         *
+         * procedure AC-3
+         *  Q <- {(Vi,Vj) in arcs(G),i#j};
+         *  while not Q empty
+         *      select and delete any arc (Vk,Vm) from Q;
+         *      if REVISE(Vk,Vm) then
+         *          Q <- Q union {(Vi,Vk) such that (Vi,Vk) in arcs(G),i#k,i#m}
+         *      endif
+         *  endwhile
+         * end AC-3
+         *
+         * Het punt van AC-3 vergeleken met gewone revise, is dat als je 1x
+         * revise toepast, dat er dan nieuwe 'givens' bij komen eigenlijk.
+         * Dus, dan moet je eigenlijk herhaal revisen tot er nix meer is
+         * veranderd. Nou moet je niet elke variabele dubbel gaan revisen, dat
+         * is inefficient. Enkel degene die affected zijn! (Dat is AC3 ipv AC2)
+         * zie: http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
+         */
+
         s.revise(c)
 
         // voor alle waarden in het domein van x
