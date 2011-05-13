@@ -123,8 +123,9 @@ class Sudoku {
         // voor elke assigned cell
         def two = assigned.every{
             // kijk of ie 1x voorkomt in zijn row en column
-            //onlyAppearsOnceInRow(it.value, it.key) && onlyAppearsOnceInColumn(it.value, it.key)
-            onlyAppearsOnceInRow(it[1], it[0]) && onlyAppearsOnceInColumn(it[1], it[0])
+            onlyAppearsOnceInRow(it[1], it[0]) && 
+            onlyAppearsOnceInColumn(it[1], it[0]) &&
+            onlyAppearsOnceIn3by3(it[1],it[0])
         }
 
         return one && two
@@ -238,11 +239,46 @@ class Sudoku {
         }
         return result
     }
+    
+    /**
+     * Geeft een lijst met cells die assigned zijn in de reg en hun waarde
+     * @param c : cell number
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 21, [5] ] ]
+     */
+    def getAssignedInReg(c)
+    {
+        def result = []
+        def sreg = getReg(c);
+        for(pair in sreg){
+            if(pair.value.size() == 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
+
+    /**
+     * Geeft een lijst met cells die niet assigned zijn in de reg en hun waarde
+     * @param c : cell number
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1,2] ], [ 21, [1,5] ] ]
+     */
+    def getNotAssignedInReg(c)
+    {
+        def result = []
+        def sreg = getReg(c);
+        for(pair in sreg){
+            if(pair.value.size() > 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
 
     /*
      * Returned de row waar de huidige cell in voorkomt
-     * @param v waarde
-     * @param c cell
+     * @param c cellNr
      * @return srow lijst met cells uit de row
      */
     def getRow(c)
@@ -253,14 +289,66 @@ class Sudoku {
 
     /*
      * Returned de col waar de huidige cell in voorkomt
-     * @param v waarde
-     * @param c cell
+     * @param c cellNr
      * @return scol lijst met cells uit de col
      */
     def getCol(c)
     {
         // pak alle cells in de sudoku in dezelfde kolom als cell
         def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+    }
+
+    /**
+     *TODO Zorgen dat de 3x3 region niet telkens overnieuw hoeft worden berekend
+     * Returned de 3by3 region waar de huidige cell in voorkomt
+     * @param c : cellNr
+     * @return sreg : lijst met cells uit de region
+     */
+    def getReg(c){
+        def rowNr = getRowFromCellNr(c); // Retrieve current row
+        def rowReg = rowNr%3 // Calculate relative row number (in a region of 3by3)
+        def rows = [];
+        def colNr = getColFromCellNr(c); // Retrieve current column
+        def colReg = colNr%3 // Calculate relative col number (in a region of 3by3)
+        def cols = [];
+
+        //determine other rows
+        if(rowReg == 1){
+            def row1 = rowNr + 1;
+            def row2 = rowNr + 2;
+            rows = [rowNr,row1,row2]; // Current region in rows
+        } else if(rowReg == 2){
+            def row1 = rowNr - 1;
+            def row2 = rowNr + 1;
+            rows = [row1, rowNr, row2]; // Current region in rows
+        } else if(rowReg == 0){
+            def row1 = rowNr - 1;
+            def row2 = rowNr - 2;
+            rows = [row2, row1, rowNr]; // Current region in rows
+        }
+
+        //determine other columns
+        if(colReg == 1){
+            def col1 = colNr + 1;
+            def col2 = colNr + 2;
+            cols = [colNr,col1,col2]; // Current region in columns
+        } else if(colReg == 2){
+            def col1 = colNr - 1;
+            def col2 = colNr + 1;
+            cols = [col1, colNr, col2]; // Current region in columns
+        } else if(colReg == 0){
+            def col1 = colNr - 1;
+            def col2 = colNr - 2;
+            cols = [col2, col1, colNr]; // Current region in columns
+        }
+
+        // Retrieve all cells that fit in these col/row constraints
+        def sreg = this.assignment.findAll{
+            cols.contains(getColFromCellNr(it.key)) &&
+            rows.contains(getRowFromCellNr(it.key))
+        }
+
+        return sreg           
     }
     
     /**
@@ -289,6 +377,18 @@ class Sudoku {
         def scol = getCol(c)
         // controleer of x 1x voorkomt in deze cells
         def result = onlyAppearsOnceInRange(v, scol)
+    }
+
+    /**
+     * Kijkt of waarde eenmaal voorkomt in een 3by3 region van de cell
+     * @param v waarde
+     * @param c cellnr
+     */
+    def onlyAppearsOnceIn3by3(v,c){
+        // pak alle cells in de sudoku in dezelfde region als cell
+        def sreg = getReg(c)
+        // controleer of v 1x voorkomt in deze cells
+        def result = onlyAppearsOnceInRange(v,sreg)
     }
 
     /**
@@ -324,7 +424,10 @@ class Sudoku {
         // pak alle cells in de sudoku in dezelfde rij als cell
         def srow = getRow(c)
         srow.remove(c)
-        return !appearsInRange(v,scol) && !appearsInRange(v,srow);
+        // pak alle cells in de sudoku in dezelfde region als cell
+        def sreg = getReg(c)
+        sreg.remove(c)
+        return !appearsInRange(v,scol) && !appearsInRange(v,srow) && !appearsInRange(v,sreg);
     }
 
     /**
@@ -345,7 +448,16 @@ class Sudoku {
          def col = c % 10
     }
 
-    /* Revise:
+    /**
+     *TODO zorgen dat revise/hidden single de eerste stap '7' maakt.
+     * Hiervoor zal het nodig zijn om de hele sudoku te checken? I dunno
+     * Ik heb al gezien in mijn eigen sudoku programma dat onze eerste sudoku
+     *het volgende heeft:
+     *[25678],9,4,[58],[28],[25],1,3,[56]
+     *Hidden Single zou hier de 7 aangeven als eerste getalletje, wat heel
+     *veel backtracking zal schelen!
+     *
+     * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
      * @param c     :   cell number to be revised
     */
@@ -424,16 +536,7 @@ class Sudoku {
    }
 
     /*
-         *TODO zorgen dat revise/hidden single de eerste stap '7' maakt.
-         *Hidden Singles
-         *Ik heb al gezien in mijn eigen sudoku programma dat onze eerste sudoku
-         *het volgende heeft:
-         *[25678],9,4,[58],[28],[25],1,3,[56]
-         *Hidden Single zou hier de 7 aangeven als eerste getalletje, wat heel
-         *veel backtracking zal schelen!
-         *http://www.learn-sudoku.com/hidden-singles.html
-        */
-    /*
+     *TODO hiddenSingle ook toepassen op columns en regions
      *Hidden Singles or Pinned Squares
      *Hidden: http://www.learn-sudoku.com/hidden-singles.html
      *Pinned: http://www.brainbashers.com/sudokupinnedsquares.asp
@@ -445,32 +548,74 @@ class Sudoku {
 
     def hiddenSingle(cellNr,values) {
         def delete = false; // bijhouden of we iets deleten
+
+        //ALL: Intialize; Retrieve other cells
         def nrow = getNotAssignedInRow(cellNr) //retrieve oningevulde rowcells
         def row = nrow - [[cellNr, values]] //haal huidige er vanaf
 
-        //Now put all the values from the other cells in the row in one list
-        def otherValues = []
+        def ncol = getNotAssignedInCol(cellNr) //retrieve oningevulde rowcells
+        def col = ncol - [[cellNr, values]] //haal huidige er vanaf
+
+        def nreg = getNotAssignedInReg(cellNr) //retrieve oningevulde rowcells
+        def reg = nreg - [[cellNr, values]] //haal huidige er vanaf
+
+        //ALL: combine values from the other cells, compare with current values
+        //ROW: Now put all the values from the other cells in one list
+        def otherValuesRow = []
         row.each{
-            otherValues = otherValues + it[1]
-            otherValues.unique()
+            otherValuesRow = otherValuesRow + it[1]
+            otherValuesRow.unique()
         }
-        //println otherValues
         //check what values are in this cell, but not in the others
-        def dif = values - otherValues
-        //println dif
-        if(dif.size() == 1 && dif != values){ //whoehoe! hidden single
-            setCell(cellNr,dif);
+        def difRow = values - otherValuesRow
+
+        //COL: Now put all the values from the other cells in one list
+        def otherValuesCol = []
+        col.each{
+            otherValuesCol = otherValuesCol + it[1]
+            otherValuesCol.unique()
+        }
+        def difCol = values - otherValuesCol
+
+        //REG: Now put all the values from the other cells in one list
+        def otherValuesReg = []
+        reg.each{
+            otherValuesReg = otherValuesReg + it[1]
+            otherValuesReg.unique()
+        }
+        def difReg = values - otherValuesReg
+
+        //ALL: now check if they are singles (and changed)
+        if(difRow.size() == 1 && difRow != values){ //whoehoe! hidden single
+            setCell(cellNr,difRow);
             delete = true;
         }
-        else if(dif.size() > 1){
+        else if(difCol.size() == 1 && difCol != values){ //whoehoe! hidden single
+            setCell(cellNr,difCol);
+            delete = true;
+        }
+        else if(difReg.size() == 1 && difReg != values){ //whoehoe! hidden single
+            setCell(cellNr,difReg);
+            delete = true;
+        }
+        else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){
             println 'faulty sudoku values'
             println cellNr
             println values
             println nrow
             println row
-            println otherValues
-            println dif
-            //sudoku is wrong
+            println otherValuesRow
+            println difRow
+            println ncol
+            println col
+            println otherValuesCol
+            println difCol
+            println nreg
+            println reg
+            println otherValuesReg
+            println difReg
+
+            //sudoku is wrong, print debug stuff
         }
         
         return delete

@@ -50,8 +50,8 @@ class Solver {
         // pak cellnr
         def c = variables[0][0]
 
-        /* TODO !!!!!!! Zorgen dat ie ook naar subgrids kijkt (ipv enkel row/col)
-         *
+
+         /**
          * TODO kijken of openSingles nut heeft
          * technique: http://www.learn-sudoku.com/open-singles.html
          * Fill in the last remaining number.
@@ -63,7 +63,7 @@ class Solver {
         */
         //if(depth == 0) { s.openSingles() }
 
-        /* TODO zorgen dat ie m juist oplost!
+        /* TODO zorgen dat ie weer werkt, hij vindt onderstaande niet.
          *  Volgens me vorige programma: werkelijke oplossing is:
          *  7     9     4     5     8     2     1     3     6
      2     6     8     9     3     1     7     4     5
@@ -74,8 +74,8 @@ class Solver {
      8     2     1     6     5     7     4     9     3
      9     4     3     1     2     8     6     5     7
      5     7     6     3     9     4     2     1     8 
-     *Ik denk dat ie meerdere oplossingen heb, nu we niet kijken naar 3x3 grid 
-     *restricties :O
+     * Hij gaf andere uitkomst zonder de 3x3 regions/grids/sections
+     * Nu zoekt ie wel bij 7!
          */
 
 
