@@ -144,7 +144,6 @@ class Sudoku {
             if(pair.value.size() > 1)
             {
                 result << [pair.key, pair.value]
-                //break // stoppen zodra de eerste gevonden is, sneller
             }
         }
         return result
@@ -153,7 +152,7 @@ class Sudoku {
     /**
      * Geeft een lijst met cells die assigned zijn en hun waarde
      * @param assignment (in)complete assignment
-     * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 63, 5 ] ]
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 63, [5] ] ]
      */
     def getAssignedVariables()
     {
@@ -170,13 +169,13 @@ class Sudoku {
 
     /**
      * Geeft een lijst met cells die assigned zijn in de row en hun waarde
-     * @param row : nummer van de row (1..9)
-     * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 12, 5 ] ]
+     * @param c : cell number
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 12, [5] ] ]
      */
-    def getAssignedInRow(int row)
+    def getAssignedInRow(c)
     {
         def result = []
-        def srow = getRow(row);
+        def srow = getRow(c);
         for(pair in srow){
             if(pair.value.size() == 1)
             {
@@ -187,16 +186,52 @@ class Sudoku {
     }
 
     /**
-     * Geeft een lijst met cells die assigned zijn in de col en hun waarde
-     * @param col : nummer van de col (1..9)
-     * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 21, 5 ] ]
+     * Geeft een lijst met cells die niet assigned zijn in de row en hun waarde
+     * @param c : cell number
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1,2] ], [ 12, [3,5,6] ] ]
      */
-    def getAssignedInCol(int col)
+    def getNotAssignedInRow(c)
     {
         def result = []
-        def scol = getCol(col);
+        def srow = getRow(c);
+        for(pair in srow){
+            if(pair.value.size() > 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
+
+    /**
+     * Geeft een lijst met cells die assigned zijn in de col en hun waarde
+     * @param c : cell number
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 21, [5] ] ]
+     */
+    def getAssignedInCol(c)
+    {
+        def result = []
+        def scol = getCol(c);
         for(pair in scol){
             if(pair.value.size() == 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
+
+    /**
+     * Geeft een lijst met cells die niet assigned zijn in de col en hun waarde
+     * @param c : cell number
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1,2] ], [ 21, [1,5] ] ]
+     */
+    def getNotAssignedInCol(c)
+    {
+        def result = []
+        def scol = getCol(c);
+        for(pair in scol){
+            if(pair.value.size() > 1)
             {
                 result << [pair.key, pair.value]
             }
@@ -315,26 +350,39 @@ class Sudoku {
     def revise(c){
         def delete = false; //Did we delete something?
         def values = this.assignment[c] //obtain possible values
+        // NORMAL REVISE:
         for(v in values){//for each possible value of cell
             if(!ninjaConsistent([v],c)){//if value is not consistent with sudoku
                 values = values - [v] //remove value
                 delete = true;
+                if(values.size() == 0){
+                    break
+                }
+                //println 'revised'
             }
         }
+        //HIDDEN SINGLE:
+        if(hiddenSingle(c,values)){
+            //println 'hidden'
+            delete = true //revise did something
+        }
+
         //update mogelijke values in cell
-        this.assignment[c] = values
-        //return of er iets is aangepast (waarom?)
+        setCell(c,values)
+        //this.assignment[c] = values
+        //returned of revise iets gedaan heeft, is handig in een while.
         return delete;
     }
 
     /*
+     * Open Singles
      * technique: http://www.learn-sudoku.com/open-singles.html
      * Fill in the last remaining number.
      * Probably very redundant and without actual performance boosting:
      *  seems to be inherent to revise already.
      * @result this.assignment might be adjusted.
     */
-   def openSingles() {
+    def openSingles() {
        for(i in 1..9){
            /*
             * Check every row for open singles
@@ -374,6 +422,59 @@ class Sudoku {
        }
 
    }
+
+    /*
+         *TODO zorgen dat revise/hidden single de eerste stap '7' maakt.
+         *Hidden Singles
+         *Ik heb al gezien in mijn eigen sudoku programma dat onze eerste sudoku
+         *het volgende heeft:
+         *[25678],9,4,[58],[28],[25],1,3,[56]
+         *Hidden Single zou hier de 7 aangeven als eerste getalletje, wat heel
+         *veel backtracking zal schelen!
+         *http://www.learn-sudoku.com/hidden-singles.html
+        */
+    /*
+     *Hidden Singles or Pinned Squares
+     *Hidden: http://www.learn-sudoku.com/hidden-singles.html
+     *Pinned: http://www.brainbashers.com/sudokupinnedsquares.asp
+     *If list of values in the cell contains a unique value for its row,col
+     *then that is a Hidden Single and we can assign that value to the cell.
+     *@param cellNr : nr of the cell
+     *@return values : (possibly) new values for the cell
+    */
+
+    def hiddenSingle(cellNr,values) {
+        def delete = false; // bijhouden of we iets deleten
+        def nrow = getNotAssignedInRow(cellNr) //retrieve oningevulde rowcells
+        def row = nrow - [[cellNr, values]] //haal huidige er vanaf
+
+        //Now put all the values from the other cells in the row in one list
+        def otherValues = []
+        row.each{
+            otherValues = otherValues + it[1]
+            otherValues.unique()
+        }
+        //println otherValues
+        //check what values are in this cell, but not in the others
+        def dif = values - otherValues
+        //println dif
+        if(dif.size() == 1 && dif != values){ //whoehoe! hidden single
+            setCell(cellNr,dif);
+            delete = true;
+        }
+        else if(dif.size() > 1){
+            println 'faulty sudoku values'
+            println cellNr
+            println values
+            println nrow
+            println row
+            println otherValues
+            println dif
+            //sudoku is wrong
+        }
+        
+        return delete
+    }
 	
 }
 

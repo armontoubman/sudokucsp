@@ -88,7 +88,7 @@ class Solver {
 
         /**
          * first eliminate impossible strategies
-         * TODO maak hier AC-3 van ipv enkel revise
+         * TODO maak hier AC-3 van ipv AC-2 (i.e. "while revise")
          *
          * procedure AC-3
          *  Q <- {(Vi,Vj) in arcs(G),i#j};
@@ -107,18 +107,17 @@ class Solver {
          * is inefficient. Enkel degene die affected zijn! (Dat is AC3 ipv AC2)
          * zie: http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
          */
-
-        s.revise(c)
-
-        
-
-        // voor alle waarden in het domein van x
+        def removing = true;
+        while(removing){
+            removing = s.revise(c)
+        }
+    // voor alle waarden in het domein van x
         for(v in s.getCell(c))
         {
                 def testcopy = new Sudoku(s)
                 // assign x deze waarde
                 testcopy.setCell(c, [v])
-                
+
                 def spaties = " "*depth
                 println spaties+testcopy
                 
