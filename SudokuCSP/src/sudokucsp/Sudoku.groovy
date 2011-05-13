@@ -317,11 +317,13 @@ class Sudoku {
      * @param c     : cell number
      * @return  boolean : true -> consistent ; false -> inconsistent
      */
-    def ninjaConsistent(v,c){
+    def cellConsistent(v,c){
         // pak alle cells in de sudoku in dezelfde kolom als cell
         def scol = getCol(c)
+        scol.remove(c)
         // pak alle cells in de sudoku in dezelfde rij als cell
         def srow = getRow(c)
+        srow.remove(c)
         return !appearsInRange(v,scol) && !appearsInRange(v,srow);
     }
 
@@ -352,13 +354,12 @@ class Sudoku {
         def values = this.assignment[c] //obtain possible values
         // NORMAL REVISE:
         for(v in values){//for each possible value of cell
-            if(!ninjaConsistent([v],c)){//if value is not consistent with sudoku
+            if(!cellConsistent([v],c)){//if value is not consistent with sudoku
                 values = values - [v] //remove value
                 delete = true;
                 if(values.size() == 0){
                     break
                 }
-                //println 'revised'
             }
         }
         //HIDDEN SINGLE:
@@ -369,7 +370,6 @@ class Sudoku {
 
         //update mogelijke values in cell
         setCell(c,values)
-        //this.assignment[c] = values
         //returned of revise iets gedaan heeft, is handig in een while.
         return delete;
     }

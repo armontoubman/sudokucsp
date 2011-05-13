@@ -50,7 +50,8 @@ class Solver {
         // pak cellnr
         def c = variables[0][0]
 
-        /*
+        /* TODO !!!!!!! Zorgen dat ie ook naar subgrids kijkt (ipv enkel row/col)
+         *
          * TODO kijken of openSingles nut heeft
          * technique: http://www.learn-sudoku.com/open-singles.html
          * Fill in the last remaining number.
