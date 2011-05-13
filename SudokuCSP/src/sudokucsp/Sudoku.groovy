@@ -12,6 +12,7 @@ package sudokucsp
 class Sudoku {
     
     def assignment
+    def full = [1,2,3,4,5,6,7,8,9] // used in multiple methods as check.
     
     /**
      * Constructor
@@ -113,15 +114,17 @@ class Sudoku {
     {
         // (1)
         def one = this.assignment.every{
-            [1,2,3,4,5,6,7,8,9].containsAll(it.value) && it.value.size() > 0
+            full.containsAll(it.value) && it.value.size() > 0
         }
         // (2)
         // pak alle cells die assigned zijn
-        def assigned = this.assignment.findAll{ it.value.size() == 1 }
+        //def assigned = this.assignment.findAll{ it.value.size() == 1 }
+        def assigned = getAssignedVariables() // wel gebruik maken van methods he
         // voor elke assigned cell
         def two = assigned.every{
             // kijk of ie 1x voorkomt in zijn row en column
-            onlyAppearsOnceInRow(it.value, it.key) && onlyAppearsOnceInColumn(it.value, it.key)
+            //onlyAppearsOnceInRow(it.value, it.key) && onlyAppearsOnceInColumn(it.value, it.key)
+            onlyAppearsOnceInRow(it[1], it[0]) && onlyAppearsOnceInColumn(it[1], it[0])
         }
 
         return one && two
@@ -164,6 +167,66 @@ class Sudoku {
         }
         return result
     }
+
+    /**
+     * Geeft een lijst met cells die assigned zijn in de row en hun waarde
+     * @param row : nummer van de row (1..9)
+     * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 12, 5 ] ]
+     */
+    def getAssignedInRow(int row)
+    {
+        def result = []
+        def srow = getRow(row);
+        for(pair in srow){
+            if(pair.value.size() == 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
+
+    /**
+     * Geeft een lijst met cells die assigned zijn in de col en hun waarde
+     * @param col : nummer van de col (1..9)
+     * @return lijst met lijst per cel, bijv: [ [ 11, 1 ], [ 21, 5 ] ]
+     */
+    def getAssignedInCol(int col)
+    {
+        def result = []
+        def scol = getCol(col);
+        for(pair in scol){
+            if(pair.value.size() == 1)
+            {
+                result << [pair.key, pair.value]
+            }
+        }
+        return result
+    }
+
+    /*
+     * Returned de row waar de huidige cell in voorkomt
+     * @param v waarde
+     * @param c cell
+     * @return srow lijst met cells uit de row
+     */
+    def getRow(c)
+    {
+        // pak alle cells in de sudoku in dezelfde rij als cell
+        def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
+    }
+
+    /*
+     * Returned de col waar de huidige cell in voorkomt
+     * @param v waarde
+     * @param c cell
+     * @return scol lijst met cells uit de col
+     */
+    def getCol(c)
+    {
+        // pak alle cells in de sudoku in dezelfde kolom als cell
+        def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+    }
     
     /**
      * Kijkt of waarde x eenmaal voorkomt in de row van cell
@@ -173,7 +236,8 @@ class Sudoku {
     def onlyAppearsOnceInRow(v, c)
     {
         // pak alle cells in de sudoku in dezelfde rij als cell
-        def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
+        //def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
+        def srow = getRow(c)
         // controleer of x 1x voorkomt in deze cells
         def result = onlyAppearsOnceInRange(v, srow)
     }
@@ -186,7 +250,8 @@ class Sudoku {
     def onlyAppearsOnceInColumn(v, c)
     {
         // pak alle cells in de sudoku in dezelfde kolom als cell
-        def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+        //def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+        def scol = getCol(c)
         // controleer of x 1x voorkomt in deze cells
         def result = onlyAppearsOnceInRange(v, scol)
     }
@@ -215,13 +280,13 @@ class Sudoku {
      * Kijkt of waarde v in c inconsistentie zou geven
      * @param v     : value voor de cell
      * @param c     : cell number
-     * @return  boolean : true -> consistent
+     * @return  boolean : true -> consistent ; false -> inconsistent
      */
     def ninjaConsistent(v,c){
         // pak alle cells in de sudoku in dezelfde kolom als cell
-        def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+        def scol = getCol(c)
         // pak alle cells in de sudoku in dezelfde rij als cell
-        def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
+        def srow = getRow(c)
         return !appearsInRange(v,scol) && !appearsInRange(v,srow);
     }
 
@@ -244,7 +309,7 @@ class Sudoku {
     }
 
     /* Revise:
-     * Zorgt dat binary constraints voldaan zijn, i.e. delete values
+     * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
      * @param c     :   cell number to be revised
     */
     def revise(c){
@@ -261,6 +326,54 @@ class Sudoku {
         //return of er iets is aangepast (waarom?)
         return delete;
     }
+
+    /*
+     * technique: http://www.learn-sudoku.com/open-singles.html
+     * Fill in the last remaining number.
+     * Probably very redundant and without actual performance boosting:
+     *  seems to be inherent to revise already.
+     * @result this.assignment might be adjusted.
+    */
+   def openSingles() {
+       for(i in 1..9){
+           /*
+            * Check every row for open singles
+           */
+           def inRow = getAssignedInRow(i) //all assigned values & their keys
+           def keyR = []
+           def valueR = []
+           if(inRow.size()==8){ //if only one value is missing
+ // e.g. [ [11,1], [12,2], [13,3], [14,4], [15,5], [16,6], [17,7], [19,8]]
+               inRow.each{ //for every given value in the list
+                   keyR << getColFromCellNr(it[0]) //retrieve the col in row
+                   valueR << it[1] //retrieve the value
+               }
+               def missingValueR = full - valueR //one value will remain
+               def missingKeyR = full - keyR// one column will remain
+               missingKeyR = missingKeyR[0]+10*i //assemble cell key
+               this.assignment[missingKeyR] = missingValueR //assign the value
+           }
+
+           /*
+            * Check every column for open singles
+           */
+           def inCol = getAssignedInCol(i) //all assigned values & their keys
+           def keyC = []
+           def valueC = []
+           if(inCol.size()==8){ //if only one value is missing
+ // e.g. [ [11,1], [21,2], [31,3], [41,4], [51,5], [61,6], [71,7], [91,8]]
+               inCol.each{ //for every given value in the list
+                   keyC << getRowFromCellNr(it[0]) //retrieve the row in col
+                   valueC << it[1] //retrieve the value
+               }
+               def missingValueC = full - valueC //one value will remain
+               def missingKeyC = full - keyC// retrieve empty col in row
+               missingKeyC = missingKeyC[0]+10*i //assemble cell key
+               this.assignment[missingKeyC] = missingValueC //assign the value
+           }
+       }
+
+   }
 	
 }
 
