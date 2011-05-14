@@ -3,7 +3,9 @@
  * and open the template in the editor.
  */
 
-package sudokucsp
+package sudokucsp;
+
+import java.util.*;
 
 /**
  *
@@ -11,9 +13,9 @@ package sudokucsp
  */
 class Solver {
 
-    static def solve(Sudoku s)
+    static Sudoku solve(Sudoku s)
     {
-        return bt(s, 0)
+        return bt(s, 0);
     }
 
     /*
@@ -41,7 +43,7 @@ class Solver {
      * TODO http://www.learn-sudoku.com/basic-techniques.html
      * TODO http://www.brainbashers.com/sudokuhelp.asp
      */
-    static def bt(Sudoku s, int depth)
+    static Sudoku bt(Sudoku s, int depth)
     {
 
                 /**
@@ -66,24 +68,24 @@ class Solver {
          * zie: http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
          */
 
-        def removing = true; //Initiate loop
+        boolean removing = true; //Initiate loop
         while(removing){ // While revise has removed values
-            removing = s.revise() // revise (again)
+            removing = s.revise(); // revise (again)
         }
 
         // pak een variable die nog niet assigned is
-        def variables = s.getNotAssignedVariables()
+        HashMap<Integer, ArrayList<Integer>> variables = s.getNotAssignedVariables();
         // alles assigned? hopelijk klaar
-        if(variables.size() == 0){
+        if(variables.isEmpty()){
             if(s.isConsistent()){ // klaar!
-                return s
+                return s;
             }
             else { // jammer, vol maar fout!
-                return null
+                return null;
             }
         }
         // pak cellnr
-        def c = variables[0][0]
+        int c = (int) variables.keySet().toArray()[0];
 
         /**
          *  Werkelijke oplossing is:
@@ -99,31 +101,33 @@ class Solver {
          */
 
         // voor alle waarden in het domein van x
-        for(v in s.getCell(c))
+        for(int v : s.getCell(c))
         {
-                def testcopy = new Sudoku(s)
+                Sudoku testcopy = new Sudoku(s);
                 // assign x deze waarde
-                testcopy.setCell(c, [v])
+                ArrayList<Integer> newValues = new ArrayList<Integer>();
+                newValues.add(v);
+                testcopy.setCell(c, newValues);
 
                
                 // als de nieuwe assignment consistent is
                 if(testcopy.isConsistent())
                 {
 
-                 def spaties = " "*depth
-                println spaties+testcopy
+                for(int i=0; i<depth; i++) { System.out.print(" "); }
+                System.out.println(testcopy.toString());
                 //println s.assignment //ff wat handiger bij t debuggen/improven
                 
                     // maak nieuwe branch
-                    def R = bt(testcopy, depth+1)
+                    Sudoku R = bt(testcopy, depth+1);
                     // als deze branch niet faalt
                     if(R != null)
                     {
-                        return R
+                        return R;
                     }
                 }
         }
-        return null
+        return null;
     }
     
 }

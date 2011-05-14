@@ -3,7 +3,9 @@
  * and open the template in the editor.
  */
 
-package sudokucsp
+package sudokucsp;
+
+import java.util.*;
 
 /**
  *
@@ -11,8 +13,8 @@ package sudokucsp
  */
 class Sudoku {
     
-    def assignment
-    def full = [1,2,3,4,5,6,7,8,9] // used in multiple methods as check.
+    HashMap<Integer, ArrayList<Integer>> assignment;
+    static final int[] ONETONINE = {1, 2, 3, 4, 5, 6, 7, 8, 9}; // used in multiple methods as check.
     
     /**
      * Constructor
@@ -21,7 +23,7 @@ class Sudoku {
      */
     Sudoku(String input)
     {
-        this.assignment = textToAssignment(input)
+        this.assignment = textToAssignment(input);
     }
     
     /**
@@ -29,78 +31,85 @@ class Sudoku {
      */
     Sudoku(Sudoku s)
     {
-        this.assignment = s.assignment.clone()
+        for(int key : s.assignment.keySet())
+        {
+            ArrayList<Integer> copy = (ArrayList<Integer>) s.assignment.get(key).clone();
+            this.assignment.put(key, copy);
+        }
     }
     
-    def textToAssignment(input)
+    private HashMap<Integer, ArrayList<Integer>> textToAssignment(String input)
     {
         // input: .94...13..............76..2.8..1.....32.........2...6.....5.4.......8..7..63.4..8
         // resultaat: [11:1..9, 12:[9], 13:[4], etc.
         
-        input = input.trim()
+        input = input.trim();
 
-        def assignment = [:];
+        HashMap newassignment = new HashMap<Integer, ArrayList<Integer>>();
 
         int row = 1;
         int col = 1;
-        for(i in input)
+        for(int j=0; j<input.length(); j++)
         {
-            def values;
+            String i = new StringBuilder(input.charAt(j)).toString();
+            ArrayList values = new ArrayList<Integer>();
 
-            def cell = row*10+col;
+            int cell = row*10+col;
 
-            if(i == ".")
+            if(i.equals("."))
             {
-                values = 1..9;
+                List temp = Arrays.asList(ONETONINE);
+                Collections.addAll(values, temp);
             }
             else
             {
-                values = [ Integer.parseInt(i) ];
+                values.add(Integer.parseInt(i));
             }
 
-            assignment[(cell)] = values;
+            newassignment.put(cell, values);
 
-            col++
+            col++;
             if(col > 9)
             {
-                col = 1
-                row++
+                col = 1;
+                row++;
             }
         }
 
-        return assignment;
+        return newassignment;
     }
     
-    String toString()
+    @Override
+    public String toString()
     {
-        def sb = ""
-        for(i in 1..9)
+        StringBuilder sb = new StringBuilder();
+        for(int i=1; i<=9; i++)
         {
-            for(j in 1..9)
+            for(int j=1; j<=9; i++)
             {
-                def x
-                if(this.assignment[i*10+j].size() > 1)
+                String x;
+                if(this.assignment.get(i*10+j).size() > 1)
                 {
-                    x = "."
+                    x = ".";
                 }
                 else
                 {
-                    x = this.assignment[i*10+j][0]
+                    x = this.assignment.get(i*10+j).get(0).toString();
                 }
-                sb = sb+x
+                sb.append(x);
             }
         }
-        return sb
+        return sb.toString();
     }
     
-    def getCell(c)
+    ArrayList<Integer> getCell(int c)
     {
-        return this.assignment[c];
+        return this.assignment.get(c);
     }
     
-    def setCell(c, vs)
+    void setCell(int c, ArrayList<Integer> vs)
     {
-        this.assignment[c] = vs;
+        this.assignment.put(c, vs);
     }    
 
     /**
@@ -110,26 +119,69 @@ class Sudoku {
      *
      * @return consistent of niet
      */
-    def isConsistent()
+    boolean isConsistent()
     {
         // (1)
-        def one = this.assignment.every{
-
-            full.containsAll(it.value) && it.value.size() > 0
+        boolean one = true;
+        for(ArrayList<Integer> values : this.assignment.values())
+        {
+            if(!Arrays.asList(ONETONINE).containsAll(values) && values.size() > 0)
+            {
+                one = false;
+            }
         }
         // (2)
         // pak alle cells die assigned zijn
         //def assigned = this.assignment.findAll{ it.value.size() == 1 }
-        def assigned = getAssignedVariables() // wel gebruik maken van methods he
+        HashMap<Integer, ArrayList<Integer>> assigned = getAssignedVariables(); // wel gebruik maken van methods he
         // voor elke assigned cell
-        def two = assigned.every{
+        boolean two = true;
+        for(Map.Entry<Integer, ArrayList<Integer>> it : assigned.entrySet())
+        {
             // kijk of ie 1x voorkomt in zijn row en column
-            onlyAppearsOnceInRow(it[1], it[0]) && 
-            onlyAppearsOnceInColumn(it[1], it[0]) &&
-            onlyAppearsOnceIn3by3(it[1],it[0])
+            if( !( onlyAppearsOnceInRow(it.getValue().get(0), it.getKey()) && onlyAppearsOnceInColumn(it.getValue().get(0), it.getKey()) && onlyAppearsOnceIn3by3(it.getValue().get(0), it.getKey()) ) )
+            {
+                two = false;
+            }
         }
 
-        return one && two
+        return one && two;
+    }
+    
+    HashMap<Integer, ArrayList<Integer>> getAssignedInGeneral(HashMap<Integer, ArrayList<Integer>> context)
+    {
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : context.entrySet())
+        {
+            if(pair.getValue().size() == 1)
+            {
+                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+            }
+        }
+        return result;
+    }
+    
+    HashMap<Integer, ArrayList<Integer>> getNotAssignedInGeneral(HashMap<Integer, ArrayList<Integer>> context)
+    {
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : context.entrySet())
+        {
+            if(pair.getValue().size() > 1)
+            {
+                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Geeft een lijst met cells die assigned zijn en hun waarde
+     * @param assignment (in)complete assignment
+     * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 63, [5] ] ]
+     */
+    HashMap<Integer, ArrayList<Integer>> getAssignedVariables()
+    {
+        return getAssignedInGeneral(this.assignment);
     }
     
     /**
@@ -138,35 +190,9 @@ class Sudoku {
      * @param incomplete assignment
      * @return lijst met 1 element, cellnr
      */
-    def getNotAssignedVariables()
+    HashMap<Integer, ArrayList<Integer>> getNotAssignedVariables()
     {
-        def result = []
-        for(pair in this.assignment)
-        {
-            if(pair.value.size() > 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
-    }
-    
-    /**
-     * Geeft een lijst met cells die assigned zijn en hun waarde
-     * @param assignment (in)complete assignment
-     * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 63, [5] ] ]
-     */
-    def getAssignedVariables()
-    {
-        def result = []
-        for(pair in this.assignment)
-        {
-            if(pair.value.size() == 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getNotAssignedInGeneral(this.assignment);
     }
 
     /**
@@ -174,17 +200,9 @@ class Sudoku {
      * @param c : cell number
      * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 12, [5] ] ]
      */
-    def getAssignedInRow(c)
+    HashMap<Integer, ArrayList<Integer>> getAssignedInRow(int c)
     {
-        def result = []
-        def srow = getRow(c);
-        for(pair in srow){
-            if(pair.value.size() == 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getAssignedInGeneral(getRow(c));
     }
 
     /**
@@ -192,17 +210,9 @@ class Sudoku {
      * @param c : cell number
      * @return lijst met lijst per cel, bijv: [ [ 11, [1,2] ], [ 12, [3,5,6] ] ]
      */
-    def getNotAssignedInRow(c)
+    HashMap<Integer, ArrayList<Integer>> getNotAssignedInRow(int c)
     {
-        def result = []
-        def srow = getRow(c);
-        for(pair in srow){
-            if(pair.value.size() > 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getNotAssignedInGeneral(getRow(c));
     }
 
     /**
@@ -210,17 +220,9 @@ class Sudoku {
      * @param c : cell number
      * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 21, [5] ] ]
      */
-    def getAssignedInCol(c)
+    HashMap<Integer, ArrayList<Integer>> getAssignedInCol(int c)
     {
-        def result = []
-        def scol = getCol(c);
-        for(pair in scol){
-            if(pair.value.size() == 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getAssignedInGeneral(getCol(c));
     }
 
     /**
@@ -228,17 +230,9 @@ class Sudoku {
      * @param c : cell number
      * @return lijst met lijst per cel, bijv: [ [ 11, [1,2] ], [ 21, [1,5] ] ]
      */
-    def getNotAssignedInCol(c)
+    HashMap<Integer, ArrayList<Integer>> getNotAssignedInCol(int c)
     {
-        def result = []
-        def scol = getCol(c);
-        for(pair in scol){
-            if(pair.value.size() > 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getNotAssignedInGeneral(getCol(c));
     }
     
     /**
@@ -246,17 +240,9 @@ class Sudoku {
      * @param c : cell number
      * @return lijst met lijst per cel, bijv: [ [ 11, [1] ], [ 21, [5] ] ]
      */
-    def getAssignedInReg(c)
+    HashMap<Integer, ArrayList<Integer>> getAssignedInReg(int c)
     {
-        def result = []
-        def sreg = getReg(c);
-        for(pair in sreg){
-            if(pair.value.size() == 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getAssignedInGeneral(getReg(c));
     }
 
     /**
@@ -264,17 +250,9 @@ class Sudoku {
      * @param c : cell number
      * @return lijst met lijst per cel, bijv: [ [ 11, [1,2] ], [ 21, [1,5] ] ]
      */
-    def getNotAssignedInReg(c)
+    HashMap<Integer, ArrayList<Integer>> getNotAssignedInReg(int c)
     {
-        def result = []
-        def sreg = getReg(c);
-        for(pair in sreg){
-            if(pair.value.size() > 1)
-            {
-                result << [pair.key, pair.value]
-            }
-        }
-        return result
+        return getNotAssignedInGeneral(getReg(c));
     }
 
     /*
@@ -282,10 +260,18 @@ class Sudoku {
      * @param c cellNr
      * @return srow lijst met cells uit de row
      */
-    def getRow(c)
+    HashMap<Integer, ArrayList<Integer>> getRow(int c)
     {
         // pak alle cells in de sudoku in dezelfde rij als cell
-        def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            if(getRowNrFromCellNr(pair.getKey()) == getRowNrFromCellNr(c))
+            {
+                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+            }
+        }
+        return result;
     }
 
     /*
@@ -293,10 +279,18 @@ class Sudoku {
      * @param c cellNr
      * @return scol lijst met cells uit de col
      */
-    def getCol(c)
+    HashMap<Integer, ArrayList<Integer>> getCol(int c)
     {
         // pak alle cells in de sudoku in dezelfde kolom als cell
-        def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            if(getColNrFromCellNr(pair.getKey()) == getColNrFromCellNr(c))
+            {
+                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+            }
+        }
+        return result;
     }
 
     /**
@@ -305,51 +299,42 @@ class Sudoku {
      * @param c : cellNr
      * @return sreg : lijst met cells uit de region
      */
-    def getReg(c){
-        def rowNr = getRowFromCellNr(c); // Retrieve current row
-        def rowReg = rowNr%3 // Calculate relative row number (in a region of 3by3)
-        def rows = [];
-        def colNr = getColFromCellNr(c); // Retrieve current column
-        def colReg = colNr%3 // Calculate relative col number (in a region of 3by3)
-        def cols = [];
+    HashMap<Integer, ArrayList<Integer>> getReg(int c){
+        int rowNr = getRowNrFromCellNr(c); // Retrieve current row
+        int rowReg = rowNr%3; // Calculate relative row number (in a region of 3by3)
+        int[] rows = new int[3];
+        int colNr = getColNrFromCellNr(c); // Retrieve current column
+        int colReg = colNr%3; // Calculate relative col number (in a region of 3by3)
+        int[] cols = new int[3];
 
         //determine other rows
         if(rowReg == 1){
-            def row1 = rowNr + 1;
-            def row2 = rowNr + 2;
-            rows = [rowNr,row1,row2]; // Current region in rows
+            rows = new int[] {rowNr, rowNr+1, rowNr+2}; // Current region in rows
         } else if(rowReg == 2){
-            def row1 = rowNr - 1;
-            def row2 = rowNr + 1;
-            rows = [row1, rowNr, row2]; // Current region in rows
+            rows = new int[] {rowNr-1, rowNr, rowNr+1}; // Current region in rows
         } else if(rowReg == 0){
-            def row1 = rowNr - 1;
-            def row2 = rowNr - 2;
-            rows = [row2, row1, rowNr]; // Current region in rows
+            rows = new int[] {rowNr-2, rowNr-1, rowNr}; // Current region in rows
         }
 
         //determine other columns
         if(colReg == 1){
-            def col1 = colNr + 1;
-            def col2 = colNr + 2;
-            cols = [colNr,col1,col2]; // Current region in columns
+            cols = new int[] {colNr, colNr+1, colNr+2}; // Current region in columns
         } else if(colReg == 2){
-            def col1 = colNr - 1;
-            def col2 = colNr + 1;
-            cols = [col1, colNr, col2]; // Current region in columns
+            cols = new int[] {colNr-1, colNr, colNr+1};// Current region in columns
         } else if(colReg == 0){
-            def col1 = colNr - 1;
-            def col2 = colNr - 2;
-            cols = [col2, col1, colNr]; // Current region in columns
+            cols = new int[] {colNr-2, colNr-1, colNr};// Current region in columns
         }
 
         // Retrieve all cells that fit in these col/row constraints
-        def sreg = this.assignment.findAll{
-            cols.contains(getColFromCellNr(it.key)) &&
-            rows.contains(getRowFromCellNr(it.key))
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            if(Arrays.asList(cols).contains(getColNrFromCellNr(pair.getKey())) && Arrays.asList(rows).contains(getColNrFromCellNr(c)))
+            {
+                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+            }
         }
-
-        return sreg           
+        return result;
     }
     
     /**
@@ -357,13 +342,11 @@ class Sudoku {
      * @param v waarde
      * @param c cell
      */
-    def onlyAppearsOnceInRow(v, c)
+    boolean onlyAppearsOnceInRow(int v, int c)
     {
         // pak alle cells in de sudoku in dezelfde rij als cell
-        //def srow = this.assignment.findAll{ getRowFromCellNr(it.key) == getRowFromCellNr(c) }
-        def srow = getRow(c)
-        // controleer of x 1x voorkomt in deze cells
-        def result = onlyAppearsOnceInRange(v, srow)
+        //def srow = this.assignment.findAll{ getRowNrFromCellNr(it.key) == getRowNrFromCellNr(c) }
+        return onlyAppearsOnceInRange(v, getRow(c));
     }
 
     /**
@@ -371,13 +354,11 @@ class Sudoku {
      * @param v waarde
      * @param c cell
      */
-    def onlyAppearsOnceInColumn(v, c)
+    boolean onlyAppearsOnceInColumn(int v, int c)
     {
         // pak alle cells in de sudoku in dezelfde kolom als cell
-        //def scol = this.assignment.findAll{ getColFromCellNr(it.key) == getColFromCellNr(c) }
-        def scol = getCol(c)
-        // controleer of x 1x voorkomt in deze cells
-        def result = onlyAppearsOnceInRange(v, scol)
+        //def scol = this.assignment.findAll{ getColNrFromCellNr(it.key) == getColNrFromCellNr(c) }
+        return onlyAppearsOnceInRange(v, getCol(c));
     }
 
     /**
@@ -385,11 +366,9 @@ class Sudoku {
      * @param v waarde
      * @param c cellnr
      */
-    def onlyAppearsOnceIn3by3(v,c){
+    boolean onlyAppearsOnceIn3by3(int v, int c) {
         // pak alle cells in de sudoku in dezelfde region als cell
-        def sreg = getReg(c)
-        // controleer of v 1x voorkomt in deze cells
-        def result = onlyAppearsOnceInRange(v,sreg)
+        return onlyAppearsOnceInRange(v, getReg(c));
     }
 
     /**
@@ -397,9 +376,17 @@ class Sudoku {
      * v waarde
      * range groepje cells (deel van een Map)
      */
-    def onlyAppearsOnceInRange(v, range)
+    boolean onlyAppearsOnceInRange(int v, HashMap<Integer, ArrayList<Integer>> range)
     {
-        def result = range.values().toList().count(v) <= 1
+        int count = 0;
+        for(ArrayList<Integer> vs : range.values())
+        {
+            for(int i : vs)
+            {
+                if(i == v) { count++; }
+            }
+        }
+        return count <= 1;
     }
     
     /**
@@ -407,9 +394,18 @@ class Sudoku {
      * v waarde
      * range groepje cells (deel van een Map)
      */
-    def appearsInRange(v, range)
+    boolean appearsInRange(int v, HashMap<Integer, ArrayList<Integer>> range)
     {
-        def result = range.values().toList().count(v) >= 1
+        
+        int count = 0;
+        for(ArrayList<Integer> vs : range.values())
+        {
+            for(int i : vs)
+            {
+                if(i == v) { count++; }
+            }
+        }
+        return count <= 1;
     }
 
     /**
@@ -418,16 +414,16 @@ class Sudoku {
      * @param c     : cell number
      * @return  boolean : true -> consistent ; false -> inconsistent
      */
-    def cellConsistent(v,c){
+    boolean cellConsistent(int v, int c){
         // pak alle cells in de sudoku in dezelfde kolom als cell
-        def scol = getCol(c)
-        scol.remove(c)
+        HashMap<Integer, ArrayList<Integer>> scol = getCol(c);
+        scol.remove(c);
         // pak alle cells in de sudoku in dezelfde rij als cell
-        def srow = getRow(c)
-        srow.remove(c)
+        HashMap<Integer, ArrayList<Integer>> srow = getRow(c);
+        srow.remove(c);
         // pak alle cells in de sudoku in dezelfde region als cell
-        def sreg = getReg(c)
-        sreg.remove(c)
+        HashMap<Integer, ArrayList<Integer>> sreg = getReg(c);
+        sreg.remove(c);
         return !appearsInRange(v,scol) && !appearsInRange(v,srow) && !appearsInRange(v,sreg);
     }
 
@@ -435,18 +431,18 @@ class Sudoku {
      * Haalt het rownr uit een cellnr
      * c cellnr
      */
-    def getRowFromCellNr(c)
+    int getRowNrFromCellNr(int c)
     {
-        def row = (int) Math.floor(c / 10)
+        return (int) Math.floor(c / 10);
     }
 
     /**
      * Haalt het colnr uit een cellnr
      * c cellnr
      */
-    def getColFromCellNr(c)
+    int getColNrFromCellNr(int c)
     {
-         def col = c % 10
+         return c % 10;
     }
 
     /**
@@ -505,7 +501,7 @@ class Sudoku {
            if(inRow.size()==8){ //if only one value is missing
  // e.g. [ [11,1], [12,2], [13,3], [14,4], [15,5], [16,6], [17,7], [19,8]]
                inRow.each{ //for every given value in the list
-                   keyR << getColFromCellNr(it[0]) //retrieve the col in row
+                   keyR << getColNrFromCellNr(it[0]) //retrieve the col in row
                    valueR << it[1] //retrieve the value
                }
                def missingValueR = full - valueR //one value will remain
@@ -522,7 +518,7 @@ class Sudoku {
            if(inCol.size()==8){ //if only one value is missing
  // e.g. [ [11,1], [21,2], [31,3], [41,4], [51,5], [61,6], [71,7], [91,8]]
                inCol.each{ //for every given value in the list
-                   keyC << getRowFromCellNr(it[0]) //retrieve the row in col
+                   keyC << getRowNrFromCellNr(it[0]) //retrieve the row in col
                    valueC << it[1] //retrieve the value
                }
                def missingValueC = full - valueC //one value will remain
