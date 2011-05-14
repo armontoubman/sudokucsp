@@ -585,6 +585,7 @@ class Sudoku {
         if(difRow.size() == 1 && difRow != values){ //whoehoe! hidden single
             setCell(cellNr,difRow);
             println cellNr
+            println values
             println difRow
             println 'unique in row'
             delete = true;
@@ -592,6 +593,7 @@ class Sudoku {
         else if(difCol.size() == 1 && difCol != values){ //whoehoe! hidden single
             setCell(cellNr,difCol);
             println cellNr
+            println values
             println difCol
             println 'unique in col'
             delete = true;
@@ -599,6 +601,7 @@ class Sudoku {
         else if(difReg.size() == 1 && difReg != values){ //whoehoe! hidden single
             setCell(cellNr,difReg);
             println cellNr
+            println values
             println difReg
             println 'unique in reg'
             delete = true;
