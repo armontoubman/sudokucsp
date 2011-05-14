@@ -610,8 +610,8 @@ class Sudoku {
             delete = true;
         }
         else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){
-            println 'faulty sudoku values'
-            /*println cellNr
+            /*println 'faulty sudoku values'
+            println cellNr
             println values
             println nrow
             println row
