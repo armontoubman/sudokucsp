@@ -469,6 +469,11 @@ class Sudoku {
                     }
                 }
             }
+            
+
+            //update mogelijke values in cell
+            setCell(c,values)
+
             /*
              *TODO hidden single werkend krijgen
              */
@@ -476,9 +481,6 @@ class Sudoku {
             if(hiddenSingle(c,values)){
                 delete = true //revise did something
             }
-
-            //update mogelijke values in cell
-            setCell(c,values)
         }
         //returned of revise iets gedaan heeft, is handig in een while.
         return delete;
@@ -584,31 +586,31 @@ class Sudoku {
         //ALL: now check if they are singles (and changed)
         if(difRow.size() == 1 && difRow != values){ //whoehoe! hidden single
             setCell(cellNr,difRow);
-            println cellNr
+            /*println cellNr
             println values
             println difRow
-            println 'unique in row'
+            println 'unique in row'*/
             delete = true;
         }
         else if(difCol.size() == 1 && difCol != values){ //whoehoe! hidden single
             setCell(cellNr,difCol);
-            println cellNr
+            /*println cellNr
             println values
             println difCol
-            println 'unique in col'
+            println 'unique in col'*/
             delete = true;
         }
         else if(difReg.size() == 1 && difReg != values){ //whoehoe! hidden single
             setCell(cellNr,difReg);
-            println cellNr
+            /*println cellNr
             println values
             println difReg
-            println 'unique in reg'
+            println 'unique in reg'*/
             delete = true;
         }
         else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){
             println 'faulty sudoku values'
-            println cellNr
+            /*println cellNr
             println values
             println nrow
             println row
@@ -621,7 +623,7 @@ class Sudoku {
             println nreg
             println reg
             println otherValuesReg
-            println difReg
+            println difReg*/
 
             //sudoku is wrong, print debug stuff
         }
