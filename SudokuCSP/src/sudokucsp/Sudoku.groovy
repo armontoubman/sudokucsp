@@ -114,6 +114,7 @@ class Sudoku {
     {
         // (1)
         def one = this.assignment.every{
+
             full.containsAll(it.value) && it.value.size() > 0
         }
         // (2)

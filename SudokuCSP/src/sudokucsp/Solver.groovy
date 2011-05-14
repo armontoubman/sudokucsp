@@ -43,30 +43,8 @@ class Solver {
      */
     static def bt(Sudoku s, int depth)
     {
-        // pak een variable die nog niet assigned is
-        def variables = s.getNotAssignedVariables()
-        // alles assigned? klaar
-        if(variables.size() == 0) return s
-        // pak cellnr
-        def c = variables[0][0]
 
-        /* TODO zorgen dat ie weer werkt, hij vindt onderstaande niet.
-         *  Volgens me vorige programma: werkelijke oplossing is:
-         *  7     9     4     5     8     2     1     3     6
-     2     6     8     9     3     1     7     4     5
-     3     1     5     4     7     6     9     8     2
-     6     8     9     7     1     5     3     2     4
-     4     3     2     8     6     9     5     7     1
-     1     5     7     2     4     3     8     6     9
-     8     2     1     6     5     7     4     9     3
-     9     4     3     1     2     8     6     5     7
-     5     7     6     3     9     4     2     1     8 
-     * Hij gaf andere uitkomst zonder de 3x3 regions/grids/sections
-     * Nu zoekt ie wel bij 7!
-         */
-
-
-        /**
+                /**
          * first eliminate impossible strategies
          * TODO maak hier AC-3 van ipv AC-2 (i.e. "while revise")
          *
@@ -93,20 +71,49 @@ class Solver {
             removing = s.revise() // revise (again)
         }
 
-    // voor alle waarden in het domein van x
+        // pak een variable die nog niet assigned is
+        def variables = s.getNotAssignedVariables()
+        // alles assigned? hopelijk klaar
+        if(variables.size() == 0){
+            if(s.isConsistent()){ // klaar!
+                return s
+            }
+            else { // jammer, vol maar fout!
+                return null
+            }
+        }
+        // pak cellnr
+        def c = variables[0][0]
+
+        /**
+         *  Werkelijke oplossing is:
+         *  7     9     4     5     8     2     1     3     6
+         *  2     6     8     9     3     1     7     4     5
+         *  3     1     5     4     7     6     9     8     2
+         *  6     8     9     7     1     5     3     2     4
+         *  4     3     2     8     6     9     5     7     1
+         *  1     5     7     2     4     3     8     6     9
+         *  8     2     1     6     5     7     4     9     3
+         *  9     4     3     1     2     8     6     5     7
+         *  5     7     6     3     9     4     2     1     8
+         */
+
+        // voor alle waarden in het domein van x
         for(v in s.getCell(c))
         {
                 def testcopy = new Sudoku(s)
                 // assign x deze waarde
                 testcopy.setCell(c, [v])
 
-                def spaties = " "*depth
-                println spaties+testcopy
-                //println s.assignment //ff wat handiger bij t debuggen/improven
-                
+               
                 // als de nieuwe assignment consistent is
                 if(testcopy.isConsistent())
                 {
+
+                 def spaties = " "*depth
+                println spaties+testcopy
+                //println s.assignment //ff wat handiger bij t debuggen/improven
+                
                     // maak nieuwe branch
                     def R = bt(testcopy, depth+1)
                     // als deze branch niet faalt
