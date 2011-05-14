@@ -449,39 +449,37 @@ class Sudoku {
     }
 
     /**
-     *TODO zorgen dat revise/hidden single de eerste stap '7' maakt.
-     * Hiervoor zal het nodig zijn om de hele sudoku te checken? I dunno
-     * Ik heb al gezien in mijn eigen sudoku programma dat onze eerste sudoku
-     *het volgende heeft:
-     *[25678],9,4,[58],[28],[25],1,3,[56]
-     *Hidden Single zou hier de 7 aangeven als eerste getalletje, wat heel
-     *veel backtracking zal schelen!
+     *TODO zorgen dat hidden single cell 11 '7' maakt.
      *
      * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
-     * @param c     :   cell number to be revised
     */
-    def revise(c){
+    def revise(){
         def delete = false; //Did we delete something?
-        def values = this.assignment[c] //obtain possible values
-        // NORMAL REVISE:
-        for(v in values){//for each possible value of cell
-            if(!cellConsistent([v],c)){//if value is not consistent with sudoku
-                values = values - [v] //remove value
-                delete = true;
-                if(values.size() == 0){
-                    break
+        for(cell in this.assignment){
+            def c = cell.key //cellNr
+            def values = cell.value //possible values
+            // NORMAL REVISE:
+            for(v in values){//for each possible value of cell
+                if(!cellConsistent([v],c)){//if value is not consistent with sudoku
+                    values = values - [v] //remove value
+                    delete = true;
+                    if(values.size() == 0){
+                        break
+                    }
                 }
             }
-        }
-        //HIDDEN SINGLE:
-        if(hiddenSingle(c,values)){
-            //println 'hidden'
-            delete = true //revise did something
-        }
+            /*
+             *TODO hidden single werkend krijgen
+             */
+            //HIDDEN SINGLE:
+            if(hiddenSingle(c,values)){
+                delete = true //revise did something
+            }
 
-        //update mogelijke values in cell
-        setCell(c,values)
+            //update mogelijke values in cell
+            setCell(c,values)
+        }
         //returned of revise iets gedaan heeft, is handig in een while.
         return delete;
     }
@@ -493,12 +491,11 @@ class Sudoku {
      * Probably very redundant and without actual performance boosting:
      *  seems to be inherent to revise already.
      * @result this.assignment might be adjusted.
-    */
+    
     def openSingles() {
        for(i in 1..9){
-           /*
-            * Check every row for open singles
-           */
+           // Check every row for open singles
+
            def inRow = getAssignedInRow(i) //all assigned values & their keys
            def keyR = []
            def valueR = []
@@ -514,9 +511,8 @@ class Sudoku {
                this.assignment[missingKeyR] = missingValueR //assign the value
            }
 
-           /*
-            * Check every column for open singles
-           */
+           //            Check every column for open singles
+           
            def inCol = getAssignedInCol(i) //all assigned values & their keys
            def keyC = []
            def valueC = []
@@ -534,9 +530,9 @@ class Sudoku {
        }
 
    }
+   */
 
     /*
-     *TODO hiddenSingle ook toepassen op columns en regions
      *Hidden Singles or Pinned Squares
      *Hidden: http://www.learn-sudoku.com/hidden-singles.html
      *Pinned: http://www.brainbashers.com/sudokupinnedsquares.asp
@@ -588,14 +584,23 @@ class Sudoku {
         //ALL: now check if they are singles (and changed)
         if(difRow.size() == 1 && difRow != values){ //whoehoe! hidden single
             setCell(cellNr,difRow);
+            println cellNr
+            println difRow
+            println 'unique in row'
             delete = true;
         }
         else if(difCol.size() == 1 && difCol != values){ //whoehoe! hidden single
             setCell(cellNr,difCol);
+            println cellNr
+            println difCol
+            println 'unique in col'
             delete = true;
         }
         else if(difReg.size() == 1 && difReg != values){ //whoehoe! hidden single
             setCell(cellNr,difReg);
+            println cellNr
+            println difReg
+            println 'unique in reg'
             delete = true;
         }
         else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){

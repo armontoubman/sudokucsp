@@ -50,19 +50,6 @@ class Solver {
         // pak cellnr
         def c = variables[0][0]
 
-
-         /**
-         * TODO kijken of openSingles nut heeft
-         * technique: http://www.learn-sudoku.com/open-singles.html
-         * Fill in the last remaining number.
-         * Probably very redundant and without actual performance boosting:
-         *  seems to be inherent to revise already.
-         * DOES NOT WORK W/ RECURSION, dus enkel in t begin
-         * met recursie: hij gaat dingen aangeven voor voorgaande levels,
-         * backtracking houdt dan dus de aannames bij van foute takken
-        */
-        //if(depth == 0) { s.openSingles() }
-
         /* TODO zorgen dat ie weer werkt, hij vindt onderstaande niet.
          *  Volgens me vorige programma: werkelijke oplossing is:
          *  7     9     4     5     8     2     1     3     6
@@ -100,10 +87,12 @@ class Solver {
          * is inefficient. Enkel degene die affected zijn! (Dat is AC3 ipv AC2)
          * zie: http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
          */
-        def removing = true;
-        while(removing){
-            removing = s.revise(c)
+
+        def removing = true; //Initiate loop
+        while(removing){ // While revise has removed values
+            removing = s.revise() // revise (again)
         }
+
     // voor alle waarden in het domein van x
         for(v in s.getCell(c))
         {
@@ -113,6 +102,7 @@ class Solver {
 
                 def spaties = " "*depth
                 println spaties+testcopy
+                //println s.assignment //ff wat handiger bij t debuggen/improven
                 
                 // als de nieuwe assignment consistent is
                 if(testcopy.isConsistent())
