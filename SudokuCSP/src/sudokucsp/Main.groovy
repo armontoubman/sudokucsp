@@ -57,7 +57,7 @@ class Main {
 
         // input lezen
         //input.eachLine{
-        input.readLines()[0..20].each{
+        input.readLines()[0..10].each{
             Sudoku sudoku = new Sudoku(it)
             Sudoku solution = Solver.solve(sudoku)
             println solution.toString()
