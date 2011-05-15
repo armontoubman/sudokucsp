@@ -6,7 +6,6 @@
 package sudokucsp;
 
 import java.io.*;
-import java.util.*;
 
 /**
  *
@@ -57,25 +56,25 @@ class Main {
         //
         int aantal = 10;
         int i = 0;
-        String line;
         try {
             BufferedReader in = new BufferedReader(new FileReader(args[0]));
-            if (!in.ready())
-                throw new IOException();
 
-            while ((line = in.readLine()) != null && i < aantal)
+            String line;
+            while ((line = in.readLine()) != null)
             {
-                i++;
                 Sudoku sudoku = new Sudoku(line);
                 sudoku = Solver.solve(sudoku);
                 System.out.println(sudoku);
+                
+                i++;
+                if(i==aantal) break;
             }
 
             in.close();
         }
         catch(Exception e)
         {
-            System.out.println("Exception: "+e.getMessage());
+            e.printStackTrace();
         }
         /*input.readLines()[0..10].each{
             Sudoku sudoku = new Sudoku(it)

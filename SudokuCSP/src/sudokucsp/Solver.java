@@ -115,7 +115,7 @@ class Solver {
                 {
 
                 for(int i=0; i<depth; i++) { System.out.print(" "); }
-                System.out.println(testcopy.toString());
+                System.out.println(testcopy);
                 //println s.assignment //ff wat handiger bij t debuggen/improven
                 
                     // maak nieuwe branch

@@ -14,7 +14,6 @@ import java.util.*;
 class Sudoku {
     
     HashMap<Integer, ArrayList<Integer>> assignment;
-    static final int[] ONETONINE = {1, 2, 3, 4, 5, 6, 7, 8, 9}; // used in multiple methods as check.
     
     /**
      * Constructor
@@ -31,9 +30,10 @@ class Sudoku {
      */
     Sudoku(Sudoku s)
     {
+        this.assignment = new HashMap<Integer, ArrayList<Integer>>();
         for(int key : s.assignment.keySet())
         {
-            ArrayList<Integer> copy = (ArrayList<Integer>) s.assignment.get(key).clone();
+            ArrayList<Integer> copy = new ArrayList<Integer>(s.assignment.get(key));
             this.assignment.put(key, copy);
         }
     }
@@ -45,25 +45,24 @@ class Sudoku {
         
         input = input.trim();
 
-        HashMap newassignment = new HashMap<Integer, ArrayList<Integer>>();
+        HashMap<Integer, ArrayList<Integer>> newassignment = new HashMap<Integer, ArrayList<Integer>>();
 
         int row = 1;
         int col = 1;
         for(int j=0; j<input.length(); j++)
         {
-            String i = new StringBuilder(input.charAt(j)).toString();
-            ArrayList values = new ArrayList<Integer>();
+            char i = input.charAt(j);
+            ArrayList<Integer> values = new ArrayList<Integer>();
 
             int cell = row*10+col;
 
-            if(i.equals("."))
+            if(i == '.')
             {
-                List temp = Arrays.asList(ONETONINE);
-                Collections.addAll(values, temp);
+                Collections.addAll(values, 1,2,3,4,5,6,7,8,9);
             }
             else
             {
-                values.add(Integer.parseInt(i));
+                values.add(Integer.parseInt(Character.toString(i)));
             }
 
             newassignment.put(cell, values);
@@ -85,16 +84,21 @@ class Sudoku {
         StringBuilder sb = new StringBuilder();
         for(int i=1; i<=9; i++)
         {
-            for(int j=1; j<=9; i++)
+            for(int j=1; j<=9; j++)
             {
                 String x;
-                if(this.assignment.get(i*10+j).size() > 1)
+                ArrayList<Integer> temp = this.assignment.get(i*10+j);
+                if(temp.isEmpty())
+                {
+                    x = "X";
+                }
+                else if(temp.size() > 1)
                 {
                     x = ".";
                 }
                 else
                 {
-                    x = this.assignment.get(i*10+j).get(0).toString();
+                    x = temp.get(0).toString();
                 }
                 sb.append(x);
             }
@@ -125,7 +129,7 @@ class Sudoku {
         boolean one = true;
         for(ArrayList<Integer> values : this.assignment.values())
         {
-            if(!Arrays.asList(ONETONINE).containsAll(values) && values.size() > 0)
+            if(!Arrays.asList(1,2,3,4,5,6,7,8,9).containsAll(values) && values.size() > 0)
             {
                 one = false;
             }
@@ -139,7 +143,10 @@ class Sudoku {
         for(Map.Entry<Integer, ArrayList<Integer>> it : assigned.entrySet())
         {
             // kijk of ie 1x voorkomt in zijn row en column
-            if( !( onlyAppearsOnceInRow(it.getValue().get(0), it.getKey()) && onlyAppearsOnceInColumn(it.getValue().get(0), it.getKey()) && onlyAppearsOnceIn3by3(it.getValue().get(0), it.getKey()) ) )
+            boolean inrow = onlyAppearsOnceInRow(it.getValue().get(0), it.getKey());
+            boolean incol = onlyAppearsOnceInColumn(it.getValue().get(0), it.getKey());
+            boolean inreg = onlyAppearsOnceIn3by3(it.getValue().get(0), it.getKey());
+            if( !( inrow && incol && inreg ) )
             {
                 two = false;
             }
@@ -155,7 +162,7 @@ class Sudoku {
         {
             if(pair.getValue().size() == 1)
             {
-                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
         }
         return result;
@@ -168,7 +175,7 @@ class Sudoku {
         {
             if(pair.getValue().size() > 1)
             {
-                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
         }
         return result;
@@ -268,7 +275,7 @@ class Sudoku {
         {
             if(getRowNrFromCellNr(pair.getKey()) == getRowNrFromCellNr(c))
             {
-                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
         }
         return result;
@@ -287,7 +294,7 @@ class Sudoku {
         {
             if(getColNrFromCellNr(pair.getKey()) == getColNrFromCellNr(c))
             {
-                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
         }
         return result;
@@ -302,37 +309,45 @@ class Sudoku {
     HashMap<Integer, ArrayList<Integer>> getReg(int c){
         int rowNr = getRowNrFromCellNr(c); // Retrieve current row
         int rowReg = rowNr%3; // Calculate relative row number (in a region of 3by3)
-        int[] rows = new int[3];
+        List rows = new ArrayList();
         int colNr = getColNrFromCellNr(c); // Retrieve current column
         int colReg = colNr%3; // Calculate relative col number (in a region of 3by3)
-        int[] cols = new int[3];
+        List cols = new ArrayList();
 
         //determine other rows
         if(rowReg == 1){
-            rows = new int[] {rowNr, rowNr+1, rowNr+2}; // Current region in rows
+            rows = Arrays.asList(rowNr, rowNr+1, rowNr+2); // Current region in rows
         } else if(rowReg == 2){
-            rows = new int[] {rowNr-1, rowNr, rowNr+1}; // Current region in rows
+            rows = Arrays.asList(rowNr-1, rowNr, rowNr+1); // Current region in rows
         } else if(rowReg == 0){
-            rows = new int[] {rowNr-2, rowNr-1, rowNr}; // Current region in rows
+            rows = Arrays.asList(rowNr-2, rowNr-1, rowNr); // Current region in rows
         }
 
         //determine other columns
         if(colReg == 1){
-            cols = new int[] {colNr, colNr+1, colNr+2}; // Current region in columns
+            cols = Arrays.asList(colNr, colNr+1, colNr+2); // Current region in columns
         } else if(colReg == 2){
-            cols = new int[] {colNr-1, colNr, colNr+1};// Current region in columns
+            cols = Arrays.asList(colNr-1, colNr, colNr+1);// Current region in columns
         } else if(colReg == 0){
-            cols = new int[] {colNr-2, colNr-1, colNr};// Current region in columns
+            cols = Arrays.asList(colNr-2, colNr-1, colNr);// Current region in columns
         }
 
         // Retrieve all cells that fit in these col/row constraints
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
         {
-            if(Arrays.asList(cols).contains(getColNrFromCellNr(pair.getKey())) && Arrays.asList(rows).contains(getColNrFromCellNr(c)))
+            boolean un = cols.contains(getColNrFromCellNr(pair.getKey()));
+            boolean deux = rows.contains(getRowNrFromCellNr(pair.getKey()));
+            if( un && deux )
             {
-                result.put(pair.getKey(), (ArrayList<Integer>) pair.getValue().clone());
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
+            /*
+            def sreg = this.assignment.findAll{
+                cols.contains(getColFromCellNr(it.key)) &&
+                rows.contains(getRowFromCellNr(it.key))
+            }
+            */
         }
         return result;
     }
@@ -386,7 +401,7 @@ class Sudoku {
                 if(i == v) { count++; }
             }
         }
-        return count <= 1;
+        return count == 1;
     }
     
     /**
@@ -405,7 +420,7 @@ class Sudoku {
                 if(i == v) { count++; }
             }
         }
-        return count <= 1;
+        return count >= 1;
     }
 
     /**
@@ -574,7 +589,7 @@ class Sudoku {
             otherValuesRow.addAll(valuelist);
         }
         //check what values are in this cell, but not in the others
-        ArrayList<Integer> difRow = values;
+        ArrayList<Integer> difRow = new ArrayList<Integer>(values);
         difRow.removeAll(otherValuesRow);
 
         //COL: Now put all the values from the other cells in one list
@@ -584,7 +599,7 @@ class Sudoku {
             otherValuesCol.addAll(valuelist);
         }
         //check what values are in this cell, but not in the others
-        ArrayList<Integer> difCol = values;
+        ArrayList<Integer> difCol = new ArrayList<Integer>(values);
         difCol.removeAll(otherValuesCol);
 
         //REG: Now put all the values from the other cells in one list
@@ -594,7 +609,7 @@ class Sudoku {
             otherValuesReg.addAll(valuelist);
         }
         //check what values are in this cell, but not in the others
-        ArrayList<Integer> difReg = values;
+        ArrayList<Integer> difReg = new ArrayList<Integer>(values);
         difReg.removeAll(otherValuesReg);
 
         //ALL: now check if they are singles (and changed)
