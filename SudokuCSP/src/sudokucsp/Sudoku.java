@@ -398,7 +398,7 @@ class Sudoku {
         {
             for(int i : vs)
             {
-                if(i == v) { count++; }
+                if(i == v && vs.size() == 1) { count++; }
             }
         }
         return count == 1;
@@ -417,7 +417,7 @@ class Sudoku {
         {
             for(int i : vs)
             {
-                if(i == v) { count++; }
+                if(i == v && vs.size() == 1) { count++; }
             }
         }
         return count >= 1;
@@ -471,6 +471,11 @@ class Sudoku {
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
         {
             int c = pair.getKey(); //cellNr
+            
+            if(c==43)
+            {
+                boolean stop = true; // zet breakpoint hier
+            }
             ArrayList<Integer> values = pair.getValue(); //possible values
             ArrayList<Integer> toRemove = new ArrayList<Integer>();
             // NORMAL REVISE:
@@ -491,10 +496,9 @@ class Sudoku {
             {
                 values.remove(values.indexOf(i));
             }
-            
 
             //update mogelijke values in cell
-            setCell(c,values);
+            //setCell(c,values); gebeurt automatisch al door Map.Entry
 
             /*
              *TODO hidden single werkend krijgen
