@@ -451,32 +451,42 @@ class Sudoku {
      * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
     */
-    def revise(){
-        def delete = false; //Did we delete something?
-        for(cell in this.assignment){
-            def c = cell.key //cellNr
-            def values = cell.value //possible values
+    boolean revise(){
+        boolean delete = false; //Did we delete something?
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            int c = pair.getKey(); //cellNr
+            ArrayList<Integer> values = pair.getValue(); //possible values
+            ArrayList<Integer> toRemove = new ArrayList<Integer>();
             // NORMAL REVISE:
-            for(v in values){//for each possible value of cell
-                if(!cellConsistent([v],c)){//if value is not consistent with sudoku
-                    values = values - [v] //remove value
+            for(int v : values) //for each possible value of cell
+            {
+                if(!cellConsistent(v,c)) //if value is not consistent with sudoku
+                {
+                    toRemove.add(v); //remove value
                     delete = true;
-                    if(values.size() == 0){
-                        break
+                    if(values.isEmpty())
+                    {
+                        break;
                     }
                 }
+            }
+            // TODO checken of dit correct is omgeschreven
+            for(int i : toRemove)
+            {
+                values.remove(values.indexOf(i));
             }
             
 
             //update mogelijke values in cell
-            setCell(c,values)
+            setCell(c,values);
 
             /*
              *TODO hidden single werkend krijgen
              */
             //HIDDEN SINGLE:
             if(hiddenSingle(c,values)){
-                delete = true //revise did something
+                delete = true; //revise did something
             }
         }
         //returned of revise iets gedaan heeft, is handig in een while.
@@ -541,47 +551,54 @@ class Sudoku {
      *@return values : (possibly) new values for the cell
     */
 
-    def hiddenSingle(cellNr,values) {
-        def delete = false; // bijhouden of we iets deleten
+    boolean hiddenSingle(int cellNr, ArrayList<Integer> values) {
+        boolean delete = false; // bijhouden of we iets deleten
 
         //ALL: Intialize; Retrieve other cells
-        def nrow = getNotAssignedInRow(cellNr) //retrieve oningevulde rowcells
-        def row = nrow - [[cellNr, values]] //haal huidige er vanaf
-
-        def ncol = getNotAssignedInCol(cellNr) //retrieve oningevulde rowcells
-        def col = ncol - [[cellNr, values]] //haal huidige er vanaf
-
-        def nreg = getNotAssignedInReg(cellNr) //retrieve oningevulde rowcells
-        def reg = nreg - [[cellNr, values]] //haal huidige er vanaf
+        
+        //retrieve oningevulde rowcells,haal huidige er vanaf
+        HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(cellNr); 
+        row.remove(cellNr);
+        
+        HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr); 
+        col.remove(cellNr);
+        
+        HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(cellNr); 
+        reg.remove(cellNr);
 
         //ALL: combine values from the other cells, compare with current values
         //ROW: Now put all the values from the other cells in one list
-        def otherValuesRow = []
-        row.each{
-            otherValuesRow = otherValuesRow + it[1]
-            otherValuesRow.unique()
+        HashSet<Integer> otherValuesRow = new HashSet<Integer>();
+        for(ArrayList<Integer> valuelist : row.values())
+        {
+            otherValuesRow.addAll(valuelist);
         }
         //check what values are in this cell, but not in the others
-        def difRow = values - otherValuesRow
+        ArrayList<Integer> difRow = values;
+        difRow.removeAll(otherValuesRow);
 
         //COL: Now put all the values from the other cells in one list
-        def otherValuesCol = []
-        col.each{
-            otherValuesCol = otherValuesCol + it[1]
-            otherValuesCol.unique()
+        HashSet<Integer> otherValuesCol = new HashSet<Integer>();
+        for(ArrayList<Integer> valuelist : col.values())
+        {
+            otherValuesCol.addAll(valuelist);
         }
-        def difCol = values - otherValuesCol
+        //check what values are in this cell, but not in the others
+        ArrayList<Integer> difCol = values;
+        difCol.removeAll(otherValuesCol);
 
         //REG: Now put all the values from the other cells in one list
-        def otherValuesReg = []
-        reg.each{
-            otherValuesReg = otherValuesReg + it[1]
-            otherValuesReg.unique()
+        HashSet<Integer> otherValuesReg = new HashSet<Integer>();
+        for(ArrayList<Integer> valuelist : reg.values())
+        {
+            otherValuesReg.addAll(valuelist);
         }
-        def difReg = values - otherValuesReg
+        //check what values are in this cell, but not in the others
+        ArrayList<Integer> difReg = values;
+        difReg.removeAll(otherValuesReg);
 
         //ALL: now check if they are singles (and changed)
-        if(difRow.size() == 1 && difRow != values){ //whoehoe! hidden single
+        if(difRow.size() == 1 && !difRow.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difRow);
             /*println cellNr
             println values
@@ -589,7 +606,7 @@ class Sudoku {
             println 'unique in row'*/
             delete = true;
         }
-        else if(difCol.size() == 1 && difCol != values){ //whoehoe! hidden single
+        else if(difCol.size() == 1 && !difCol.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difCol);
             /*println cellNr
             println values
@@ -597,7 +614,7 @@ class Sudoku {
             println 'unique in col'*/
             delete = true;
         }
-        else if(difReg.size() == 1 && difReg != values){ //whoehoe! hidden single
+        else if(difReg.size() == 1 && !difReg.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difReg);
             /*println cellNr
             println values
@@ -625,7 +642,7 @@ class Sudoku {
             //sudoku is wrong, print debug stuff
         }
         
-        return delete
+        return delete;
     }
 	
 }

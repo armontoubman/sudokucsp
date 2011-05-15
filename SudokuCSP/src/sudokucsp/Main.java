@@ -75,7 +75,7 @@ class Main {
         }
         catch(Exception e)
         {
-            System.out.println(e.getMessage());
+            System.out.println("Exception: "+e.getMessage());
         }
         /*input.readLines()[0..10].each{
             Sudoku sudoku = new Sudoku(it)

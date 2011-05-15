@@ -85,7 +85,7 @@ class Solver {
             }
         }
         // pak cellnr
-        int c = (int) variables.keySet().toArray()[0];
+        int c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
 
         /**
          *  Werkelijke oplossing is:
