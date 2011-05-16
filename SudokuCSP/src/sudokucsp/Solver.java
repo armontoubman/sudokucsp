@@ -38,10 +38,21 @@ class Solver {
      * @return compleet ingevulde sudoku assignment
      */
     /**
-     * TODO add constraint propogation techniques etc. uit slides en hiero:
-     * http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
-     * TODO http://www.learn-sudoku.com/basic-techniques.html
-     * TODO http://www.brainbashers.com/sudokuhelp.asp
+     * TODO depth-first --> best-first : add heuristics (reduce search space)
+     * Heuristics : informed guess of the next step to be taken (domain dependent)
+     * I.e. combine depth-first met wat slimme breadth-first
+     * f(n) = g(n) + h(n) : g(n) = depth of node n, h(n) = heuristic value ?
+     * Kunnen g(n) nog wel even overslaan, hoeven we geen score systeem te hebben
+     * Mogelijke opties:
+     *  H1: Kies Node eerder, hoe minder kinderen het heeft
+     *  H2: Kies Node eerder, hoe meer zijn values al voorkomen in de Sudoku
+     *  H3: Kies Node eerder, hoe meer constrained deze is (som values in row/col/reg)
+     *  H4: Diepte constrainen, bvb via g(n). Misschien zijn andere nodes eerder opgelost.
+     *  H5: ... andere maten die zouden kunnen aangeven of iets dichter bij solution komt.
+     *
+     * TODO constraint propogation : http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
+     * TODO sudoku techniques : http://www.learn-sudoku.com/basic-techniques.html
+     * TODO sudoku techniques : http://www.brainbashers.com/sudokuhelp.asp
      */
     static Sudoku bt(Sudoku s, int depth)
     {

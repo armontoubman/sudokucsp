@@ -301,7 +301,6 @@ class Sudoku {
     }
 
     /**
-     *TODO Zorgen dat de 3x3 region niet telkens overnieuw hoeft worden berekend
      * Returned de 3by3 region waar de huidige cell in voorkomt
      * @param c : cellNr
      * @return sreg : lijst met cells uit de region
@@ -461,8 +460,6 @@ class Sudoku {
     }
 
     /**
-     *TODO zorgen dat hidden single cell 11 '7' maakt.
-     *
      * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
     */
@@ -485,6 +482,12 @@ class Sudoku {
                 {
                     toRemove.add(v); //remove value
                     delete = true;
+                    /**
+                     * TODO onderstaande vervangen met wat nuttigs of verwijderen
+                     * values wordt hier helemaal niet leeggemaakt, je stopt dingen in toRemove
+                     * onderstaande check was volgens mij gewoon om uit de for te komen, opdat ie niet flipte
+                     * zou nu kunnen zijn: toRemove == values, maar t nut is volges mij ver te zoeken.
+                    */
                     if(values.isEmpty())
                     {
                         break;
@@ -492,6 +495,7 @@ class Sudoku {
                 }
             }
             // TODO checken of dit correct is omgeschreven
+            // TODO werkt wel toch? anders zou die niet solven lijkt mij?
             for(int i : toRemove)
             {
                 values.remove(values.indexOf(i));
@@ -501,11 +505,25 @@ class Sudoku {
             //setCell(c,values); gebeurt automatisch al door Map.Entry
 
             /*
-             *TODO hidden single werkend krijgen
+             * TODO zorgen dat hiddenSingle niet overbodig tjekt
+             * Ik had wat printjes erin bij diffRow gestopt, dit was de eerste 2 outputs:
+             *
+values: [2, 5, 6, 7, 8]
+otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+diff_before: [2, 5, 6, 7, 8]
+diff_after: []
+values: [9] <---- dit is nutteloze check, dit vakje heeft dus nu al waarde Assigned!
+otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+diff_before: [9]
+diff_after: []
+             * en dit was echt niet de enige. die komen dus al totaal revised uit loop van net.
+             *
              */
             //HIDDEN SINGLE:
-            if(hiddenSingle(c,values)){
-                delete = true; //revise did something
+            if(values.size() > 1) { //KABAM! bijna de helft van de tijd eraf gesneden!
+                if(hiddenSingle(c,values)){
+                    delete = true; //revise did something
+                }
             }
         }
         //returned of revise iets gedaan heeft, is handig in een while.
@@ -592,9 +610,13 @@ class Sudoku {
         {
             otherValuesRow.addAll(valuelist);
         }
-        //check what values are in this cell, but not in the others
+        //check what values are in current cell, but not in the others
         ArrayList<Integer> difRow = new ArrayList<Integer>(values);
+        //System.out.println("values: "+values);
+        //System.out.println("otherValues: "+otherValuesRow);
+        //System.out.println("diff_before: "+difRow);
         difRow.removeAll(otherValuesRow);
+        //System.out.println("diff_after: "+difRow);
 
         //COL: Now put all the values from the other cells in one list
         HashSet<Integer> otherValuesCol = new HashSet<Integer>();
@@ -602,7 +624,7 @@ class Sudoku {
         {
             otherValuesCol.addAll(valuelist);
         }
-        //check what values are in this cell, but not in the others
+        //check what values are in current cell, but not in the others
         ArrayList<Integer> difCol = new ArrayList<Integer>(values);
         difCol.removeAll(otherValuesCol);
 
@@ -612,53 +634,25 @@ class Sudoku {
         {
             otherValuesReg.addAll(valuelist);
         }
-        //check what values are in this cell, but not in the others
+        //check what values are in current cell, but not in the others
         ArrayList<Integer> difReg = new ArrayList<Integer>(values);
         difReg.removeAll(otherValuesReg);
 
         //ALL: now check if they are singles (and changed)
         if(difRow.size() == 1 && !difRow.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difRow);
-            /*println cellNr
-            println values
-            println difRow
-            println 'unique in row'*/
             delete = true;
         }
         else if(difCol.size() == 1 && !difCol.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difCol);
-            /*println cellNr
-            println values
-            println difCol
-            println 'unique in col'*/
             delete = true;
         }
         else if(difReg.size() == 1 && !difReg.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difReg);
-            /*println cellNr
-            println values
-            println difReg
-            println 'unique in reg'*/
             delete = true;
         }
         else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){
-            /*println 'faulty sudoku values'
-            println cellNr
-            println values
-            println nrow
-            println row
-            println otherValuesRow
-            println difRow
-            println ncol
-            println col
-            println otherValuesCol
-            println difCol
-            println nreg
-            println reg
-            println otherValuesReg
-            println difReg*/
-
-            //sudoku is wrong, print debug stuff
+            //sudoku is wrong :O
         }
         
         return delete;
