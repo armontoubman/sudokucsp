@@ -62,12 +62,17 @@ class Main {
             String line;
             while ((line = in.readLine()) != null)
             {
-                Sudoku sudoku = new Sudoku(line);
-                sudoku = Solver.solve(sudoku);
-                System.out.println(sudoku);
-                
-                i++;
-                if(i==aantal) break;
+                if(line.length() == 81)
+                {
+                    System.out.println(i);
+
+                    Sudoku sudoku = new Sudoku(line);
+                    sudoku = Solver.solve(sudoku);
+                    System.out.println(sudoku);
+
+                    i++;
+                    //if(i==aantal) break;
+                }
             }
 
             in.close();
