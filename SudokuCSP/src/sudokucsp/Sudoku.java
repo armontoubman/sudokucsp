@@ -129,7 +129,7 @@ class Sudoku {
         boolean one = true;
         for(ArrayList<Integer> values : this.assignment.values())
         {
-            if(!Arrays.asList(1,2,3,4,5,6,7,8,9).containsAll(values) && values.size() > 0)
+            if(!Arrays.asList(1,2,3,4,5,6,7,8,9).containsAll(values) || values.isEmpty())
             {
                 one = false;
             }
