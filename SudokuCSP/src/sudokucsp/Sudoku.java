@@ -523,6 +523,12 @@ class Sudoku {
                             delete = true;
                         }
                     }
+                    if(Solver.HIDDENPAIRS)
+                    {
+                        if(hiddenPairs(c,values)){
+                            delete = true;
+                        }
+                    }
                 }
             }
         }
@@ -729,6 +735,83 @@ class Sudoku {
                     boolean changed = newvalues.removeAll(values);
                     if(changed) delete = true;
                     setCell(pair.getKey(), newvalues);
+                }
+            }
+        }
+        
+        return delete;
+    }
+    
+    boolean hiddenPairs(int cellNr, ArrayList<Integer> values)
+    {
+        boolean delete = false;
+        
+        // alleen pairs
+        if(values.size() != 2) return false;
+        // triplets maakt langzamer:
+        // if(values.size() != 2 || values.size() != 3) return false;
+        
+        // pak row van deze cell
+        HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(cellNr); 
+        // zoek pairs met deze cell
+        boolean rowresult = hiddenPairsGeneral(values, row);
+        
+        HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr); 
+        boolean colresult = hiddenPairsGeneral(values, col);
+        
+        HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(cellNr);
+        boolean regresult = hiddenPairsGeneral(values, reg);
+        
+        // als iets verwijderd is
+        delete = rowresult || colresult || regresult;
+        return delete;
+    }
+    
+    // niet cell weghalen uit part!
+    boolean hiddenPairsGeneral(ArrayList<Integer> values, HashMap<Integer, ArrayList<Integer>> part)
+    {
+        boolean delete = false;
+        
+        // map met per value de cells waar de value in voor komt
+        HashMap<Integer, ArrayList<Integer>> inverse = new HashMap<Integer, ArrayList<Integer>>();
+        for(int i : new int[] {1,2,3,4,5,6,7,8,9})
+        {
+            inverse.put(i, new ArrayList<Integer>());
+        }
+        
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : part.entrySet())
+        {
+            for(int i : pair.getValue())
+            {
+                inverse.get(i).add(pair.getKey());
+            }
+        }
+        
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : inverse.entrySet())
+        {
+            ArrayList<Integer> p1 = pair.getValue(); // 1 => 11,12
+            
+            for(Map.Entry<Integer, ArrayList<Integer>> otherpair : inverse.entrySet())
+            {
+                ArrayList<Integer> p2 = otherpair.getValue(); // 2 => 11,12
+                
+                if(p1.containsAll(p2) && p2.containsAll(p1))
+                {
+                    // hidden pair gevonden
+                    ArrayList<Integer> hcells = new ArrayList<Integer>(pair.getValue()); // 11,12
+                    ArrayList<Integer> hvalues = new ArrayList<Integer>();
+                    
+                    for(Map.Entry<Integer, ArrayList<Integer>> ppair : part.entrySet())
+                    {
+                        Integer pcell = ppair.getKey();
+                        ArrayList<Integer> pvalues = ppair.getValue();
+                        
+                        if(!hcells.contains(pcell)) // niet deel van hidden pair
+                        {
+                            boolean changed = pvalues.removeAll(hvalues);
+                            if(changed) delete = true;
+                        }
+                    }
                 }
             }
         }

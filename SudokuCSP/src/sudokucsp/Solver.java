@@ -18,6 +18,8 @@ class Solver {
     static boolean NAKEDPAIRS = true;
     static boolean ORDERVARIABLES = true;
     static boolean ORDERVALUES = true;
+    
+    static boolean HIDDENPAIRS = false; // wordt slechter
 
     static Sudoku solve(Sudoku s)
     {
