@@ -15,6 +15,7 @@ class Solver {
     
     static boolean REVISE = true;
     static boolean HIDDENSINGLES = true;
+    static boolean NAKEDPAIRS = true;
     static boolean ORDERVARIABLES = true;
     static boolean ORDERVALUES = true;
 

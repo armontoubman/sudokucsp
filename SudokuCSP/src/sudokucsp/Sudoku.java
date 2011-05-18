@@ -509,9 +509,19 @@ class Sudoku {
                  *
                  */
                 //HIDDEN SINGLE:
-                if(values.size() > 1 && Solver.HIDDENSINGLES) { //KABAM! bijna de helft van de tijd eraf gesneden!
-                    if(hiddenSingle(c,values)){
-                        delete = true; //revise did something
+                if(values.size() > 1) //KABAM! bijna de helft van de tijd eraf gesneden!
+                {
+                    if(Solver.HIDDENSINGLES)
+                    { 
+                        if(hiddenSingle(c,values)){
+                            delete = true; //revise did something
+                        }
+                    }
+                    if(Solver.NAKEDPAIRS)
+                    {
+                        if(nakedPairs(c,values)){
+                            delete = true;
+                        }
                     }
                 }
             }
@@ -643,6 +653,84 @@ class Sudoku {
         }
         else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){
             //sudoku is wrong :O
+        }
+        
+        return delete;
+    }
+    
+    /**
+     * Poging tot Naked Pairs
+     * http://www.learn-sudoku.com/naked-pairs.html
+     * @param cellNr
+     * @param values
+     * @return of iets verwijderd is
+     */
+    boolean nakedPairs(int cellNr, ArrayList<Integer> values)
+    {
+        boolean delete = false;
+        
+        // alleen pairs
+        if(values.size() != 2) return false;
+        // triplets maakt langzamer:
+        // if(values.size() != 2 || values.size() != 3) return false;
+        
+        // pak row van deze cell
+        HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(cellNr); 
+        // tief cell er uit
+        row.remove(cellNr);
+        // zoek pairs met deze cell
+        boolean rowresult = nakedPairsGeneral(values, row);
+        
+        HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr); 
+        col.remove(cellNr);
+        boolean colresult = nakedPairsGeneral(values, col);
+        
+        HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(cellNr); 
+        reg.remove(cellNr);
+        boolean regresult = nakedPairsGeneral(values, reg);
+        
+        // als iets verwijderd is
+        delete = rowresult || colresult || regresult;
+        return delete;
+    }
+    
+    /**
+     * Generieke Naked Pairs methode
+     * @param values
+     * @param part
+     * @return of iets verwijderd is
+     */
+    boolean nakedPairsGeneral(ArrayList<Integer> values, HashMap<Integer, ArrayList<Integer>> part)
+    {
+        boolean delete = false;
+        
+        // lijst met cellnrs die pairen met de huidige cell
+        ArrayList<Integer> matches = new ArrayList<Integer>();
+        
+        // zoek en bewaar alle cells in part met exact dezelfde values
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : part.entrySet())
+        {
+            if(pair.getValue().containsAll(values) && values.containsAll(pair.getValue()))
+            {
+                matches.add(pair.getKey());
+            }
+        }
+        
+        // nakedPairs() geven we alleen value-lijsten door met waarde 2(/3/4)
+        // maar aangezien we de 'huidige' cell uit part hebben gehaald
+        // klopt deze conditie altijd als we een pair(/triplet/quad) hebben gevonden
+        if(matches.size() == values.size() - 1)
+        {
+            for(Map.Entry<Integer, ArrayList<Integer>> pair : part.entrySet())
+            {
+                if(!matches.contains(pair.getKey())) // niet de gepairde aanpassen
+                {
+                    ArrayList<Integer> newvalues = new ArrayList<Integer>(pair.getValue());
+                    boolean changed = newvalues.removeAll(values);
+                    if(changed) delete = true;
+                    setCell(pair.getKey(), newvalues);
+                }
+            }
         }
         
         return delete;
