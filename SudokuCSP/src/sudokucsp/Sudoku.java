@@ -482,20 +482,8 @@ class Sudoku {
                         {
                             toRemove.add(v); //remove value
                             delete = true;
-                            /**
-                             * TODO onderstaande vervangen met wat nuttigs of verwijderen
-                             * values wordt hier helemaal niet leeggemaakt, je stopt dingen in toRemove
-                             * onderstaande check was volgens mij gewoon om uit de for te komen, opdat ie niet flipte
-                             * zou nu kunnen zijn: toRemove == values, maar t nut is volges mij ver te zoeken.
-                            */
-                            if(values.isEmpty())
-                            {
-                                break;
-                            }
                         }
                     }
-                    // TODO checken of dit correct is omgeschreven
-                    // TODO werkt wel toch? anders zou die niet solven lijkt mij?
                     for(int i : toRemove)
                     {
                         values.remove(values.indexOf(i));
