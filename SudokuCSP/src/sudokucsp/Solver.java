@@ -17,9 +17,11 @@ class Solver {
     static boolean HIDDENSINGLES = true;
     static boolean NAKEDPAIRS = true;
     static boolean ORDERVARIABLES = true;
-    static boolean ORDERVALUES = true;
+    static boolean ORDERVALUES = false;
     
     static boolean HIDDENPAIRS = false; // wordt slechter
+
+    static boolean HEURISTIC1 = true;
 
     static Sudoku solve(Sudoku s)
     {
@@ -55,7 +57,7 @@ class Solver {
 
                 /**
          * first eliminate impossible strategies
-         * TODO (DONE?) maak hier AC-3 van ipv AC-2 (i.e. "while revise")
+         * TODO (NOT DONE) maak hier AC-3 van ipv AC-2 (dus ipv "while revise")
          *
          * procedure AC-3
          *  Q <- {(Vi,Vj) in arcs(G),i#j};
@@ -92,13 +94,19 @@ class Solver {
             }
         }
         
+        int c;
         if(ORDERVARIABLES)
         {
-            variables = orderVariables(variables);
+            c = orderVariables(variables);
+            if(c == 0){
+                c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
+            }
         }
-        
+        else
+        {
         // pak cellnr
-        int c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
+            c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
+        }
 
         /**
          *  Werkelijke oplossing is:
@@ -164,11 +172,21 @@ class Solver {
      *  H5: ... andere maten die zouden kunnen aangeven of iets dichter bij solution komt.
      *
      */
-    static HashMap<Integer, ArrayList<Integer>> orderVariables(HashMap<Integer, ArrayList<Integer>> init)
-    {
-        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+    static int orderVariables(HashMap<Integer, ArrayList<Integer>> init){
+        int result = 0;
         
-        result = init;
+        if(HEURISTIC1){ //H1: Kies Node eerder, hoe minder kinderen het heeft
+            // enkel unassigned in de HashMap please!
+            // Sort result op values.size() met kleinste vooraan:
+
+            for(Map.Entry<Integer,ArrayList<Integer>> pair : init.entrySet()){
+                if(pair.getValue().size() == 2){
+                    result = pair.getKey();
+                    break;
+                }
+            }
+
+        }
         
         return result;
     }

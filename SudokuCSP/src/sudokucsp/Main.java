@@ -54,7 +54,7 @@ class Main {
         //
         // Input lezen, solven, output schrijven
         //
-        int aantal = 10;
+        int aantal = 1;
         int i = 0;
         try {
             BufferedReader in = new BufferedReader(new FileReader(args[0]));
