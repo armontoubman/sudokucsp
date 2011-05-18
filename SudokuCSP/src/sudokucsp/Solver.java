@@ -176,12 +176,19 @@ class Solver {
             // enkel unassigned in de HashMap please!
             // Sort result op values.size() met kleinste vooraan:
 
+            int lowestcell=-1, lowestvalues=-1, cell=-1, values=-1;
+            
             for(Map.Entry<Integer,ArrayList<Integer>> pair : init.entrySet()){
-                if(pair.getValue().size() == 2){
-                    result = pair.getKey();
-                    break;
-                }
+                    cell = pair.getKey();
+                    values = pair.getValue().size();
+                    if(lowestcell == -1 || values < lowestvalues)
+                    {
+                        lowestcell = cell;
+                        lowestvalues = values;
+                    }
             }
+            
+            if(lowestcell != -1) result = lowestcell;
 
         }
         
