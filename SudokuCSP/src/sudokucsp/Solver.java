@@ -74,7 +74,7 @@ class Solver {
 
         boolean removing = true; //Initiate loop
         while(removing){ // While revise has removed values
-            removing = s.revise(REVISE, HIDDENSINGLES); // revise (again)
+            removing = s.revise(); // revise (again)
         }
 
         // pak een variable die nog niet assigned is

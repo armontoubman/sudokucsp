@@ -463,16 +463,16 @@ class Sudoku {
      * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
     */
-    boolean revise(boolean doRevise, boolean doHiddenSingles){
+    boolean revise(){
         boolean delete = false; //Did we delete something?
-        if(doRevise || doHiddenSingles)
+        if(Solver.REVISE || Solver.HIDDENSINGLES)
         {
             for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
             {
                 int c = pair.getKey(); //cellNr
                 ArrayList<Integer> values = pair.getValue(); //possible values
                 
-                if(doRevise)
+                if(Solver.REVISE)
                 {
                     ArrayList<Integer> toRemove = new ArrayList<Integer>();
                     // NORMAL REVISE:
@@ -521,7 +521,7 @@ class Sudoku {
                  *
                  */
                 //HIDDEN SINGLE:
-                if(values.size() > 1 && doHiddenSingles) { //KABAM! bijna de helft van de tijd eraf gesneden!
+                if(values.size() > 1 && Solver.HIDDENSINGLES) { //KABAM! bijna de helft van de tijd eraf gesneden!
                     if(hiddenSingle(c,values)){
                         delete = true; //revise did something
                     }
