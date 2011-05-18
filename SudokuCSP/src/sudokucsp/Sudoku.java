@@ -463,66 +463,68 @@ class Sudoku {
      * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
     */
-    boolean revise(){
+    boolean revise(boolean doRevise, boolean doHiddenSingles){
         boolean delete = false; //Did we delete something?
-        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        if(doRevise || doHiddenSingles)
         {
-            int c = pair.getKey(); //cellNr
-            
-            if(c==43)
+            for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
             {
-                boolean stop = true; // zet breakpoint hier
-            }
-            ArrayList<Integer> values = pair.getValue(); //possible values
-            ArrayList<Integer> toRemove = new ArrayList<Integer>();
-            // NORMAL REVISE:
-            for(int v : values) //for each possible value of cell
-            {
-                if(!cellConsistent(v,c)) //if value is not consistent with sudoku
+                int c = pair.getKey(); //cellNr
+                ArrayList<Integer> values = pair.getValue(); //possible values
+                
+                if(doRevise)
                 {
-                    toRemove.add(v); //remove value
-                    delete = true;
-                    /**
-                     * TODO onderstaande vervangen met wat nuttigs of verwijderen
-                     * values wordt hier helemaal niet leeggemaakt, je stopt dingen in toRemove
-                     * onderstaande check was volgens mij gewoon om uit de for te komen, opdat ie niet flipte
-                     * zou nu kunnen zijn: toRemove == values, maar t nut is volges mij ver te zoeken.
-                    */
-                    if(values.isEmpty())
+                    ArrayList<Integer> toRemove = new ArrayList<Integer>();
+                    // NORMAL REVISE:
+                    for(int v : values) //for each possible value of cell
                     {
-                        break;
+                        if(!cellConsistent(v,c)) //if value is not consistent with sudoku
+                        {
+                            toRemove.add(v); //remove value
+                            delete = true;
+                            /**
+                             * TODO onderstaande vervangen met wat nuttigs of verwijderen
+                             * values wordt hier helemaal niet leeggemaakt, je stopt dingen in toRemove
+                             * onderstaande check was volgens mij gewoon om uit de for te komen, opdat ie niet flipte
+                             * zou nu kunnen zijn: toRemove == values, maar t nut is volges mij ver te zoeken.
+                            */
+                            if(values.isEmpty())
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    // TODO checken of dit correct is omgeschreven
+                    // TODO werkt wel toch? anders zou die niet solven lijkt mij?
+                    for(int i : toRemove)
+                    {
+                        values.remove(values.indexOf(i));
                     }
                 }
-            }
-            // TODO checken of dit correct is omgeschreven
-            // TODO werkt wel toch? anders zou die niet solven lijkt mij?
-            for(int i : toRemove)
-            {
-                values.remove(values.indexOf(i));
-            }
 
-            //update mogelijke values in cell
-            //setCell(c,values); gebeurt automatisch al door Map.Entry
+                //update mogelijke values in cell
+                //setCell(c,values); gebeurt automatisch al door Map.Entry
 
-            /*
-             * TODO zorgen dat hiddenSingle niet overbodig tjekt
-             * Ik had wat printjes erin bij diffRow gestopt, dit was de eerste 2 outputs:
-             *
-values: [2, 5, 6, 7, 8]
-otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-diff_before: [2, 5, 6, 7, 8]
-diff_after: []
-values: [9] <---- dit is nutteloze check, dit vakje heeft dus nu al waarde Assigned!
-otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-diff_before: [9]
-diff_after: []
-             * en dit was echt niet de enige. die komen dus al totaal revised uit loop van net.
-             *
-             */
-            //HIDDEN SINGLE:
-            if(values.size() > 1) { //KABAM! bijna de helft van de tijd eraf gesneden!
-                if(hiddenSingle(c,values)){
-                    delete = true; //revise did something
+                /*
+                 * TODO zorgen dat hiddenSingle niet overbodig tjekt
+                 * Ik had wat printjes erin bij diffRow gestopt, dit was de eerste 2 outputs:
+                 *
+    values: [2, 5, 6, 7, 8]
+    otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    diff_before: [2, 5, 6, 7, 8]
+    diff_after: []
+    values: [9] <---- dit is nutteloze check, dit vakje heeft dus nu al waarde Assigned!
+    otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    diff_before: [9]
+    diff_after: []
+                 * en dit was echt niet de enige. die komen dus al totaal revised uit loop van net.
+                 *
+                 */
+                //HIDDEN SINGLE:
+                if(values.size() > 1 && doHiddenSingles) { //KABAM! bijna de helft van de tijd eraf gesneden!
+                    if(hiddenSingle(c,values)){
+                        delete = true; //revise did something
+                    }
                 }
             }
         }

@@ -12,6 +12,11 @@ import java.util.*;
  * @author Armon
  */
 class Solver {
+    
+    static boolean REVISE = true;
+    static boolean HIDDENSINGLES = true;
+    static boolean ORDERVARIABLES = true;
+    static boolean ORDERVALUES = true;
 
     static Sudoku solve(Sudoku s)
     {
@@ -38,18 +43,6 @@ class Solver {
      * @return compleet ingevulde sudoku assignment
      */
     /**
-     * TODO depth-first --> best-first : add heuristics (reduce search space)
-     * Heuristics : informed guess of the next step to be taken (domain dependent)
-     * I.e. combine depth-first met wat slimme breadth-first
-     * f(n) = g(n) + h(n) : g(n) = depth of node n, h(n) = heuristic value ?
-     * Kunnen g(n) nog wel even overslaan, hoeven we geen score systeem te hebben
-     * Mogelijke opties:
-     *  H1: Kies Node eerder, hoe minder kinderen het heeft
-     *  H2: Kies Node eerder, hoe meer zijn values al voorkomen in de Sudoku
-     *  H3: Kies Node eerder, hoe meer constrained deze is (som values in row/col/reg)
-     *  H4: Diepte constrainen, bvb via g(n). Misschien zijn andere nodes eerder opgelost.
-     *  H5: ... andere maten die zouden kunnen aangeven of iets dichter bij solution komt.
-     *
      * TODO constraint propogation : http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
      * TODO sudoku techniques : http://www.learn-sudoku.com/basic-techniques.html
      * TODO sudoku techniques : http://www.brainbashers.com/sudokuhelp.asp
@@ -59,7 +52,7 @@ class Solver {
 
                 /**
          * first eliminate impossible strategies
-         * TODO maak hier AC-3 van ipv AC-2 (i.e. "while revise")
+         * TODO (DONE?) maak hier AC-3 van ipv AC-2 (i.e. "while revise")
          *
          * procedure AC-3
          *  Q <- {(Vi,Vj) in arcs(G),i#j};
@@ -81,7 +74,7 @@ class Solver {
 
         boolean removing = true; //Initiate loop
         while(removing){ // While revise has removed values
-            removing = s.revise(); // revise (again)
+            removing = s.revise(REVISE, HIDDENSINGLES); // revise (again)
         }
 
         // pak een variable die nog niet assigned is
@@ -95,6 +88,12 @@ class Solver {
                 return null;
             }
         }
+        
+        if(ORDERVARIABLES)
+        {
+            variables = orderVariables(variables);
+        }
+        
         // pak cellnr
         int c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
 
@@ -110,9 +109,16 @@ class Solver {
          *  9     4     3     1     2     8     6     5     7
          *  5     7     6     3     9     4     2     1     8
          */
+        
+        ArrayList<Integer> values = s.getCell(c);
+        
+        if(ORDERVALUES)
+        {
+            values = orderValues(values);
+        }
 
         // voor alle waarden in het domein van x
-        for(int v : s.getCell(c))
+        for(int v : values)
         {
                 Sudoku testcopy = new Sudoku(s);
                 // assign x deze waarde
@@ -139,6 +145,38 @@ class Solver {
                 }
         }
         return null;
+    }
+    
+    /*
+     * TODO depth-first --> best-first : add heuristics (reduce search space)
+     * Heuristics : informed guess of the next step to be taken (domain dependent)
+     * I.e. combine depth-first met wat slimme breadth-first
+     * f(n) = g(n) + h(n) : g(n) = depth of node n, h(n) = heuristic value ?
+     * Kunnen g(n) nog wel even overslaan, hoeven we geen score systeem te hebben
+     * Mogelijke opties:
+     *  H1: Kies Node eerder, hoe minder kinderen het heeft
+     *  H2: Kies Node eerder, hoe meer zijn values al voorkomen in de Sudoku
+     *  H3: Kies Node eerder, hoe meer constrained deze is (som values in row/col/reg)
+     *  H4: Diepte constrainen, bvb via g(n). Misschien zijn andere nodes eerder opgelost.
+     *  H5: ... andere maten die zouden kunnen aangeven of iets dichter bij solution komt.
+     *
+     */
+    static HashMap<Integer, ArrayList<Integer>> orderVariables(HashMap<Integer, ArrayList<Integer>> init)
+    {
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        
+        result = init;
+        
+        return result;
+    }
+    
+    static ArrayList<Integer> orderValues(ArrayList<Integer> init)
+    {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        
+        result = init;
+        
+        return result;
     }
     
 }
