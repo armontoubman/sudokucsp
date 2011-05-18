@@ -98,13 +98,10 @@ class Solver {
         if(ORDERVARIABLES)
         {
             c = orderVariables(variables);
-            if(c == 0){
-                c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
-            }
         }
         else
         {
-        // pak cellnr
+            // pak cellnr
             c = (int) new ArrayList<Integer>(variables.keySet()).get(0);
         }
 
@@ -187,6 +184,8 @@ class Solver {
             }
 
         }
+        
+        if(result==0) return (int) new ArrayList<Integer>(init.keySet()).get(0);
         
         return result;
     }
