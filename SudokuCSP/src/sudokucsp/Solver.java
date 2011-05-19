@@ -17,11 +17,17 @@ class Solver {
     static boolean REVISE = true;
     static boolean HIDDENSINGLES = true;
     static boolean NAKEDPAIRS = true;
-    static boolean HIDDENPAIRS = false; // wordt slechter
+    static boolean HIDDENPAIRS = true; // wordt slechter
 
     //SET ORDERING
     static boolean ORDERVARIABLES = true; // if false, no heuristics
     static boolean ORDERVALUES = false;
+
+    //COUNT EFFECTIVENESS
+    static int revise;
+    static int hSingle;
+    static int nPair;
+    static int hPair;
 
     //SET HEURISTICS for ordering
     /**
@@ -54,7 +60,13 @@ class Solver {
     
     static Sudoku solve(Sudoku s)
     {
+        //COUNT EFFECTIVENESS
+        /*revise = 0;
+        hSingle = 0;
+        nPair = 0;
+        hPair = 0;*/
         return bt(s, 0);
+
     }
 
     /*
@@ -110,6 +122,11 @@ class Solver {
         while(removing){ // While revise has removed values
             removing = s.revise(); // revise (again)
         }
+        //COUNT EFFECTIVENESS
+        revise += s.count_revise;
+        hSingle += s.count_hSingle;
+        nPair += s.count_nPair;
+        hPair += s.count_hPair;
 
         // pak een variable die nog niet assigned is
         HashMap<Integer, ArrayList<Integer>> variables = s.getNotAssignedVariables();

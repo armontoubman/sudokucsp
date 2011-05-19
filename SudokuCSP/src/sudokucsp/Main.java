@@ -68,6 +68,10 @@ class Main {
 
                     Sudoku sudoku = new Sudoku(line);
                     sudoku = Solver.solve(sudoku);
+                    System.out.println("end_revise: "+Solver.revise);
+                    System.out.println("end_hSingle: "+Solver.hSingle);
+                    System.out.println("end_nPair: "+Solver.nPair);
+                    System.out.println("end_hPair: "+Solver.hPair);
                     System.out.println(sudoku);
 
                     i++;

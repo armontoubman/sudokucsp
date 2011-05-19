@@ -19,6 +19,11 @@ class Sudoku {
     static final int COLS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0 };
     static final int REGS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,1,1,2,2,2,3,3,3,0, 1,1,1,2,2,2,3,3,3,0, 1,1,1,2,2,2,3,3,3,0, 4,4,4,5,5,5,6,6,6,0, 4,4,4,5,5,5,6,6,6,0, 4,4,4,5,5,5,6,6,6,0, 7,7,7,8,8,8,9,9,9,0, 7,7,7,8,8,8,9,9,9,0, 7,7,7,8,8,8,9,9,9,0 };
 
+    //COUNT EFFECTIVENESS
+    int count_revise = 0;
+    int count_hSingle = 0;
+    int count_nPair = 0;
+    int count_hPair = 0;
     
     /**
      * Constructor
@@ -577,7 +582,7 @@ class Sudoku {
     */
     boolean revise(){
         boolean delete = false; //Did we delete something?
-        if(Solver.REVISE || Solver.HIDDENSINGLES)
+        if(Solver.REVISE || Solver.HIDDENSINGLES || Solver.HIDDENPAIRS || Solver.NAKEDPAIRS)
         {
             for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
             {
@@ -596,6 +601,9 @@ class Sudoku {
                             delete = true;
                         }
                     }
+                    //COUNT EFFECTIVENESS
+                    count_revise += toRemove.size();
+
                     for(int i : toRemove)
                     {
                         values.remove(values.indexOf(i));
@@ -730,11 +738,7 @@ class Sudoku {
         }
         //check what values are in current cell, but not in the others
         ArrayList<Integer> difRow = new ArrayList<Integer>(values);
-        //System.out.println("values: "+values);
-        //System.out.println("otherValues: "+otherValuesRow);
-        //System.out.println("diff_before: "+difRow);
         difRow.removeAll(otherValuesRow);
-        //System.out.println("diff_after: "+difRow);
 
         //COL: Now put all the values from the other cells in one list
         HashSet<Integer> otherValuesCol = new HashSet<Integer>();
@@ -760,14 +764,20 @@ class Sudoku {
         if(difRow.size() == 1 && !difRow.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difRow);
             delete = true;
+            //COUNT EFFECTIVENESS
+            count_hSingle += values.size()-1;
         }
         else if(difCol.size() == 1 && !difCol.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difCol);
             delete = true;
+            //COUNT EFFECTIVENESS
+            count_hSingle += values.size()-1;
         }
         else if(difReg.size() == 1 && !difReg.equals(values)){ //whoehoe! hidden single
             setCell(cellNr,difReg);
             delete = true;
+            //COUNT EFFECTIVENESS
+            count_hSingle += values.size()-1;
         }
         else if(difRow.size() > 1 || difCol.size() > 1 || difReg.size() > 1){
             //sudoku is wrong :O
@@ -779,6 +789,8 @@ class Sudoku {
     /**
      * Poging tot Naked Pairs
      * http://www.learn-sudoku.com/naked-pairs.html
+     * Ook wel locked sets :
+     * http://www.brainbashers.com/sudokulockedsets.asp
      * @param cellNr
      * @param values
      * @return of iets verwijderd is
@@ -844,7 +856,11 @@ class Sudoku {
                 if(!matches.contains(pair.getKey())) // niet de gepairde aanpassen
                 {
                     ArrayList<Integer> newvalues = new ArrayList<Integer>(pair.getValue());
+                    //COUNT EFFECTIVENESS
+                    int voor = newvalues.size();
                     boolean changed = newvalues.removeAll(values);
+                    //COUNT EFFECTIVENESS
+                    count_nPair += voor - newvalues.size();
                     if(changed) delete = true;
                     setCell(pair.getKey(), newvalues);
                 }
@@ -857,22 +873,17 @@ class Sudoku {
     boolean hiddenPairs(int cellNr, ArrayList<Integer> values)
     {
         boolean delete = false;
-        
-        // alleen pairs
-        if(values.size() != 2) return false;
-        // triplets maakt langzamer:
-        // if(values.size() != 2 || values.size() != 3) return false;
-        
+               
         // pak row van deze cell
         HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(cellNr); 
         // zoek pairs met deze cell
-        boolean rowresult = hiddenPairsGeneral(values, row);
+        boolean rowresult = hiddenPairsGeneral(cellNr, values, row);
         
         HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr); 
-        boolean colresult = hiddenPairsGeneral(values, col);
+        boolean colresult = hiddenPairsGeneral(cellNr, values, col);
         
         HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(cellNr);
-        boolean regresult = hiddenPairsGeneral(values, reg);
+        boolean regresult = hiddenPairsGeneral(cellNr, values, reg);
         
         // als iets verwijderd is
         delete = rowresult || colresult || regresult;
@@ -880,36 +891,110 @@ class Sudoku {
     }
     
     // niet cell weghalen uit part!
-    boolean hiddenPairsGeneral(ArrayList<Integer> values, HashMap<Integer, ArrayList<Integer>> part)
+    boolean hiddenPairsGeneral(int cellNr, ArrayList<Integer> values, HashMap<Integer, ArrayList<Integer>> part)
     {
         boolean delete = false;
         
+        // We hebben de huidige cell met zn values:
+        int currentCell = cellNr;
+        ArrayList<Integer> currentValues = values;
+
+        HashMap<Integer, ArrayList<Integer>> inverse = new HashMap<Integer, ArrayList<Integer>>();
+        for(int j : currentValues)
+        {
+            inverse.put(j, new ArrayList<Integer>());
+        }
+
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : part.entrySet())
+        {
+            if(pair.getKey() == currentCell){
+                continue;
+            }
+            for(int i : pair.getValue()) //for every value in that cell
+            {
+                if(currentValues.contains(i)){
+                    //add the key to arraylist of that value
+                    inverse.get(i).add(pair.getKey());
+                }
+            }
+        }
+
+        /**
+         * Nu hebben we de map inverse met voor elke waarde van de huidige cell
+         * een lijst met andere cells in de huidige range die ook die waarde hebben
+         */
+        ArrayList<Integer> valuesWithOneCell = new ArrayList<Integer>();
+
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : inverse.entrySet())
+        {
+            int value = pair.getKey();
+            int nrOtherCells = pair.getValue().size();
+            if(nrOtherCells == 1){
+                valuesWithOneCell.add(value);
+            }
+        }
+
+        System.out.println(valuesWithOneCell.size());
+        if(valuesWithOneCell.size() == 2){
+            //hidden pair!
+            System.out.println("Hidden pair!");
+            setCell(currentCell,valuesWithOneCell);
+            return delete = true;
+        }
+
+
+        /*
         // map met per value de cells waar de value in voor komt
+        // Initiate an arraylist for every of the 9 possible values
         HashMap<Integer, ArrayList<Integer>> inverse = new HashMap<Integer, ArrayList<Integer>>();
         for(int i : new int[] {1,2,3,4,5,6,7,8,9})
         {
             inverse.put(i, new ArrayList<Integer>());
         }
-        
+
+        //For every 'cell = value' pair in part
         for(Map.Entry<Integer, ArrayList<Integer>> pair : part.entrySet())
         {
-            for(int i : pair.getValue())
+            for(int i : pair.getValue()) //for every value in that cell
             {
+                //add the key to arraylist of that value
                 inverse.get(i).add(pair.getKey());
             }
         }
-        
+        System.out.println(inverse);
+        /**
+         * TODO deze vergelijking aanpassen, volgens mij is het super inefficient het met fors te doen.
+         * Gewoon de 9 arrayLists eruit halen en dan compare 1 met 2:9, 2 met 3:9, 3 met 4:9 etc.
+         * of gewoon compare values uit alles in 1 keer
+         */
+        /*For every arraylist in inverse (for values 1 .. 9)
         for(Map.Entry<Integer, ArrayList<Integer>> pair : inverse.entrySet())
         {
+            //retrieve the cellkeys that contain the current value pair.getKey()
             ArrayList<Integer> p1 = pair.getValue(); // 1 => 11,12
-            
+            System.out.println("Pair Value: "+pair.getKey());
+            System.out.println("Pair Cells: "+p1);
+
+            //For every arraylist in inverse (for values 1 .. 9)
             for(Map.Entry<Integer, ArrayList<Integer>> otherpair : inverse.entrySet())
             {
+                //if looking at the same set, skip it
+                if(pair.getKey()==otherpair.getKey()){
+                    continue;
+                }
+
+                //retrieve the cellkeys that contain the current value otherpair.getKey()
                 ArrayList<Integer> p2 = otherpair.getValue(); // 2 => 11,12
-                
+                System.out.println("OtherPair Value: "+otherpair.getKey());
+                System.out.println("OtherPair Cells: "+p2);
+
+                //If these 2 sets contain the same cells, they could be a hidden pair
                 if(p1.containsAll(p2) && p2.containsAll(p1))
                 {
-                    // hidden pair gevonden
+                    System.out.println("The same cells!");
+
+                    //Now check how many have the same cells
+                    //To be a hidden pair, we need: 2 values in 2 same cells
                     ArrayList<Integer> hcells = new ArrayList<Integer>(pair.getValue()); // 11,12
                     ArrayList<Integer> hvalues = new ArrayList<Integer>();
                     
@@ -920,13 +1005,17 @@ class Sudoku {
                         
                         if(!hcells.contains(pcell)) // niet deel van hidden pair
                         {
+                            //COUNT EFFECTIVENESS
+                            int voor = pvalues.size();
                             boolean changed = pvalues.removeAll(hvalues);
+                            //COUNT EFFECTIVENESS
+                            count_hPair = voor - pvalues.size();
                             if(changed) delete = true;
                         }
                     }
                 }
             }
-        }
+        }*/
         
         return delete;
     }
