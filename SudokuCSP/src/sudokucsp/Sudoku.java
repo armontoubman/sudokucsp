@@ -15,6 +15,11 @@ class Sudoku {
     
     HashMap<Integer, ArrayList<Integer>> assignment;
     
+    static final int ROWS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,1,0, 2,2,2,2,2,2,2,2,2,0, 3,3,3,3,3,3,3,3,3,0, 4,4,4,4,4,4,4,4,4,0, 5,5,5,5,5,5,5,5,5,0, 6,6,6,6,6,6,6,6,6,0, 7,7,7,7,7,7,7,7,7,0, 8,8,8,8,8,8,8,8,8,0, 9,9,9,9,9,9,9,9,9,0 };
+    static final int COLS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0 };
+    static final int REGS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,1,1,2,2,2,3,3,3,0, 1,1,1,2,2,2,3,3,3,0, 1,1,1,2,2,2,3,3,3,0, 4,4,4,5,5,5,6,6,6,0, 4,4,4,5,5,5,6,6,6,0, 4,4,4,5,5,5,6,6,6,0, 7,7,7,8,8,8,9,9,9,0, 7,7,7,8,8,8,9,9,9,0, 7,7,7,8,8,8,9,9,9,0 };
+
+    
     /**
      * Constructor
      * @see textToAssignment
@@ -269,11 +274,24 @@ class Sudoku {
      */
     HashMap<Integer, ArrayList<Integer>> getRow(int c)
     {
+        /* OUDE METHODE
         // pak alle cells in de sudoku in dezelfde rij als cell
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
         {
             if(getRowNrFromCellNr(pair.getKey()) == getRowNrFromCellNr(c))
+            {
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
+            }
+        }
+        return result;
+        */
+        /* NIEUWE METHODE */
+        int target = getRowNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            if(getRowNrFromCellNr(pair.getKey()) == target)
             {
                 result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
@@ -288,11 +306,24 @@ class Sudoku {
      */
     HashMap<Integer, ArrayList<Integer>> getCol(int c)
     {
+        /* OUDE METHODE
         // pak alle cells in de sudoku in dezelfde kolom als cell
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
         {
             if(getColNrFromCellNr(pair.getKey()) == getColNrFromCellNr(c))
+            {
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
+            }
+        }
+        return result;
+        */
+        /* NIEUWE METHODE */
+        int target = getColNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            if(getColNrFromCellNr(pair.getKey()) == target)
             {
                 result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
@@ -306,6 +337,8 @@ class Sudoku {
      * @return sreg : lijst met cells uit de region
      */
     HashMap<Integer, ArrayList<Integer>> getReg(int c){
+        
+        /* OUDE METHODE
         int rowNr = getRowNrFromCellNr(c); // Retrieve current row
         int rowReg = rowNr%3; // Calculate relative row number (in a region of 3by3)
         List rows = new ArrayList();
@@ -341,12 +374,19 @@ class Sudoku {
             {
                 result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
-            /*
-            def sreg = this.assignment.findAll{
-                cols.contains(getColFromCellNr(it.key)) &&
-                rows.contains(getRowFromCellNr(it.key))
+        }
+        return result;
+        */
+        
+        /* NIEUWE METHODE */
+        int target = getRegNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
+        {
+            if(getRegNrFromCellNr(pair.getKey()) == target)
+            {
+                result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
             }
-            */
         }
         return result;
     }
@@ -447,7 +487,8 @@ class Sudoku {
      */
     int getRowNrFromCellNr(int c)
     {
-        return (int) Math.floor(c / 10);
+        //return (int) Math.floor(c / 10);
+        return Sudoku.ROWS[c];
     }
 
     /**
@@ -456,7 +497,13 @@ class Sudoku {
      */
     int getColNrFromCellNr(int c)
     {
-         return c % 10;
+         //return c % 10;
+        return Sudoku.COLS[c];
+    }
+    
+    int getRegNrFromCellNr(int c)
+    {
+        return Sudoku.REGS[c];
     }
 
     /**
