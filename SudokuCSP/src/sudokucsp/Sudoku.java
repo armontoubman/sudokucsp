@@ -460,6 +460,35 @@ class Sudoku {
     }
 
     /**
+     * Returned het aantal constraints (influencing givens) op de meegegeven cell
+     * c cellnr
+     */
+    int getNrConstraints(int c){
+
+        /*Tjek vanuit deze cell
+        HashMap<Integer, ArrayList<Integer>> row = getAssignedInRow(c);
+        HashMap<Integer, ArrayList<Integer>> col = getAssignedInCol(c);
+        HashMap<Integer, ArrayList<Integer>> reg = getAssignedInReg(c);
+        
+        return 0 + row.size() + col.size() + reg.size();*/
+
+        //alternatief: tjek vanuit assigned values
+        int result = 0;
+        HashMap<Integer, ArrayList<Integer>> ass = getAssignedVariables();
+        for(Map.Entry<Integer,ArrayList<Integer>> pair : ass.entrySet()){
+            int cell = pair.getKey();
+            // mis nog wel wat van de region nu
+            if(getColNrFromCellNr(cell)==getColNrFromCellNr(c)||getRowNrFromCellNr(cell)==getRowNrFromCellNr(c)){
+                result ++;
+            }
+        }
+        return result;
+    }
+
+    /***********************************************************************
+     ***********************REVISE & SUDOKU TECHNIQUES**********************
+     ***********************************************************************/
+    /**
      * Revise:
      * Zorgt dat binary constraints voldaan zijn, i.e. delete impossible values
     */

@@ -12,17 +12,46 @@ import java.util.*;
  * @author Armon
  */
 class Solver {
-    
+
+    //SET VALUE REMOVAL TECHNIQUES
     static boolean REVISE = true;
     static boolean HIDDENSINGLES = true;
     static boolean NAKEDPAIRS = true;
-    static boolean ORDERVARIABLES = true;
-    static boolean ORDERVALUES = false;
-    
     static boolean HIDDENPAIRS = false; // wordt slechter
 
-    static boolean HEURISTIC1 = true;
+    //SET ORDERING
+    static boolean ORDERVARIABLES = true; // if false, no heuristics
+    static boolean ORDERVALUES = false;
 
+    //SET HEURISTICS for ordering
+    /**
+     * Tijden van Torec: (19/5/2011)
+     * File : sudoku_training.txt
+     *  Heuristic:
+     *      - none  :   2:17    (100%)
+     *      - H1    :   1:53/54 (70.5%)
+     *      - H3    :   1:54    (71.0%)
+     *      - H3_alt :  1:57    (72.4%)
+     *      - H13   :   1:51/52 (69.6%)
+     *      - H13_alt:  1:54    (71.0%)
+     * File : top95.txt
+     *  Heuristic:
+     *      - none  :   2:09    (100%)
+     *      - H1    :   1:25    (59.8%)
+     *      - H3    :   2:11    (101%) ??
+     *      - H3_alt:   1:48    (70.8%)
+     *      - H13   :   1:21    (57.9%)
+     *      - H13_alt:  1:26    (60.3%)  ?? niet echt logisch dat alt opzichzelf beter is, maar samen slechter
+     *
+     * _alt geeft hier aan dat ik de alternatieve methode in getNrConstraints gebruikte
+     *
+     */
+    static boolean HEURISTIC1 = false; // Nr of Children
+    static boolean HEURISTIC13 = true; // Heuristic 1&3
+    //static boolean HEURISTIC2 = false;
+    static boolean HEURISTIC3 = false; // Nr of Constraints
+    //static boolean HEURISTIC4 = false;
+    
     static Sudoku solve(Sudoku s)
     {
         return bt(s, 0);
@@ -97,7 +126,7 @@ class Solver {
         int c;
         if(ORDERVARIABLES)
         {
-            c = orderVariables(variables);
+            c = orderVariables(variables, s);
         }
         else
         {
@@ -169,28 +198,41 @@ class Solver {
      *  H5: ... andere maten die zouden kunnen aangeven of iets dichter bij solution komt.
      *
      */
-    static int orderVariables(HashMap<Integer, ArrayList<Integer>> init){
+    static int orderVariables(HashMap<Integer, ArrayList<Integer>> init, Sudoku s){
         int result = 0;
         
-        if(HEURISTIC1){ //H1: Kies Node eerder, hoe minder kinderen het heeft
-            // enkel unassigned in de HashMap please!
-            // Sort result op values.size() met kleinste vooraan:
+        int lowestcell=-1, lowestvalues=-1, cell=-1, values=-1, h3 = -1, highesth3 = -1;
 
-            int lowestcell=-1, lowestvalues=-1, cell=-1, values=-1;
-            
-            for(Map.Entry<Integer,ArrayList<Integer>> pair : init.entrySet()){
-                    cell = pair.getKey();
+        for(Map.Entry<Integer,ArrayList<Integer>> pair : init.entrySet()){
+                cell = pair.getKey();
+                if(HEURISTIC1 || HEURISTIC13){ //H1: Kies Node eerder, hoe minder kinderen het heeft
                     values = pair.getValue().size();
+
                     if(lowestcell == -1 || values < lowestvalues)
                     {
-                        lowestcell = cell;
-                        lowestvalues = values;
+                        if(HEURISTIC13){ // combined Heuristic 3 & 1
+                            h3 = s.getNrConstraints(pair.getKey());
+                            if(lowestcell == -1 || h3 > highesth3){
+                                lowestcell = cell;
+                                highesth3 = h3;
+                                lowestvalues = values;
+                            }
+                        } else {
+                            lowestcell = cell;
+                            lowestvalues = values;
+                        }
                     }
-            }
-            
-            if(lowestcell != -1) result = lowestcell;
-
+                }
+                else if(HEURISTIC3){ //H3: Kies Node eerder, hoe meer constrained deze is (som values in row/col/reg)
+                    h3 = s.getNrConstraints(pair.getKey());
+                    if(lowestcell == -1 || h3 > highesth3){
+                        lowestcell = cell;
+                        highesth3 = h3;
+                    }
+                }
         }
+
+        if(lowestcell != -1) result = lowestcell;
         
         if(result==0) return (int) new ArrayList<Integer>(init.keySet()).get(0);
         
