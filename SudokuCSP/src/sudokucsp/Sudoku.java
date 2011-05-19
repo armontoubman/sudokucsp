@@ -286,7 +286,7 @@ class Sudoku {
         }
         return result;
         */
-        /* NIEUWE METHODE */
+        /* NIEUWE METHODE
         int target = getRowNrFromCellNr(c);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
@@ -294,6 +294,18 @@ class Sudoku {
             if(getRowNrFromCellNr(pair.getKey()) == target)
             {
                 result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
+            }
+        }
+        return result;
+        */
+        /* NOG NIEUWERE METHODE */
+        int target = getRowNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(int i=11; i<100; i++)
+        {
+            if(Sudoku.ROWS[i] == target)
+            {
+                result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
             }
         }
         return result;
@@ -318,7 +330,7 @@ class Sudoku {
         }
         return result;
         */
-        /* NIEUWE METHODE */
+        /* NIEUWE METHODE
         int target = getColNrFromCellNr(c);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
@@ -326,6 +338,18 @@ class Sudoku {
             if(getColNrFromCellNr(pair.getKey()) == target)
             {
                 result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
+            }
+        }
+        return result;
+        */
+        /* NOG NIEUWERE METHODE */
+        int target = getColNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(int i=11; i<100; i++)
+        {
+            if(Sudoku.COLS[i] == target)
+            {
+                result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
             }
         }
         return result;
@@ -378,7 +402,7 @@ class Sudoku {
         return result;
         */
         
-        /* NIEUWE METHODE */
+        /* NIEUWE METHODE 
         int target = getRegNrFromCellNr(c);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(Map.Entry<Integer, ArrayList<Integer>> pair : this.assignment.entrySet())
@@ -386,6 +410,18 @@ class Sudoku {
             if(getRegNrFromCellNr(pair.getKey()) == target)
             {
                 result.put(pair.getKey(), new ArrayList<Integer>(pair.getValue()));
+            }
+        }
+        return result;
+        */
+        /* NOG NIEUWERE METHODE */
+        int target = getRegNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        for(int i=11; i<100; i++)
+        {
+            if(Sudoku.REGS[i] == target)
+            {
+                result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
             }
         }
         return result;
@@ -451,15 +487,15 @@ class Sudoku {
     boolean appearsInRange(int v, HashMap<Integer, ArrayList<Integer>> range)
     {
         
-        int count = 0;
+        //int count = 0;
         for(ArrayList<Integer> vs : range.values())
         {
             for(int i : vs)
             {
-                if(i == v && vs.size() == 1) { count++; }
+                if(i == v && vs.size() == 1) { return true; }
             }
         }
-        return count >= 1;
+        return false;
     }
 
     /**
