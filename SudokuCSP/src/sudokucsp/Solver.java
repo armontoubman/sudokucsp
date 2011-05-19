@@ -17,7 +17,7 @@ class Solver {
     static boolean REVISE = true;
     static boolean HIDDENSINGLES = true;
     static boolean NAKEDPAIRS = true;
-    static boolean HIDDENPAIRS = true; // wordt slechter
+    static boolean HIDDENPAIRS = true; // buggy
 
     //SET ORDERING
     static boolean ORDERVARIABLES = true; // if false, no heuristics
@@ -30,28 +30,6 @@ class Solver {
     static int hPair;
 
     //SET HEURISTICS for ordering
-    /**
-     * Tijden van Torec: (19/5/2011)
-     * File : sudoku_training.txt
-     *  Heuristic:
-     *      - none  :   2:17    (100%)
-     *      - H1    :   1:53/54 (70.5%)
-     *      - H3    :   1:54    (71.0%)
-     *      - H3_alt :  1:57    (72.4%)
-     *      - H13   :   1:51/52 (69.6%) <--- beste (huidige)
-     *      - H13_alt:  1:54    (71.0%)
-     * File : top95.txt
-     *  Heuristic:
-     *      - none  :   2:09    (100%)
-     *      - H1    :   1:25    (59.8%)
-     *      - H3    :   2:11    (101%) ??
-     *      - H3_alt:   1:48    (70.8%)
-     *      - H13   :   1:21    (57.9%) <---- beste
-     *      - H13_alt:  1:26    (60.3%)  ?? niet echt logisch dat alt opzichzelf beter is, maar samen slechter
-     *
-     * _alt geeft hier aan dat ik de alternatieve methode in getNrConstraints gebruikte
-     *
-     */
     static boolean HEURISTIC1 = false; // Nr of Children
     static boolean HEURISTIC13 = true; // Heuristic 1&3
     //static boolean HEURISTIC2 = false;
@@ -122,6 +100,7 @@ class Solver {
         while(removing){ // While revise has removed values
             removing = s.revise(); // revise (again)
         }
+        //System.out.println(s);
         //COUNT EFFECTIVENESS
         revise += s.count_revise;
         hSingle += s.count_hSingle;

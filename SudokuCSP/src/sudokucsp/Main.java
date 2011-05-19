@@ -54,7 +54,7 @@ class Main {
         //
         // Input lezen, solven, output schrijven
         //
-        int aantal = 1;
+        int aantal = 2;
         int i = 0;
         try {
             BufferedReader in = new BufferedReader(new FileReader(args[0]));
@@ -68,14 +68,14 @@ class Main {
 
                     Sudoku sudoku = new Sudoku(line);
                     sudoku = Solver.solve(sudoku);
-                    System.out.println("end_revise: "+Solver.revise);
-                    System.out.println("end_hSingle: "+Solver.hSingle);
-                    System.out.println("end_nPair: "+Solver.nPair);
-                    System.out.println("end_hPair: "+Solver.hPair);
+                    //System.out.println("end_revise: "+Solver.revise);
+                    //System.out.println("end_hSingle: "+Solver.hSingle);
+                    //System.out.println("end_nPair: "+Solver.nPair);
+                    //System.out.println("end_hPair: "+Solver.hPair);
                     System.out.println(sudoku);
 
                     i++;
-                    //if(i==aantal) break;
+                    if(i==aantal) break;
                 }
             }
 

@@ -609,45 +609,31 @@ class Sudoku {
                         values.remove(values.indexOf(i));
                     }
                 }
+                if(values.size()==0){ //Sudoku is faulty, stop now
+                    return false;//will also stop the while if false.
+                }
 
-                //update mogelijke values in cell
-                //setCell(c,values); gebeurt automatisch al door Map.Entry
-
-                /*
-                 * TODO zorgen dat hiddenSingle niet overbodig tjekt
-                 * Ik had wat printjes erin bij diffRow gestopt, dit was de eerste 2 outputs:
-                 *
-    values: [2, 5, 6, 7, 8]
-    otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    diff_before: [2, 5, 6, 7, 8]
-    diff_after: []
-    values: [9] <---- dit is nutteloze check, dit vakje heeft dus nu al waarde Assigned!
-    otherValues: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    diff_before: [9]
-    diff_after: []
-                 * en dit was echt niet de enige. die komen dus al totaal revised uit loop van net.
-                 *
-                 */
                 //HIDDEN SINGLE:
-                if(values.size() > 1) //KABAM! bijna de helft van de tijd eraf gesneden!
+                 //Don't use techniques on newly created givens
+                if(Solver.HIDDENSINGLES && values.size() > 1)
                 {
-                    if(Solver.HIDDENSINGLES)
-                    { 
-                        if(hiddenSingle(c,values)){
-                            delete = true; //revise did something
-                        }
+                    if(hiddenSingle(c,values)){
+                        delete = true; //revise did something
+                        //makes values consistent again
+                        values = getCell(c);
                     }
-                    if(Solver.NAKEDPAIRS)
-                    {
-                        if(nakedPairs(c,values)){
-                            delete = true;
-                        }
+                }
+                if(Solver.NAKEDPAIRS && values.size() > 1)
+                {
+                    if(nakedPairs(c,values)){
+                        delete = true;
+                        values = getCell(c);
                     }
-                    if(Solver.HIDDENPAIRS)
-                    {
-                        if(hiddenPairs(c,values)){
-                            delete = true;
-                        }
+                }
+                if(Solver.HIDDENPAIRS && values.size() > 1)
+                {
+                    if(hiddenPairs(c,values)){
+                        delete = true;
                     }
                 }
             }
@@ -873,24 +859,41 @@ class Sudoku {
     boolean hiddenPairs(int cellNr, ArrayList<Integer> values)
     {
         boolean delete = false;
-               
+
+        if(values.size()<=2){
+            return delete;
+        }
+
         // pak row van deze cell
         HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(cellNr); 
         // zoek pairs met deze cell
         boolean rowresult = hiddenPairsGeneral(cellNr, values, row);
-        
-        HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr); 
+        // There can be only one pair (then values <= 2, so we have to return)
+        if(rowresult){
+            System.out.println("rowresult");
+            return rowresult;
+        }
+
+        HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr);
         boolean colresult = hiddenPairsGeneral(cellNr, values, col);
+        if(colresult){
+            System.out.println("colresult");
+            return colresult;
+        }
         
         HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(cellNr);
         boolean regresult = hiddenPairsGeneral(cellNr, values, reg);
-        
+        if(regresult){
+            System.out.println("regresult");
+            return regresult;
+        }
         // als iets verwijderd is
         delete = rowresult || colresult || regresult;
         return delete;
     }
     
     // niet cell weghalen uit part!
+    // TODO fix hiddenPairs :'( als je m met hiddenPairs doet krijgt ie de 2e nieteens af!
     boolean hiddenPairsGeneral(int cellNr, ArrayList<Integer> values, HashMap<Integer, ArrayList<Integer>> part)
     {
         boolean delete = false;
@@ -899,22 +902,25 @@ class Sudoku {
         int currentCell = cellNr;
         ArrayList<Integer> currentValues = values;
 
+        //Nu maken we een Map 'inverse', met daarin een ArrayList voor elke value van huidige cell
         HashMap<Integer, ArrayList<Integer>> inverse = new HashMap<Integer, ArrayList<Integer>>();
-        for(int j : currentValues)
+        for(int j : currentValues) // Voor elke value van de huidige cell
         {
-            inverse.put(j, new ArrayList<Integer>());
+            inverse.put(j, new ArrayList<Integer>()); //Add lijst met als key de huidige value
         }
-
+        //Dan gaan we loopen over de meegegeven part van de sudoku (row/col/reg).
+        //Pair wordt de entry van een cell uit dit part van de sudoku (cellNr en values).
         for(Map.Entry<Integer, ArrayList<Integer>> pair : part.entrySet())
         {
+            //Als de cell uit de row/col/reg de huidige is, slaan we deze even over
             if(pair.getKey() == currentCell){
                 continue;
             }
-            for(int i : pair.getValue()) //for every value in that cell
+            for(int i : pair.getValue()) //for every value van de cell uit part
             {
-                if(currentValues.contains(i)){
-                    //add the key to arraylist of that value
-                    inverse.get(i).add(pair.getKey());
+                //System.out.println(currentValues+" contains "+i+" = "+currentValues.contains(i));
+                if(currentValues.contains(i)){ //als deze value ook voorkomt in de huidige cell
+                    inverse.get(i).add(pair.getKey()); //add cellNr to bijbehorende arraylist
                 }
             }
         }
@@ -923,24 +929,51 @@ class Sudoku {
          * Nu hebben we de map inverse met voor elke waarde van de huidige cell
          * een lijst met andere cells in de huidige range die ook die waarde hebben
          */
+        //Initiate a new list to store those values that are present in only one other cell
         ArrayList<Integer> valuesWithOneCell = new ArrayList<Integer>();
-
+        ArrayList<Integer> cell = new ArrayList<Integer>();
+        //For every value from our current cell:
         for(Map.Entry<Integer, ArrayList<Integer>> pair : inverse.entrySet())
         {
-            int value = pair.getKey();
-            int nrOtherCells = pair.getValue().size();
-            if(nrOtherCells == 1){
-                valuesWithOneCell.add(value);
+            int value = pair.getKey(); // A value from our current cell
+            int nrOtherCells = pair.getValue().size(); // Number of other cells with that value
+            if(nrOtherCells == 1){ // If there is only one other cell with that value
+                valuesWithOneCell.add(value); //We store this value
+                if(!cell.contains(pair.getValue().get(0))){
+                    cell.add(pair.getValue().get(0)); //And the other's cellNr
+                }
             }
         }
 
-        System.out.println(valuesWithOneCell.size());
-        if(valuesWithOneCell.size() == 2){
+        // If there were exactly two values also in one other cell, this must be a hidden pair
+        if(valuesWithOneCell.size() == 2 && cell.size() == 1){
             //hidden pair!
-            System.out.println("Hidden pair!");
-            setCell(currentCell,valuesWithOneCell);
-            return delete = true;
+                    System.out.println("*******Hidden Pair overview*********");
+                    System.out.println("Current Cell: "+cellNr+" ,with values: "+getCell(cellNr));
+                    System.out.println("Part we are looking at: "+part);
+                    System.out.println("Inverse created: "+inverse);
+                    System.out.println("Chosen values: "+valuesWithOneCell);
+                    System.out.println("Chosen cells: "+cell+" ,with values: "+getCell(cell.get(0)));
+                    System.out.println("Now we apply the operation: ");
+                    System.out.println("before: "+this.assignment);
+
+            setCell(currentCell,valuesWithOneCell); // Remove all other options from this cell
+            setCell(cell.get(0) ,valuesWithOneCell); // And from the other cell
+                    
+                    System.out.println("after: "+this.assignment);
+                    System.out.println("Current Cell: "+cellNr+" ,with values: "+getCell(cellNr));
+                    System.out.println("Chosen cells: "+cell+" ,with values: "+getCell(cell.get(0)));
+                    System.out.println("************************************");
+
+            //COUNT EFFECTIVENESS
+            int voor = currentValues.size()+getCell(cell.get(0)).size();
+            //COUNT EFFECTIVENESS
+            count_hPair = voor - (getCell(currentCell).size()+getCell(cell.get(0)).size());
+
+            return true;
         }
+
+        //TODO maybe check for hiddentriples?
 
 
         /*
@@ -962,11 +995,7 @@ class Sudoku {
             }
         }
         System.out.println(inverse);
-        /**
-         * TODO deze vergelijking aanpassen, volgens mij is het super inefficient het met fors te doen.
-         * Gewoon de 9 arrayLists eruit halen en dan compare 1 met 2:9, 2 met 3:9, 3 met 4:9 etc.
-         * of gewoon compare values uit alles in 1 keer
-         */
+
         /*For every arraylist in inverse (for values 1 .. 9)
         for(Map.Entry<Integer, ArrayList<Integer>> pair : inverse.entrySet())
         {
@@ -1021,4 +1050,3 @@ class Sudoku {
     }
 	
 }
-
