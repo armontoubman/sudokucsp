@@ -32,7 +32,7 @@ class Solver {
      *      - H1    :   1:53/54 (70.5%)
      *      - H3    :   1:54    (71.0%)
      *      - H3_alt :  1:57    (72.4%)
-     *      - H13   :   1:51/52 (69.6%)
+     *      - H13   :   1:51/52 (69.6%) <--- beste (huidige)
      *      - H13_alt:  1:54    (71.0%)
      * File : top95.txt
      *  Heuristic:
@@ -40,7 +40,7 @@ class Solver {
      *      - H1    :   1:25    (59.8%)
      *      - H3    :   2:11    (101%) ??
      *      - H3_alt:   1:48    (70.8%)
-     *      - H13   :   1:21    (57.9%)
+     *      - H13   :   1:21    (57.9%) <---- beste
      *      - H13_alt:  1:26    (60.3%)  ?? niet echt logisch dat alt opzichzelf beter is, maar samen slechter
      *
      * _alt geeft hier aan dat ik de alternatieve methode in getNrConstraints gebruikte

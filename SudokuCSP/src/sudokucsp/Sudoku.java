@@ -465,14 +465,14 @@ class Sudoku {
      */
     int getNrConstraints(int c){
 
-        /*Tjek vanuit deze cell
+        //Tjek vanuit deze cell
         HashMap<Integer, ArrayList<Integer>> row = getAssignedInRow(c);
         HashMap<Integer, ArrayList<Integer>> col = getAssignedInCol(c);
         HashMap<Integer, ArrayList<Integer>> reg = getAssignedInReg(c);
         
-        return 0 + row.size() + col.size() + reg.size();*/
+        return 0 + row.size() + col.size() + reg.size();
 
-        //alternatief: tjek vanuit assigned values
+        /*alternatief: tjek vanuit assigned values
         int result = 0;
         HashMap<Integer, ArrayList<Integer>> ass = getAssignedVariables();
         for(Map.Entry<Integer,ArrayList<Integer>> pair : ass.entrySet()){
@@ -482,7 +482,7 @@ class Sudoku {
                 result ++;
             }
         }
-        return result;
+        return result;*/
     }
 
     /***********************************************************************
