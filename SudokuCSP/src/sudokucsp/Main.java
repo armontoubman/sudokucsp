@@ -57,6 +57,8 @@ class Main {
         int aantal = 2;
         int i = 0;
         
+        Solver.PRINT = true;
+        
         BufferedReader in = null;
         BufferedWriter out = null;
         try {
