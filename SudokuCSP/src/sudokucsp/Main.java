@@ -56,8 +56,12 @@ class Main {
         //
         int aantal = 2;
         int i = 0;
+        
+        BufferedReader in = null;
+        BufferedWriter out = null;
         try {
-            BufferedReader in = new BufferedReader(new FileReader(args[0]));
+            in = new BufferedReader(new FileReader(args[0]));
+            out = new BufferedWriter(new FileWriter(args[1]));
 
             String line;
             while ((line = in.readLine()) != null)
@@ -73,6 +77,9 @@ class Main {
                     //System.out.println("end_nPair: "+Solver.nPair);
                     //System.out.println("end_hPair: "+Solver.hPair);
                     System.out.println(sudoku);
+                    
+                    out.write(sudoku.toString());
+                    out.newLine();
 
                     i++;
                     if(i==aantal) break;
@@ -84,12 +91,18 @@ class Main {
         catch(Exception e)
         {
             e.printStackTrace();
+        } finally {
+            //Close the BufferedWriter
+            try {
+                if(out != null)
+                {
+                    out.flush();
+                    out.close();
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
-        /*input.readLines()[0..10].each{
-            Sudoku sudoku = new Sudoku(it)
-            Sudoku solution = Solver.solve(sudoku)
-            println solution.toString()
-        }*/
 
     }
 
