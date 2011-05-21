@@ -958,7 +958,7 @@ class Sudoku {
                     System.out.println("before: "+this.assignment);
 
             setCell(currentCell,valuesWithOneCell); // Remove all other options from this cell
-            setCell(cell.get(0) ,valuesWithOneCell); // And from the other cell
+            setCell(cell.get(0),new ArrayList<Integer>(valuesWithOneCell)); // And from the other cell
                     
                     System.out.println("after: "+this.assignment);
                     System.out.println("Current Cell: "+cellNr+" ,with values: "+getCell(cellNr));
