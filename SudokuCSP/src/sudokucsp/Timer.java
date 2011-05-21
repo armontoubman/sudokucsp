@@ -19,6 +19,10 @@ class Timer {
     {
         new Timer().start(args);
     }
+    
+    HashMap<String, Double> results;
+    
+    ArrayList<String> training, top95;
 
     void start(String[] args)
     {
@@ -35,48 +39,24 @@ class Timer {
         //static boolean HEURISTIC2 = false;
         Solver.HEURISTIC3 = false;
         
-        HashMap<String, Double> results = new HashMap<String, Double>();
+        results = new HashMap<String, Double>();
         
-        ArrayList<String> training = readSudokus("sudoku_training.txt");
-        ArrayList<String> top95 = readSudokus("top95.txt");
-        
-        String test = "";
-        
-        //
-        
-        test = "rv";
-        System.out.print(test+" ");
-        results.put("training_"+test, go(training));
-        results.put("top95_"+test, go(top95));
-        System.out.println("Done");
+        training = readSudokus("sudoku_training.txt");
+        top95 = readSudokus("top95.txt");
         
         //
         Solver.HIDDENSINGLES = true;
-        test = "rv_hs";
-        System.out.print(test+" ");
-        results.put("training_"+test, go(training));
-        results.put("top95_"+test, go(top95));
-        System.out.println("Done");
+        test("rv_hs");
         
         //
         Solver.HIDDENSINGLES = false;
         Solver.NAKEDPAIRS = true;
-        test = "rv_np";
-        System.out.print(test+" ");
-        results.put("training_"+test, go(training));
-        results.put("top95_"+test, go(top95));
-        System.out.println("Done");
+        test("rv_np");
         
         //
         Solver.NAKEDPAIRS = false;
         Solver.HIDDENPAIRS = true;
-        test = "rv_hp";
-        System.out.print(test+" ");
-        results.put("training_"+test, go(training));
-        results.put("top95_"+test, go(top95));
-        System.out.println("Done");
-        
-        System.out.println(results);
+        test("rv_hp");
     }
     
     ArrayList<String> readSudokus(String filename)
@@ -126,13 +106,24 @@ class Timer {
     double go(ArrayList<String> sudokus)
     {
         double mean = 0.0;
-        int t = 5;
+        int t = 3;
         for(int i=0; i<t; i++)
         {
+            System.out.print(i);
             mean += doTest(sudokus);
         }
+        System.out.print(" ");
         mean = mean/t;
         return mean; // seconden
+    }
+    
+    void test(String name)
+    {
+        System.out.print(name+" ");
+        results.put("training_"+name, go(training));
+        results.put("top95_"+name, go(top95));
+        System.out.println();
+        System.out.println(results);
     }
 
 }
