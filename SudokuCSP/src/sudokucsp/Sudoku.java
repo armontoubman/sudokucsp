@@ -870,21 +870,21 @@ class Sudoku {
         boolean rowresult = hiddenPairsGeneral(cellNr, values, row);
         // There can be only one pair (then values <= 2, so we have to return)
         if(rowresult){
-            System.out.println("rowresult");
+            //System.out.println("rowresult");
             return rowresult;
         }
 
         HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(cellNr);
         boolean colresult = hiddenPairsGeneral(cellNr, values, col);
         if(colresult){
-            System.out.println("colresult");
+            //System.out.println("colresult");
             return colresult;
         }
         
         HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(cellNr);
         boolean regresult = hiddenPairsGeneral(cellNr, values, reg);
         if(regresult){
-            System.out.println("regresult");
+            //System.out.println("regresult");
             return regresult;
         }
         // als iets verwijderd is
@@ -948,22 +948,22 @@ class Sudoku {
         // If there were exactly two values also in one other cell, this must be a hidden pair
         if(valuesWithOneCell.size() == 2 && cell.size() == 1){
             //hidden pair!
-                    System.out.println("*******Hidden Pair overview*********");
+                    /*System.out.println("*******Hidden Pair overview*********");
                     System.out.println("Current Cell: "+cellNr+" ,with values: "+getCell(cellNr));
                     System.out.println("Part we are looking at: "+part);
                     System.out.println("Inverse created: "+inverse);
                     System.out.println("Chosen values: "+valuesWithOneCell);
                     System.out.println("Chosen cells: "+cell+" ,with values: "+getCell(cell.get(0)));
                     System.out.println("Now we apply the operation: ");
-                    System.out.println("before: "+this.assignment);
+                    System.out.println("before: "+this.assignment);*/
 
             setCell(currentCell,valuesWithOneCell); // Remove all other options from this cell
             setCell(cell.get(0),new ArrayList<Integer>(valuesWithOneCell)); // And from the other cell
                     
-                    System.out.println("after: "+this.assignment);
+                    /*System.out.println("after: "+this.assignment);
                     System.out.println("Current Cell: "+cellNr+" ,with values: "+getCell(cellNr));
                     System.out.println("Chosen cells: "+cell+" ,with values: "+getCell(cell.get(0)));
-                    System.out.println("************************************");
+                    System.out.println("************************************");*/
 
             //COUNT EFFECTIVENESS
             int voor = currentValues.size()+getCell(cell.get(0)).size();

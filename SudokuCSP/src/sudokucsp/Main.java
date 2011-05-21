@@ -68,7 +68,7 @@ class Main {
             {
                 if(line.length() == 81)
                 {
-                    System.out.println(i);
+                    if(Solver.PRINT) System.out.println(i);
 
                     Sudoku sudoku = new Sudoku(line);
                     sudoku = Solver.solve(sudoku);
@@ -76,13 +76,13 @@ class Main {
                     //System.out.println("end_hSingle: "+Solver.hSingle);
                     //System.out.println("end_nPair: "+Solver.nPair);
                     //System.out.println("end_hPair: "+Solver.hPair);
-                    System.out.println(sudoku);
+                    if(Solver.PRINT) System.out.println(sudoku);
                     
                     out.write(sudoku.toString());
                     out.newLine();
 
                     i++;
-                    if(i==aantal) break;
+                    //if(i==aantal) break;
                 }
             }
 

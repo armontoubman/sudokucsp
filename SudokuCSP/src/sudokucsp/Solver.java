@@ -12,12 +12,14 @@ import java.util.*;
  * @author Armon
  */
 class Solver {
+    
+    static boolean PRINT = false;
 
     //SET VALUE REMOVAL TECHNIQUES
     static boolean REVISE = true;
     static boolean HIDDENSINGLES = true;
     static boolean NAKEDPAIRS = true;
-    static boolean HIDDENPAIRS = true; // buggy
+    static boolean HIDDENPAIRS = false; // buggy
 
     //SET ORDERING
     static boolean ORDERVARIABLES = true; // if false, no heuristics
@@ -164,9 +166,12 @@ class Solver {
                 if(testcopy.isConsistent())
                 {
 
-                for(int i=0; i<depth; i++) { System.out.print(" "); }
-                System.out.println(testcopy);
-                //println s.assignment //ff wat handiger bij t debuggen/improven
+                    if(PRINT)
+                    {
+                        for(int i=0; i<depth; i++) { System.out.print(" "); }
+                        System.out.println(testcopy);
+                        //println s.assignment //ff wat handiger bij t debuggen/improven
+                    }
                 
                     // maak nieuwe branch
                     Sudoku R = bt(testcopy, depth+1);
