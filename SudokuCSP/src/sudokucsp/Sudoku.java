@@ -1155,43 +1155,7 @@ class Sudoku {
             returnset.addAll(reg);
    */
         }
-
-        return GetUniqueValues(returnset);
-    }
-
-    /**
-     * From: http://code.hammerpig.com/fast-way-to-get-all-unique-values-from-a-list-in-java.html
-     * Takes the Union of two collections.
-     * @param coll1
-     * @param coll2
-     * @return union : ArrayList
-     */
-    public static Collection Union(Collection coll1, Collection coll2)
-    {
-        Set union = new HashSet(coll1);
-        union.addAll(new HashSet(coll2));
-        return new ArrayList(union);
-    }
-
-    /**
-     * From: http://code.hammerpig.com/fast-way-to-get-all-unique-values-from-a-list-in-java.html
-     * Returns the union of one collection with itself. This makes the list unique.
-     * E.G.:
-     * ArrayList x = new ArrayList();
-     * x.add("abc");
-     * x.add("abc");
-     * x.add("abc");
-     * x.add("def");
-     * x.add("def");
-     * x.add("ghi");
-     * for (Object y : s.GetUniqueValues(x))    System.out.println(y);
-     *
-     * @param values
-     * @return values (subset of initial values)
-     */
-    public static ArrayList GetUniqueValues(Collection values)
-    {
-        return (ArrayList)Union(values, values);
+    return new ArrayList(new HashSet(returnset));
     }
 
     /*

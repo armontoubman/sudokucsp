@@ -103,19 +103,8 @@ class Solver {
             removing = s.revise(); // revise (again)
         }
 */
-
         // pak een variable die nog niet assigned is
         HashMap<Integer, ArrayList<Integer>> variables = s.getNotAssignedVariables();
-        // alles assigned? hopelijk klaar
-        if(variables.isEmpty()){
-            if(s.isConsistent()){ // klaar!
-                return s;
-            }
-            else { // jammer, vol maar fout!
-                return null;
-            }
-        }
-
         // Instead of while-ing our revise, we apply smart-revising: revise2.
         //TODO zorgen dat revise2 logischerwijs wel sneller is dan revise
         ArrayList<Integer> keyset = new ArrayList<Integer>(variables.keySet());
@@ -128,6 +117,20 @@ class Solver {
             returnset = s.affected(returnset); //Add revised cell's row/col/reg
             //System.out.println("Next Input: "+returnset);
         }
+
+        // pak een variable die nog niet assigned is
+        variables = s.getNotAssignedVariables();
+        // alles assigned? hopelijk klaar
+        if(variables.isEmpty()){
+            if(s.isConsistent()){ // klaar!
+                return s;
+            }
+            else { // jammer, vol maar fout!
+                return null;
+            }
+        }
+
+        
 
                             // TIMING //
         // revise on sudoku_training.txt
