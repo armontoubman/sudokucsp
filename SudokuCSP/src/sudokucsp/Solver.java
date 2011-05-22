@@ -19,7 +19,7 @@ class Solver {
     static boolean REVISE = true;
     static boolean HIDDENSINGLES = true;
     static boolean NAKEDPAIRS = true;
-    static boolean HIDDENPAIRS = false; // buggy
+    static boolean HIDDENPAIRS = true; // buggy
 
     //SET ORDERING
     static boolean ORDERVARIABLES = true; // if false, no heuristics
@@ -97,17 +97,12 @@ class Solver {
          * is inefficient. Enkel degene die affected zijn! (Dat is AC3 ipv AC2)
          * zie: http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
          */
-
+/*
         boolean removing = true; //Initiate loop
         while(removing){ // While revise has removed values
             removing = s.revise(); // revise (again)
         }
-        //System.out.println(s);
-        //COUNT EFFECTIVENESS
-        revise += s.count_revise;
-        hSingle += s.count_hSingle;
-        nPair += s.count_nPair;
-        hPair += s.count_hPair;
+*/
 
         // pak een variable die nog niet assigned is
         HashMap<Integer, ArrayList<Integer>> variables = s.getNotAssignedVariables();
@@ -120,7 +115,44 @@ class Solver {
                 return null;
             }
         }
+
+        // Instead of while-ing our revise, we apply smart-revising: revise2.
+        //TODO zorgen dat revise2 logischerwijs wel sneller is dan revise
+        ArrayList<Integer> keyset = new ArrayList<Integer>(variables.keySet());
+        ArrayList<Integer> returnset = new ArrayList<Integer>();
+        returnset.addAll(keyset);
+        while(!returnset.isEmpty()){ //Until no cells are revised anymore
+            //System.out.println("Previous Input: "+returnset);
+            returnset = s.revise2(keyset); //Revise the current crop
+            //System.out.println("Revised: "+returnset);
+            returnset = s.affected(returnset); //Add revised cell's row/col/reg
+            //System.out.println("Next Input: "+returnset);
+        }
+
+                            // TIMING //
+        // revise on sudoku_training.txt
+            //31 & 33 seconds
+        // revise2 on sudoku_training.txt
+            //37 & 36 seconds with old affected (revise affected ones)
+            //34 & 35 seconds with updated affected (revise affected ones)
+            //34 & 31 seconds without affected, with returnset (revise a subset)
+            //31 & 32 seconds without affected, with keyset ( == revise)
+        // revise on top95.txt
+            //12 & 11 seconds
+        // revise2 on top95.txt
+            //14 & 14 seconds with old affected (revise affected ones)
+            //14 & 13 seconds with updated affected (revise affected ones)
+            //13 & 14 seconds without affected, with returnset (revise a subset)
+            //11 & 12 seconds without affected, with keyset ( == revise)
+        // ERGO: implementation of retrieving affected cells is slower than just repeating it for all
         
+    
+        //COUNT EFFECTIVENESS
+        revise += s.count_revise;
+        hSingle += s.count_hSingle;
+        nPair += s.count_nPair;
+        hPair += s.count_hPair;
+
         int c;
         if(ORDERVARIABLES)
         {

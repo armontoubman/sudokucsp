@@ -1048,5 +1048,235 @@ class Sudoku {
         
         return delete;
     }
+    /**
+     * Revise2, less repeating, more to the point!
+     * New point:
+     * Don't just ask 'did you?' but ask 'what did you do?'.
+     * Showing more interest is always a plus.
+     * @return ArrayList<Integer> : what cells have been revised?
+     */
+    ArrayList<Integer> revise2(ArrayList<Integer> cells){
+        boolean delete = false;
+        ArrayList<Integer> revised = new ArrayList<Integer>(); //what did we revise?
+        if(Solver.REVISE || Solver.HIDDENSINGLES || Solver.HIDDENPAIRS || Solver.NAKEDPAIRS)
+        {
+            for(int c : cells)
+            {
+                //int c = pair.getKey(); //cellNr
+                ArrayList<Integer> values = getCell(c); //possible values
+
+                if(Solver.REVISE)
+                {
+                    ArrayList<Integer> toRemove = new ArrayList<Integer>();
+                    // NORMAL REVISE:
+                    for(int v : values) //for each possible value of cell
+                    {
+                        if(!cellConsistent(v,c)) //if value is not consistent with sudoku
+                        {
+                            toRemove.add(v); //remove value
+                            delete = true;
+                        }
+                    }
+                    //COUNT EFFECTIVENESS
+                    count_revise += toRemove.size();
+                    
+                    for(int i : toRemove)
+                    {
+                        values.remove(values.indexOf(i));
+                    }
+                    setCell(c,values); //Once again needed!
+
+                }
+                if(values.size()==0){ //Sudoku is faulty, stop now
+                    break;//will also stop the while if false.
+                }
+
+                 //HIDDEN SINGLE:
+                 //Don't use techniques on newly created givens
+                if(Solver.HIDDENSINGLES && values.size() > 1)
+                {
+                    if(hiddenSingle(c,values)){
+                        delete = true; //revise did something
+                        //makes values consistent again
+                        values = getCell(c);
+                    }
+                }
+                if(Solver.NAKEDPAIRS && values.size() > 1)
+                {
+                    if(nakedPairs(c,values)){
+                        delete = true;
+                        values = getCell(c);
+                    }
+                }
+                if(Solver.HIDDENPAIRS && values.size() > 1)
+                {
+                    if(hiddenPairs(c,values)){
+                        delete = true;
+                    }
+                }
+                
+                if(delete){//if something has been removed
+                    //The cell has been revised:
+                   revised.add(c);
+                }
+            }
+        }
+        //returned of revise iets gedaan heeft, is handig in een while.
+        return revised;
+    }
+
+    /**
+     * Return all cells that could be affected by changes in the given cells
+     * @param cells
+     * @return
+     */
+    ArrayList<Integer> affected(ArrayList<Integer> cells){
+        ArrayList<Integer> returnset = new ArrayList<Integer>();
+
+        for(int c : cells){ //Check all cells individually:
+
+            //Retrieve all unassigned cells in current cell's row/col/reg:
+            HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(c);
+            HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(c);
+            HashMap<Integer, ArrayList<Integer>> reg = getNotAssignedInReg(c);
+            //Add these to the returnset
+            returnset.addAll(row.keySet());
+            returnset.addAll(col.keySet());
+            returnset.addAll(reg.keySet());
+    
+   /*
+            //Retrieve all unassigned cells in current cell's row/col/reg:
+            ArrayList<Integer> row = getNotAssignedInGeneral2(getRow2(c));
+            ArrayList<Integer> col = getNotAssignedInGeneral2(getCol2(c));
+            ArrayList<Integer> reg = getNotAssignedInGeneral2(getReg2(c));
+            //Add these to the returnset
+            returnset.addAll(row);
+            returnset.addAll(col);
+            returnset.addAll(reg);
+   */
+        }
+
+        return GetUniqueValues(returnset);
+    }
+
+    /**
+     * From: http://code.hammerpig.com/fast-way-to-get-all-unique-values-from-a-list-in-java.html
+     * Takes the Union of two collections.
+     * @param coll1
+     * @param coll2
+     * @return union : ArrayList
+     */
+    public static Collection Union(Collection coll1, Collection coll2)
+    {
+        Set union = new HashSet(coll1);
+        union.addAll(new HashSet(coll2));
+        return new ArrayList(union);
+    }
+
+    /**
+     * From: http://code.hammerpig.com/fast-way-to-get-all-unique-values-from-a-list-in-java.html
+     * Returns the union of one collection with itself. This makes the list unique.
+     * E.G.:
+     * ArrayList x = new ArrayList();
+     * x.add("abc");
+     * x.add("abc");
+     * x.add("abc");
+     * x.add("def");
+     * x.add("def");
+     * x.add("ghi");
+     * for (Object y : s.GetUniqueValues(x))    System.out.println(y);
+     *
+     * @param values
+     * @return values (subset of initial values)
+     */
+    public static ArrayList GetUniqueValues(Collection values)
+    {
+        return (ArrayList)Union(values, values);
+    }
+
+    /*
+     * Updated versie: don't return values
+     * Returned de row waar de huidige cell in voorkomt
+     * @param c cellNr
+     * @return srow lijst met cellNrs uit de row
+     */
+    ArrayList<Integer> getRow2(int c)
+    {
+
+        /* NOG NOG NIEUWERE METHODE */
+        int target = getRowNrFromCellNr(c);
+        //HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i=11; i<100; i++)
+        {
+            if(Sudoku.ROWS[i] == target)
+            {
+                //result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    /*
+     * Updated versie: don't return values
+     * Returned de col waar de huidige cell in voorkomt
+     * @param c cellNr
+     * @return scol lijst met cellNrs uit de col
+     */
+    ArrayList<Integer> getCol2(int c)
+    {
+        /* NOG NOG NIEUWERE METHODE */
+        int target = getColNrFromCellNr(c);
+        //HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i=11; i<100; i++)
+        {
+            if(Sudoku.COLS[i] == target)
+            {
+                //result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Updated versie: don't return values
+     * Returned de 3by3 region waar de huidige cell in voorkomt
+     * @param c : cellNr
+     * @return sreg : lijst met cellNrs uit de region
+     */
+    ArrayList<Integer> getReg2(int c){
+
+        /* NOG NOG NIEUWERE METHODE */
+        int target = getRegNrFromCellNr(c);
+        //HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i=11; i<100; i++)
+        {
+            if(Sudoku.REGS[i] == target)
+            {
+                //result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+   ArrayList<Integer> getNotAssignedInGeneral2(ArrayList<Integer> context)
+    {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i : context)
+        {
+            if(getCell(i).size() > 1)
+            {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+
 	
 }
