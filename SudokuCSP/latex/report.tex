@@ -64,7 +64,7 @@ Assignment 2: Sudoku as a CSP}
 
 \section{Introduction}
 
-vermelden dat we optimizations gaan vergelijken
+The popular Sudoku puzzle can be seen as a Constraint Satisfaction Problem (CSP). For this assignment, we will implement a CSP solver for solving Sudoku puzzles, including optimizations specifically for Sudokus. ***********Section X gives a short introduction to Sudokus as CSPs. Section X describes the solving algorithm we used. The optimizations we used are explained in section X. In section X we compare the effectiveness of the optimizations. Finally, section X concludes this report.*************%aanpassen natuurlijk
 
 Hier een Sudoku template indien nodig:
 
@@ -82,15 +82,50 @@ Hier een Sudoku template indien nodig:
 
 \section{Sudoku as a Constraint Satisfaction Problem}
 
-blabla
+A completed (9x9) Sudoku puzzle has the numbers 1 to 9 appearing exactly once in every row, column and region. We can make the following translation from Sudoku to CSP:
+\begin{itemize}
+\item Variables: Not-assigned cells of a Sudoku. In other words: cells we are not sure about.
+\item Assignment: Cells with assigned values.
+\item Constraints: As just stated,  the numbers 1 to 9 appearing exactly once in every row, column and region.
+\item Domains of the variables: At the start, the possible values of not-assigned cells are 1 to 9.
+\item Consistency: An assignment is consistent if the same value does not appear more than once per row, column and region.
+\item Termination: A solution is complete if there are no variables (empty cells) left. Provided the initial problem is valid, the solving process should always terminate succesfully.
+\end{itemize}
 
-\subsection{The Backtracking Algorithm}
+\section{The Backtracking Algorithm}
 
 We used the backtracking algorithm as described in the assignment description.
 
-\subsection{Optimizations}
+\begin{verbatim}
+procedure BT(X:variables, V:assignment, C:constraints)
+    if X={} then return V
+    x := select a not-yet assigned variable from X
+    for each value h from the domain of x do
+        if consistent(V+{x/h}, C) then
+            R := BT(X-{x}, V+{x/h}, C)
+        if R != fail then return R
+    end for
+    return fail
+end BT
+\end{verbatim}
 
-Revise, hidden singles, blabla
+In short, this algorithm takes a cell that is not yet assigned a value, and for each value in its domain creates a new branch in the search tree. The branches recursively create their own branches, forming a search tree. The tree is searched depth-first for a solution. The algorithm terminates if either a solution is found, or no solution exists in the search tree.
+
+\section{Optimizations}
+
+The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). However, because we know the constraints, we can rule out complete branches of the search tree at early stages. There are also specific Sudoku solving techniques that help rule out possible values. Pruning the search tree with these methods way results in a smaller search space and therefore lower runtimes of the solver. In this section we describe the pruning methods we used.
+
+\subsection{Revise}
+
+Our Revise method is a version of the AC-XXX method as described in X. It works as follows: When a value is assigned to a cell, because in a completed Sudoku each value should appear exactly once in each row, column and region, we can rule out the assigned value as a possibility for the other cells in its row, column and region. It is possible that this method implicitly creates a new assignment by ruling out a value from the domain of a cell with only two values left. Because of this, we apply the Revise method until no more changes are made. For efficiency, after the first revision, the Revise method only checks cells that could have been affected by the previous revision.
+
+This method is capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, as we experienced with certain Sudokus in our testset.
+
+\subsection{Hidden Singles}
+
+\subsection{Naked Pairs}
+
+\subsection{Hidden Pairs}
 
 \section{Implementation}
 
