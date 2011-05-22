@@ -553,10 +553,14 @@ class Sudoku {
      */
     int getNrConstraints(int c){
 
-        //Tjek vanuit deze cell
+        /*Tjek vanuit deze cell
         HashMap<Integer, ArrayList<Integer>> row = getAssignedInRow(c);
         HashMap<Integer, ArrayList<Integer>> col = getAssignedInCol(c);
         HashMap<Integer, ArrayList<Integer>> reg = getAssignedInReg(c);
+        */
+        ArrayList<Integer> row = getAssignedInGeneral2(getRow2(c));
+        ArrayList<Integer> col = getAssignedInGeneral2(getCol2(c));
+        ArrayList<Integer> reg = getAssignedInGeneral2(getReg2(c));
         
         return 0 + row.size() + col.size() + reg.size();
 
@@ -1134,7 +1138,7 @@ class Sudoku {
         ArrayList<Integer> returnset = new ArrayList<Integer>();
 
         for(int c : cells){ //Check all cells individually:
-
+/*
             //Retrieve all unassigned cells in current cell's row/col/reg:
             HashMap<Integer, ArrayList<Integer>> row = getNotAssignedInRow(c);
             HashMap<Integer, ArrayList<Integer>> col = getNotAssignedInCol(c);
@@ -1143,8 +1147,8 @@ class Sudoku {
             returnset.addAll(row.keySet());
             returnset.addAll(col.keySet());
             returnset.addAll(reg.keySet());
-    
-   /*
+    */
+   
             //Retrieve all unassigned cells in current cell's row/col/reg:
             ArrayList<Integer> row = getNotAssignedInGeneral2(getRow2(c));
             ArrayList<Integer> col = getNotAssignedInGeneral2(getCol2(c));
@@ -1153,7 +1157,7 @@ class Sudoku {
             returnset.addAll(row);
             returnset.addAll(col);
             returnset.addAll(reg);
-   */
+   
         }
     return new ArrayList(new HashSet(returnset));
     }
@@ -1234,6 +1238,19 @@ class Sudoku {
         for(int i : context)
         {
             if(getCell(i).size() > 1)
+            {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+   ArrayList<Integer> getAssignedInGeneral2(ArrayList<Integer> context)
+    {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i : context)
+        {
+            if(getCell(i).size() == 1)
             {
                 result.add(i);
             }
