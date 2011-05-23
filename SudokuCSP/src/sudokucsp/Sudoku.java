@@ -18,6 +18,10 @@ class Sudoku {
     static final int ROWS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,1,0, 2,2,2,2,2,2,2,2,2,0, 3,3,3,3,3,3,3,3,3,0, 4,4,4,4,4,4,4,4,4,0, 5,5,5,5,5,5,5,5,5,0, 6,6,6,6,6,6,6,6,6,0, 7,7,7,7,7,7,7,7,7,0, 8,8,8,8,8,8,8,8,8,0, 9,9,9,9,9,9,9,9,9,0 };
     static final int COLS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0, 1,2,3,4,5,6,7,8,9,0 };
     static final int REGS[] = {0, 0,0,0,0,0,0,0,0,0,0, 1,1,1,2,2,2,3,3,3,0, 1,1,1,2,2,2,3,3,3,0, 1,1,1,2,2,2,3,3,3,0, 4,4,4,5,5,5,6,6,6,0, 4,4,4,5,5,5,6,6,6,0, 4,4,4,5,5,5,6,6,6,0, 7,7,7,8,8,8,9,9,9,0, 7,7,7,8,8,8,9,9,9,0, 7,7,7,8,8,8,9,9,9,0 };
+    
+    static final int ROWS2[][] = { {}, {11,12,13,14,15,16,17,18,19}, {21,22,23,24,25,26,27,28,29}, {31,32,33,34,35,36,37,38,39}, {41,42,43,44,45,46,47,48,49}, {51,52,53,54,55,56,57,58,59}, {61,62,63,64,65,66,67,68,69}, {71,72,73,74,75,76,77,78,79}, {81,82,83,84,85,86,87,88,89}, {91,92,93,94,95,96,97,98,99} };
+    static final int COLS2[][] = { {}, {11,21,31,41,51,61,71,81,91}, {12,22,32,42,52,62,72,82,92}, {13,23,33,43,53,63,73,83,93}, {14,24,34,44,54,64,74,84,94}, {15,25,35,45,55,65,75,85,95}, {16,26,36,46,56,66,76,86,96}, {17,27,37,47,57,67,77,87,97}, {18,28,38,48,58,68,78,88,98}, {19,29,39,49,59,69,79,89,99} };
+    static final int REGS2[][] = { {}, {11,12,13,21,22,23,31,32,33}, {14,15,16,24,25,26,34,35,36}, {17,18,19,27,28,29,37,38,39}, {41,42,43,51,52,53,61,62,63}, {44,45,46,54,55,56,64,65,66}, {47,48,49,57,58,59,67,68,69}, {71,72,73,81,82,83,91,92,93}, {74,75,76,84,85,86,94,95,96}, {77,78,79,87,88,89,97,98,99} };
 
     //COUNT EFFECTIVENESS
     int count_revise = 0;
@@ -303,7 +307,7 @@ class Sudoku {
         }
         return result;
         */
-        /* NOG NIEUWERE METHODE */
+        /* NOG NIEUWERE METHODE
         int target = getRowNrFromCellNr(c);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(int i=11; i<100; i++)
@@ -311,7 +315,17 @@ class Sudoku {
             if(Sudoku.ROWS[i] == target)
             {
                 result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
+                if(result.size() == 9) break;
             }
+        }
+        return result;
+        */
+        int target = getRowNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        int[] cells = ROWS2[target];
+        for(int i : cells)
+        {
+            result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
         }
         return result;
     }
@@ -347,7 +361,7 @@ class Sudoku {
         }
         return result;
         */
-        /* NOG NIEUWERE METHODE */
+        /* NOG NIEUWERE METHODE 
         int target = getColNrFromCellNr(c);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(int i=11; i<100; i++)
@@ -355,7 +369,17 @@ class Sudoku {
             if(Sudoku.COLS[i] == target)
             {
                 result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
+                if(result.size() == 9) break;
             }
+        }
+        return result;
+        */
+        int target = getColNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        int[] cells = COLS2[target];
+        for(int i : cells)
+        {
+            result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
         }
         return result;
     }
@@ -419,7 +443,7 @@ class Sudoku {
         }
         return result;
         */
-        /* NOG NIEUWERE METHODE */
+        /* NOG NIEUWERE METHODE 
         int target = getRegNrFromCellNr(c);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         for(int i=11; i<100; i++)
@@ -427,7 +451,17 @@ class Sudoku {
             if(Sudoku.REGS[i] == target)
             {
                 result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
+                if(result.size() == 9) break;
             }
+        }
+        return result;
+        */
+        int target = getRegNrFromCellNr(c);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
+        int[] cells = REGS2[target];
+        for(int i : cells)
+        {
+            result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
         }
         return result;
     }
@@ -474,12 +508,17 @@ class Sudoku {
     boolean onlyAppearsOnceInRange(int v, HashMap<Integer, ArrayList<Integer>> range)
     {
         int count = 0;
-        for(ArrayList<Integer> vs : range.values())
+        /*for(ArrayList<Integer> vs : range.values())
         {
             for(int i : vs)
             {
                 if(i == v && vs.size() == 1) { count++; }
             }
+        }*/
+        for(ArrayList<Integer> vs : range.values())
+        {
+            if(vs.contains(v) && vs.size() == 1) { count++; }
+            if(count > 1) return false;
         }
         return count == 1;
     }
@@ -493,12 +532,16 @@ class Sudoku {
     {
         
         //int count = 0;
-        for(ArrayList<Integer> vs : range.values())
+        /*for(ArrayList<Integer> vs : range.values())
         {
             for(int i : vs)
             {
                 if(i == v && vs.size() == 1) { return true; }
             }
+        }*/
+        for(ArrayList<Integer> vs : range.values())
+        {
+            if(vs.contains(v) && vs.size() == 1) { return true; }
         }
         return false;
     }
@@ -1171,7 +1214,7 @@ class Sudoku {
     ArrayList<Integer> getRow2(int c)
     {
 
-        /* NOG NOG NIEUWERE METHODE */
+        /* NOG NOG NIEUWERE METHODE 
         int target = getRowNrFromCellNr(c);
         //HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         ArrayList<Integer> result = new ArrayList<Integer>();
@@ -1181,7 +1224,16 @@ class Sudoku {
             {
                 //result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
                 result.add(i);
+                if(result.size() == 9) break;
             }
+        }
+        return result;
+        */
+        int target = getRowNrFromCellNr(c);
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i : ROWS2[target])
+        {
+            result.add(i);
         }
         return result;
     }
@@ -1194,7 +1246,7 @@ class Sudoku {
      */
     ArrayList<Integer> getCol2(int c)
     {
-        /* NOG NOG NIEUWERE METHODE */
+        /* NOG NOG NIEUWERE METHODE 
         int target = getColNrFromCellNr(c);
         //HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         ArrayList<Integer> result = new ArrayList<Integer>();
@@ -1204,7 +1256,16 @@ class Sudoku {
             {
                 //result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
                 result.add(i);
+                if(result.size() == 9) break;
             }
+        }
+        return result;
+        */
+        int target = getColNrFromCellNr(c);
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i : COLS2[target])
+        {
+            result.add(i);
         }
         return result;
     }
@@ -1217,7 +1278,7 @@ class Sudoku {
      */
     ArrayList<Integer> getReg2(int c){
 
-        /* NOG NOG NIEUWERE METHODE */
+        /* NOG NOG NIEUWERE METHODE 
         int target = getRegNrFromCellNr(c);
         //HashMap<Integer, ArrayList<Integer>> result = new HashMap<Integer, ArrayList<Integer>>();
         ArrayList<Integer> result = new ArrayList<Integer>();
@@ -1227,7 +1288,16 @@ class Sudoku {
             {
                 //result.put(i, new ArrayList<Integer>(this.assignment.get(i)));
                 result.add(i);
+                if(result.size() == 9) break;
             }
+        }
+        return result;
+        */
+        int target = getRegNrFromCellNr(c);
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i : REGS2[target])
+        {
+            result.add(i);
         }
         return result;
     }
