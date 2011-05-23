@@ -29,6 +29,16 @@ class Sudoku {
     int count_nPair = 0;
     int count_hPair = 0;
     
+    Sudoku()
+    {
+        
+    }
+    
+    void init(String input)
+    {
+        this.assignment = textToAssignment(input);
+    }
+    
     /**
      * Constructor
      * @see textToAssignment

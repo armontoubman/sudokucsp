@@ -61,6 +61,7 @@ class Main {
         
         BufferedReader in = null;
         BufferedWriter out = null;
+        Sudoku sudoku = new Sudoku();
         try {
             in = new BufferedReader(new FileReader(args[0]));
             out = new BufferedWriter(new FileWriter(args[1]));
@@ -72,7 +73,7 @@ class Main {
                 {
                     if(Solver.PRINT) System.out.println(i);
 
-                    Sudoku sudoku = new Sudoku(line);
+                    sudoku.init(line);
                     sudoku = Solver.solve(sudoku);
                     System.out.println("end_revise: "+Solver.revise);
                     System.out.println("end_hSingle: "+Solver.hSingle);
