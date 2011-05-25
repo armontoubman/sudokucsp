@@ -47,6 +47,44 @@ class Timer {
       /* gedaan
         //
         Solver.HIDDENSINGLES = true;
+        Solver.HEURISTIC1 = true;
+        test("rv_hs_h1");
+        
+        //
+        Solver.HEURISTIC1 = false;
+        Solver.HEURISTIC3 = true;
+        test("rv_hs_h3");
+        
+        //
+        Solver.HEURISTIC3 = false;
+        Solver.HEURISTIC13 = true;
+        test("rv_hs_h13");
+      */
+        // top95_rv_hs_h3=48.22889132033333, training_rv_hs_h1=29.734570621, top95_rv_hs_h1=49.521653201, top95_rv_hs_h13=51.78545695633333, training_rv_hs_h3=29.912008605, training_rv_hs_h13=29.857984153
+        
+      /* gedaan
+        //
+        test("rv");
+        
+        //
+        Solver.HEURISTIC1 = true;
+        test("rv_h1");
+        
+        //
+        Solver.HEURISTIC1 = false;
+        Solver.HEURISTIC3 = true;
+        test("rv_h3");
+        
+        //
+        Solver.HEURISTIC3 = false;
+        Solver.HEURISTIC13 = true;
+        test("rv_h13");
+      */
+        // {top95_rv=6924.5242909, training_rv_h13=540.58733985, top95_rv_h1=7023.125097676, top95_rv_h13=7011.893442942, training_rv_h1=532.882686773, training_rv_h3=543.003054551, training_rv=536.094290474, top95_rv_h3=7060.009184544}
+        
+      /* gedaan
+        //
+        Solver.HIDDENSINGLES = true;
         Solver.NAKEDPAIRS = true;
         Solver.HIDDENPAIRS = true;
         test("rv_hs_hp_np");
