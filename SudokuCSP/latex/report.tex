@@ -171,6 +171,24 @@ x & x & x & 9m1s & 1h56m52s \\ % training_rv_h13=540.58733985, top95_rv_h13=7011
 \caption{The runtimes of our program using two different Sudoku sets with only the revise algorithm and no, one or both heuristics enabled. These results are from a single run.}
 \end{table}
 
+% , , 
+
+\begin{table}
+\begin{center}
+\begin{tabular}{c c c c c c}
+\hline
+ Revise & Hidden Singles & Heuristic 1 & Heuristic 3 & sudoku\_training & top95 \\
+\hline
+x & x &  &  & 29s & 47s \\ % training_rv_hs=29.234435128, top95_rv_hs=47.415598335
+x & x & x &  & 29s & 50s \\ % training_rv_hs_h1=29.734570621, top95_rv_hs_h1=49.521653201
+x & x &  & x & 30s & 48s \\ % training_rv_hs_h3=29.912008605, top95_rv_hs_h3=48.22889132033333
+x & x & x & x & 29s & 52s \\ % training_rv_hs_h13=29.857984153, top95_rv_hs_h13=51.78545695633333
+\hline
+\end{tabular}
+\end{center}
+\caption{The runtimes of our program using two different Sudoku sets with only the revise algorithm and the hidden singles algorithm and no, one or both heuristics enabled. The times were averaged over three runs.}
+\end{table}
+
 \section{Conclusion}
 
 \end{document}
