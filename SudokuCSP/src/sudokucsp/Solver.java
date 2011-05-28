@@ -76,27 +76,6 @@ class Solver {
     static Sudoku bt(Sudoku s, int depth)
     {
 
-                /**
-         * first eliminate impossible strategies
-         * TODO (NOT DONE) maak hier AC-3 van ipv AC-2 (dus ipv "while revise")
-         *
-         * procedure AC-3
-         *  Q <- {(Vi,Vj) in arcs(G),i#j};
-         *  while not Q empty
-         *      select and delete any arc (Vk,Vm) from Q;
-         *      if REVISE(Vk,Vm) then
-         *          Q <- Q union {(Vi,Vk) such that (Vi,Vk) in arcs(G),i#k,i#m}
-         *      endif
-         *  endwhile
-         * end AC-3
-         *
-         * Het punt van AC-3 vergeleken met gewone revise, is dat als je 1x
-         * revise toepast, dat er dan nieuwe 'givens' bij komen eigenlijk.
-         * Dus, dan moet je eigenlijk herhaal revisen tot er nix meer is
-         * veranderd. Nou moet je niet elke variabele dubbel gaan revisen, dat
-         * is inefficient. Enkel degene die affected zijn! (Dat is AC3 ipv AC2)
-         * zie: http://kti.mff.cuni.cz/~bartak/constraints/consistent.html
-         */
 /*
         boolean removing = true; //Initiate loop
         while(removing){ // While revise has removed values
@@ -129,27 +108,7 @@ class Solver {
                 return null;
             }
         }
-
-        
-
-                            // TIMING //
-        // revise on sudoku_training.txt
-            //31 & 33 seconds
-        // revise2 on sudoku_training.txt
-            //37 & 36 seconds with old affected (revise affected ones)
-            //34 & 35 seconds with updated affected (revise affected ones)
-            //34 & 31 seconds without affected, with returnset (revise a subset)
-            //31 & 32 seconds without affected, with keyset ( == revise)
-        // revise on top95.txt
-            //12 & 11 seconds
-        // revise2 on top95.txt
-            //14 & 14 seconds with old affected (revise affected ones)
-            //14 & 13 seconds with updated affected (revise affected ones)
-            //13 & 14 seconds without affected, with returnset (revise a subset)
-            //11 & 12 seconds without affected, with keyset ( == revise)
-        // ERGO: implementation of retrieving affected cells is slower than just repeating it for all
-        
-    
+   
         //COUNT EFFECTIVENESS
         revise += s.count_revise;
         hSingle += s.count_hSingle;

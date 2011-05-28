@@ -24,6 +24,7 @@
 % \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 
 %%% PACKAGES
+\usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption} % for nice captions
 \usepackage{booktabs} % for much better looking tables
 \usepackage{array} % for better arrays (eg matrices) in maths
 \usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
@@ -92,9 +93,19 @@ A completed (9x9) Sudoku puzzle has the numbers 1 to 9 appearing exactly once in
 \item Termination: A solution is complete if there are no variables (empty cells) left. Provided the initial problem is valid, the solving process should always terminate succesfully.
 \end{itemize}
 
-\section{The Backtracking Algorithm}
+\section{Search Algorithm}
 
-We used the backtracking algorithm as described in the assignment description.
+When we consider the Sudoku as a CSP with a sequence of variables, we can create a search tree for this CSP. Here the nodes of the tree are CSP's and the root is our starting CSP (i.e. the initial Sudoku). See also Figure~\ref{fig:basic_tree}. First constraint propogation is applied to the current CSP. Then, if the resulting CSP is not a leaf, one of its variables is split up. For every value in its domain, a new child will be added to the tree. This process contintues until the leaf is a correct solution (i.e. all variables are instantiated and adhere to the constraints).
+
+\begin{figure}
+\includegraphics{tree.png}
+\caption{Example of a CSP search tree. From Constraint Programming - lecture 3 (CSP) Algorithms. }
+\label{fig:basic_tree}
+\end{figure}
+
+\subsection{The Backtracking Algorithm}
+
+For creation and traversal of our Search Tree, we started with the backtracking algorithm as described in the assignment description.
 
 \begin{verbatim}
 procedure BT(X:variables, V:assignment, C:constraints)
@@ -111,21 +122,21 @@ end BT
 
 In short, this algorithm takes a cell that is not yet assigned a value, and for each value in its domain creates a new branch in the search tree. The branches recursively create their own branches, forming a search tree. The tree is searched depth-first for a solution. The algorithm terminates if either a solution is found, or no solution exists in the search tree.
 
-\section{Optimizations}
+\subsection{Optimizations}
 
 The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). However, because we know the constraints, we can rule out complete branches of the search tree at early stages. There are also specific Sudoku solving techniques that help rule out possible values. Pruning the search tree with these methods way results in a smaller search space and therefore lower runtimes of the solver. In this section we describe the pruning methods we used.
 
-\subsection{Revise}
+\subsubsection{Revise}
 
 Our Revise method is a version of the AC-XXX method as described in X. It works as follows: When a value is assigned to a cell, because in a completed Sudoku each value should appear exactly once in each row, column and region, we can rule out the assigned value as a possibility for the other cells in its row, column and region. It is possible that this method implicitly creates a new assignment by ruling out a value from the domain of a cell with only two values left. Because of this, we apply the Revise method until no more changes are made. For efficiency, after the first revision, the Revise method only checks cells that could have been affected by the previous revision.
 
 This method is capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, as we experienced with certain Sudokus in our testset.
 
-\subsection{Hidden Singles}
+\subsubsection{Hidden Singles}
 
-\subsection{Naked Pairs}
+\subsubsection{Naked Pairs}
 
-\subsection{Hidden Pairs}
+\subsubsection{Hidden Pairs}
 
 \section{Implementation}
 
