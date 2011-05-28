@@ -50,6 +50,11 @@
 \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
+%%% BIBLIOGRAPHY
+\usepackage{natbib}
+\usepackage{url}
+  
+
 %%% END Article customizations
 
 %%% The "real" document content comes below...
@@ -124,19 +129,73 @@ In short, this algorithm takes a cell that is not yet assigned a value, and for 
 
 \subsection{Optimizations}
 
-The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). However, because we know the constraints, we can rule out complete branches of the search tree at early stages. There are also specific Sudoku solving techniques that help rule out possible values. Pruning the search tree with these methods way results in a smaller search space and therefore lower runtimes of the solver. In this section we describe the pruning methods we used.
+The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). However, because we know the constraints, we can rule out complete branches of the search tree at early stages. There are also specific Sudoku solving techniques that help rule out possible values. Pruning the search tree with these methods way results in a smaller search space and therefore lower runtimes of the solver. In this section we describe the pruning methods we used, which correspond to the earlier-discussed constraint propogation.
 
-\subsubsection{Revise}
+\subsubsection{Revise / Constraint Propagation}
 
-Our Revise method is a version of the AC-XXX method as described in X. It works as follows: When a value is assigned to a cell, because in a completed Sudoku each value should appear exactly once in each row, column and region, we can rule out the assigned value as a possibility for the other cells in its row, column and region. It is possible that this method implicitly creates a new assignment by ruling out a value from the domain of a cell with only two values left. Because of this, we apply the Revise method until no more changes are made. For efficiency, after the first revision, the Revise method only checks cells that could have been affected by the previous revision.
+Also:
+maintaining arc consistency (MAC)
+. Now: local consistency notion is arcconsistency.
+. Arc consistency binary constraints:
+For every constraint C and every variable x with domain D, each
+value for x from D participates in a solution to C
+. Arc consistency:
+En revise bekijkt ook arc consistency (i.e. constraints tussen 2 variables)
 
-This method is capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, as we experienced with certain Sudokus in our testset.
+
+Our Revise method is a version of the AC-3 method as described in \citet{BartakConsistency}. It works as follows: When a value is assigned to a cell, because in a completed Sudoku each value should appear exactly once in each row, column and region, we can rule out the assigned value as a possibility for the other cells in its row, column and region. It is possible that this method implicitly creates a new assignment by ruling out a value from the domain of a cell with only two values left. Because of this, we apply the Revise method until no more changes are made. For efficiency, after the first revision, the Revise method only checks cells that could have been affected by the previous revision.
+
+This method is capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, as we experienced with multiple Sudokus in the provided testset.
 
 \subsubsection{Hidden Singles}
+
+
 
 \subsubsection{Naked Pairs}
 
 \subsubsection{Hidden Pairs}
+
+\subsubsection{Heuristics}
+
+From slides:
+Complete labeling tree
+
+ordering of variables does not differ in
+number of leaves
+
+ordering of variables does differ in number
+of nodes
+
+least number of nodes if the variables are
+ordered by their domain sizes in the
+increasing order
+
+This is a bit like one of the heuristics with the lowest nr Children first stuff.
+
+And later on:
+Heuristics for search algorithms
+
+Variable selection
+
+Select a variable with the smallest domain
+
+select a most constraint variable
+
+
+select a variable with the smallest difference between its domain bounds
+
+Heuristics for search algorithms
+
+Value selection
+
+select a value for which the heuristic function yields the hightest outcome
+
+select the smallest value
+
+select the largest value
+
+select the middle value
+
 
 \section{Implementation}
 
@@ -201,5 +260,10 @@ x & x & x & x & 29s & 52s \\ % training_rv_hs_h13=29.857984153, top95_rv_hs_h13=
 \end{table}
 
 \section{Conclusion}
+
+\nocite{BartakConsistency}
+
+\bibliographystyle{plainnat}
+\bibliography{ref}
 
 \end{document}
