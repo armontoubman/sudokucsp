@@ -950,7 +950,7 @@ class Sudoku {
     }
     
     // niet cell weghalen uit part!
-    // TODO fix hiddenPairs :'( als je m met hiddenPairs doet krijgt ie de 2e nieteens af!
+
     boolean hiddenPairsGeneral(int cellNr, ArrayList<Integer> values, HashMap<Integer, ArrayList<Integer>> part)
     {
         boolean delete = false;
@@ -1113,16 +1113,17 @@ class Sudoku {
      * @return ArrayList<Integer> : what cells have been revised?
      */
     ArrayList<Integer> revise2(ArrayList<Integer> cells){
+        boolean revise = Solver.REVISE;
+        int count = 0;
         boolean delete = false;
         ArrayList<Integer> revised = new ArrayList<Integer>(); //what did we revise?
-        if(Solver.REVISE || Solver.HIDDENSINGLES || Solver.HIDDENPAIRS || Solver.NAKEDPAIRS)
+        if(revise || Solver.HIDDENSINGLES || Solver.HIDDENPAIRS || Solver.NAKEDPAIRS)
         {
             for(int c : cells)
             {
                 //int c = pair.getKey(); //cellNr
                 ArrayList<Integer> values = getCell(c); //possible values
-
-                if(Solver.REVISE)
+                if(revise)
                 {
                     ArrayList<Integer> toRemove = new ArrayList<Integer>();
                     // NORMAL REVISE:
@@ -1136,6 +1137,7 @@ class Sudoku {
                     }
                     //COUNT EFFECTIVENESS
                     count_revise += toRemove.size();
+                    //if(delete = true) System.out.println("revise check!");
                     
                     for(int i : toRemove)
                     {
@@ -1156,29 +1158,79 @@ class Sudoku {
                         delete = true; //revise did something
                         //makes values consistent again
                         values = getCell(c);
+                        //System.out.println("hsingle check!");
                     }
+
                 }
                 if(Solver.NAKEDPAIRS && values.size() > 1)
                 {
                     if(nakedPairs(c,values)){
                         delete = true;
                         values = getCell(c);
+                        //System.out.println("npairs check!");
                     }
                 }
                 if(Solver.HIDDENPAIRS && values.size() > 1)
                 {
                     if(hiddenPairs(c,values)){
                         delete = true;
+                        values = getCell(c);
+                        //System.out.println("hpairs check!");
                     }
                 }
-                
+                /*
                 if(delete){//if something has been removed
                     //The cell has been revised:
                    revised.add(c);
+                   if(values.size()==1){
+                       //really something deleted
+                       count++;
+                       revise = true; //LOCAL
+                       Solver.REVISE = true; //GLOBAL
+                       //System.out.println("REVISE ==> TRUE");
+                   }
                 }
+                 /*deze gaat hier fout:
+                 * 125
+............1.5....43..8..2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+ ...........21.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+ ...........81.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+  ..2........81.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+  ..5........81.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+............1.5....45..8..2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+ ..........6.1.54...45..86.2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+ ..........6.1.58...45..86.2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+  ..8.......621.58...45..86.2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+138627549962145873745398612529483167473916258681752394217869435896534721354271986
+
+                  ==>
+                  * 125
+............1.5....43..8..2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+ ...........21.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+ ...........81.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+  ..2........81.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+  ..5........81.5....43..8..2..9..31...3..1....68175.3.4..7.6..3..96...7...54...986
+............1.5....45..8..2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+ ..........6.1.54...45..86.2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+ ..........6.1.58...45..86.2..9..31......1....68175.3.4..7.6..3..96...7...54...986
+                  * null
+                  */
+//                 oude:
+                if(delete){
+                   revised.add(c);
+                }
+
+                
             }
+/*
+        if(count == 0){ //none given, so no need for revision next time.
+            Solver.REVISE = false;
+            //System.out.println("REVISE ==> FALSE");
         }
-        //returned of revise iets gedaan heeft, is handig in een while.
+ * */
+        }
+
+        //return de aangepaste cellen
         return revised;
     }
 

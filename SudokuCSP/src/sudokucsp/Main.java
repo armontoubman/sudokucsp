@@ -17,7 +17,8 @@ class Main {
 
     public static void main(String[] args)
     {
-        new Main().start(args);
+        //new Main().start(args);
+        new Main().oude_start(args);
     }
 
     void start(String[] args)
@@ -149,10 +150,10 @@ class Main {
         //
         // Input lezen, solven, output schrijven
         //
-        int aantal = 2;
+        int aantal = 100;
         int i = 0;
         
-        Solver.PRINT = true;
+        //Solver.PRINT = true;
         
         BufferedReader in = null;
         BufferedWriter out = null;
@@ -170,10 +171,10 @@ class Main {
 
                     sudoku.init(line);
                     sudoku = Solver.solve(sudoku);
-                    System.out.println("end_revise: "+Solver.revise);
+                    /*System.out.println("end_revise: "+Solver.revise);
                     System.out.println("end_hSingle: "+Solver.hSingle);
                     System.out.println("end_nPair: "+Solver.nPair);
-                    System.out.println("end_hPair: "+Solver.hPair);
+                    System.out.println("end_hPair: "+Solver.hPair);*/
                     if(Solver.PRINT) System.out.println(sudoku);
                     
                     out.write(sudoku.toString());

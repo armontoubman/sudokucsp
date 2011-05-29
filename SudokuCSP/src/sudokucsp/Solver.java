@@ -13,7 +13,8 @@ import java.util.*;
  */
 class Solver {
     
-    static boolean PRINT = false;
+    static boolean PRINT = true;
+    static boolean nietVolgendeKeer = false;
 
     //SET VALUE REMOVAL TECHNIQUES
     static boolean REVISE = true;
@@ -85,14 +86,16 @@ class Solver {
         // pak een variable die nog niet assigned is
         HashMap<Integer, ArrayList<Integer>> variables = s.getNotAssignedVariables();
         // Instead of while-ing our revise, we apply smart-revising: revise2.
-        //TODO zorgen dat revise2 logischerwijs wel sneller is dan revise
         ArrayList<Integer> keyset = new ArrayList<Integer>(variables.keySet());
         ArrayList<Integer> returnset = new ArrayList<Integer>();
         returnset.addAll(keyset);
+
+        REVISE = true; // zodat ie weer aanstaat na een foute tak.
         while(!returnset.isEmpty()){ //Until no cells are revised anymore
-            //System.out.println("Previous Input: "+returnset);
+            //System.out.println("Previous Input: "+s.assignment);
             returnset = s.revise2(keyset); //Revise the current crop
-            //System.out.println("Revised: "+returnset);
+            //System.out.println("Revised: "+s.assignment);
+            //System.out.println("return: "+returnset);
             returnset = s.affected(returnset); //Add revised cell's row/col/reg
             //System.out.println("Next Input: "+returnset);
         }

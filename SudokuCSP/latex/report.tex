@@ -31,6 +31,7 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 % These packages are all incorporated in the memoir class to one degree or another...
+\usepackage{colortbl} % adds colors to tables
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -74,9 +75,8 @@ The popular Sudoku puzzle can be seen as a Constraint Satisfaction Problem (CSP)
 
 Hier een Sudoku template indien nodig:
 \begin{table}[htbp]
-
 \caption{Example of a Sudoku. From the first line of "sudoku\_training.txt". }
-    \label{fig:SudokuStart}
+    \label{tab:sudoku_initial}
     \begin{comment}
 
     .94...13.
@@ -163,15 +163,55 @@ In short, this algorithm takes a cell that is not yet assigned a value, and for 
 
 \subsection{Optimizations}
 
-The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). To solve this, we can use constraint propagation to eliminate a lot of these branches at an early stage. There are also specific Sudoku solving techniques that help rule out possible values from certain variables' domains. Pruning the search tree with these methods way results in a smaller search space and therefore lower runtimes of the solver. In this section we describe the pruning methods we used, which correspond to the earlier-discussed constraint propagation.
+The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). To solve this, we can use constraint propagation to eliminate a lot of these branches at an early stage. There are also specific Sudoku solving techniques that help rule out possible values from certain variables' domains. Pruning the search tree with these methods results in a smaller search space and therefore lower runtimes of the solver. The idea of using these techniques corresponds to constraint propagation and its application in prop Labeling trees. In this section we describe the pruning methods we used in our implementation.
 
 \subsubsection{Constraint Propagation : Revise}
 
-Our Revise method is a version of the AC-3 method as described in \citet{BartakConsistency}. The AC-3 (AC: Arc Consistency) method checks for arc-consistency, i.e. constraints between multiple variables. The domain of chosen variables is reduced to those values that are still possible in the current solution.
-It works as follows: When a value is assigned to a cell, because in a completed Sudoku each value should appear exactly once in each row, column and region, we can rule out the assigned value as a possibility for the other cells in its row, column and region. It is possible that this method implicitly creates a new assignment by ruling out a value from the domain of a cell with only two values left. Because of this, we apply the Revise method until no more changes are made. For efficiency, after the first revision, the Revise method only checks cells that could have been affected by the previous revision.
+Our Revise method is an adjusted version of the AC-3 method as described in \citet{BartakConsistency}.
+In other sources, such as \citet{Apt2003}, constraint propagation in the form of arc consistency (AC) is called MAC (Maintaining Arc Consistency).
+The AC-3 method checks for arc-consistency, i.e. constraints between multiple variables. The method reduces the domain of all variables to those values that are still possible in the current solution.
+It works as follows: When a value is assigned to a cell, we can rule out the assigned value as a possibility for the other cells in its row, column and region. This is because in a completed Sudoku each value should appear exactly once in each row, column and region. It is possible that this method implicitly creates a new assignment by ruling out all but one value from the domain of a cell. Because of this, the Revise method is applied until no more changes are made. This would be AC-1 in \cite{BartakConsistency}. However, after a previous revision, it is more efficient when the Revise method only checks cells that could have been affected by this revision.
+
+\begin{table}[htbp]
+\caption{First row of the Sudoku in Table~\ref{tab:sudoku_initial}. Cell 11 highlighted.}
+    \label{tab:sudoku_frstrow}
+    \begin{comment}
+\{1, 2, 3, 4, 5, 6, 7, 8, 9\}
+    {11=[1, 2, 3, 4, 5, 6, 7, 8, 9], 12=[9], 13=[4], 14=[1, 2, 3, 4, 5, 6, 7, 8, 9], 15=[1, 2, 3, 4, 5, 6, 7, 8, 9], 17=[1], 16=[1, 2, 3, 4, 5, 6, 7, 8, 9], 19=[1, 2, 3, 4, 5, 6, 7, 8, 9], 18=[3]
+    \end{comment}
+    \begin{center}
+        \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+        \hline
+        \hline
+        \cellcolor[gray]{0.5} & 9 & 4 &  &  &  & 1 & 3 & \\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+As an example of the working of Revise, take the first cell of the Sudoku from Table~\ref{tab:sudoku_initial}, now shown in Table~\ref{tab:sudoku_frstrow_rev}. Similar to all other empty cells, its initial domain is \{1,2,3,4,5,6,7,8,9\}.
+However, the values \{1,3,4,9\} are already given in the first row, so if we apply Revise, the cell's domain will be reduced to \{2,5,6,7,8\}.
+In Table~\ref{tab:sudoku_frstrow_rev}, we can see the revised domains of all cells in the first row. Keep in mind that the columns and regions are also taken into account, which is why not all the empty cells in the row have the same reduced domain.
+
+\begin{table}[htbp]
+\caption{First row of the Sudoku in Table~\ref{tab:sudoku_initial}. Domains after applying Revise.}
+    \label{tab:sudoku_frstrow_rev}
+    \begin{comment}
+    {11=[2, 5, 6, 7, 8], 12=[9], 13=[4], 14=[5, 8], 15=[2, 8], 17=[1], 16=[2, 5], 19=[5, 6], 18=[3]
+    \end{comment}
+    \begin{center}
+        \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+        \hline
+        \hline
+        \{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
 
 This method is capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, as we experienced with multiple Sudokus in the provided testset.
-In other sources, constraint propagation in the form of arc consistency is called MAC (Maintaining Arc Consistency).
+
 Also:
 maintaining arc consistency (MAC)
 . Now: local consistency notion is arcconsistency.
@@ -239,7 +279,7 @@ Java blabla
 
 Zoiets:
 
-\begin{table}
+\begin{table}[htbp]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
@@ -257,9 +297,10 @@ x &  &  & x & 1m17s & 19m32s \\ % training_rv_np=76.90551903866667, top95_rv_np=
 \end{tabular}
 \end{center}
 \caption{The runtimes of our program using two different Sudoku sets with the different optimizations enabled (indicated with an x) or disabled. The times were averaged over three runs, except the revise-only trial which was only performed once.}
+\label{tab:tech_results}
 \end{table}
 
-\begin{table}
+\begin{table}[htbp]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
@@ -273,11 +314,12 @@ x & x & x & 9m1s & 1h56m52s \\ % training_rv_h13=540.58733985, top95_rv_h13=7011
 \end{tabular}
 \end{center}
 \caption{The runtimes of our program using two different Sudoku sets with only the revise algorithm and no, one or both heuristics enabled. These results are from a single run.}
+\label{tab:heur_results}
 \end{table}
 
 % , , 
 
-\begin{table}
+\begin{table}[htbp]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
@@ -291,6 +333,7 @@ x & x & x & x & 29s & 52s \\ % training_rv_hs_h13=29.857984153, top95_rv_hs_h13=
 \end{tabular}
 \end{center}
 \caption{The runtimes of our program using two different Sudoku sets with only the revise algorithm and the hidden singles algorithm and no, one or both heuristics enabled. The times were averaged over three runs.}
+\label{tab:hs+heur_results}
 \end{table}
 
 \section{Conclusion}
