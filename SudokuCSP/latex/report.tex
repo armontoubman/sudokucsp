@@ -31,7 +31,8 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 % These packages are all incorporated in the memoir class to one degree or another...
-\usepackage{colortbl} % adds colors to tables
+\usepackage[table]{xcolor} % colors for the tables
+
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -180,10 +181,9 @@ It works as follows: When a value is assigned to a cell, we can rule out the ass
     {11=[1, 2, 3, 4, 5, 6, 7, 8, 9], 12=[9], 13=[4], 14=[1, 2, 3, 4, 5, 6, 7, 8, 9], 15=[1, 2, 3, 4, 5, 6, 7, 8, 9], 17=[1], 16=[1, 2, 3, 4, 5, 6, 7, 8, 9], 19=[1, 2, 3, 4, 5, 6, 7, 8, 9], 18=[3]
     \end{comment}
     \begin{center}
-        \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \hline
-        \cellcolor[gray]{0.5} & 9 & 4 &  &  &  & 1 & 3 & \\
+        \cellcolor[gray]{0.4} & 9 & 4 &  &  &  & 1 & 3 & \\
         \hline
         \end{tabular}
     \end{center}
@@ -200,10 +200,9 @@ In Table~\ref{tab:sudoku_frstrow_rev}, we can see the revised domains of all cel
     {11=[2, 5, 6, 7, 8], 12=[9], 13=[4], 14=[5, 8], 15=[2, 8], 17=[1], 16=[2, 5], 19=[5, 6], 18=[3]
     \end{comment}
     \begin{center}
-        \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \hline
-        \{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \cellcolor{red}\{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
         \hline
         \end{tabular}
     \end{center}
@@ -215,7 +214,26 @@ This method could be capable of solving a Sudoku by itself without ever allowing
 
 The greatest influence from our constraint propagation comes from the Sudoku-specific technique 'Hidden Singles'. We have adopted the naming of all Sudoku-specific techniques from \url{learn-sudoku.com}\footnote{\url{http://www.learn-sudoku.com/basic-techniques.html}}, but \url{Brainbashers.com}\footnote{\url{http://www.brainbashers.com/sudokuhelp.asp}} has also been used to gather information.
 
+The technique works as follows: Given a constraint, such as the row of domains in Table~\ref{tab:sudoku_frstrow_rev}, look for any unique values. If a value is unique, such as the 7 in the first cell, we can deduce that this variable should be assigned this value for the constraint to hold.
+This is one of the most powerful techniques available in solving Sudokus. A succesful application of hidden singles will provide a new given value, reducing other variables' domains. As such, when this manner of constraint propagation is applied in combination with the loop of the previously discussed Revise, most of the easier Sudokus can be solved without ever branching out into a tree.
+
 \subsubsection{Naked Pairs}
+
+Naked Pairs is the third constraint propagation technique we introduce in our programme. Similarly to the previously discussed technique, we look for unique values. However, with naked pairs, we look for a combination of two values in a set of constrained variables (i.e. row,column,region).
+Take the example in Table~\ref{tab:nakedpairs}. Cells 4 and 5 of this example contain the same pair of values. This means that these values must be in these two cells and thus they can be removed from the other variables' domains. The example then provides us a lot of new givens after applying this technique.
+While it is made-up, Table~\ref{tab:nakedpairs} still shows that the technique has the potential to be a powerful constraint propagater as well. We combine it together with Revise and the other constraint propagation techniques.
+
+\begin{table}[htbp]
+    \caption{Fictional row of a Sudoku. Colored cells represent a naked pair.}
+    \label{tab:nakedpairs}
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \{2, 5, 7\} & 9 & 4 & \cellcolor{red!25!white}\{2, 5\} & \cellcolor[wave]{453}\{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 \subsubsection{Hidden Pairs}
 
