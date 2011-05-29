@@ -17,8 +17,8 @@ class Main {
 
     public static void main(String[] args)
     {
-        //new Main().start(args);
-        new Main().oude_start(args);
+        new Main().start(args);
+        //new Main().oude_start(args);
     }
 
     void start(String[] args)

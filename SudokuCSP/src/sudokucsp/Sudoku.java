@@ -1216,7 +1216,10 @@ class Sudoku {
                   * null
                   */
 //                 oude:
-                if(delete){
+//                if(delete){
+//                   revised.add(c);
+//                }
+                if(delete && values.size() == 0){
                    revised.add(c);
                 }
 
