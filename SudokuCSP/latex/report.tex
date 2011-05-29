@@ -209,21 +209,11 @@ In Table~\ref{tab:sudoku_frstrow_rev}, we can see the revised domains of all cel
     \end{center}
 \end{table}
 
-
-This method is capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, as we experienced with multiple Sudokus in the provided testset.
-
-Also:
-maintaining arc consistency (MAC)
-. Now: local consistency notion is arcconsistency.
-. Arc consistency binary constraints:
-For every constraint C and every variable x with domain D, each
-value for x from D participates in a solution to C
-. Arc consistency:
-En revise bekijkt ook arc consistency (i.e. constraints tussen 2 variables)
+This method could be capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, but it would require the simplest of Sudoku assignments.
 
 \subsubsection{Hidden Singles}
 
-
+The greatest influence from our constraint propagation comes from the Sudoku-specific technique 'Hidden Singles'. We have adopted the naming of all Sudoku-specific techniques from \url{learn-sudoku.com}\footnote{\url{http://www.learn-sudoku.com/basic-techniques.html}}, but \url{Brainbashers.com}\footnote{\url{http://www.brainbashers.com/sudokuhelp.asp}} has also been used to gather information.
 
 \subsubsection{Naked Pairs}
 
@@ -231,6 +221,7 @@ En revise bekijkt ook arc consistency (i.e. constraints tussen 2 variables)
 
 \subsubsection{Heuristics}
 
+\begin{comment}
 From slides:
 Complete labeling tree
 
@@ -269,6 +260,7 @@ select the smallest value
 select the largest value
 
 select the middle value
+\end{comment}
 
 
 \section{Implementation}
@@ -300,7 +292,7 @@ x &  &  & x & 1m17s & 19m32s \\ % training_rv_np=76.90551903866667, top95_rv_np=
 \label{tab:tech_results}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[hb]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
@@ -319,7 +311,7 @@ x & x & x & 9m1s & 1h56m52s \\ % training_rv_h13=540.58733985, top95_rv_h13=7011
 
 % , , 
 
-\begin{table}[htbp]
+\begin{table}[hb]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
