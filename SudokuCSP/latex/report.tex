@@ -73,45 +73,50 @@ Assignment 2: Sudoku as a CSP}
 The popular Sudoku puzzle can be seen as a Constraint Satisfaction Problem (CSP). For this assignment, we will implement a CSP solver for solving Sudoku puzzles, including optimizations specifically for Sudokus. ***********Section X gives a short introduction to Sudokus as CSPs. Section X describes the solving algorithm we used. The optimizations we used are explained in section X. In section X we compare the effectiveness of the optimizations. Finally, section X concludes this report.*************%aanpassen natuurlijk
 
 Hier een Sudoku template indien nodig:
+\begin{table}[htbp]
 
-\begin{center}
-\begin{tabular}{||c|c|c||c|c|c||c|c|c||}
-\hline
-\hline
- & 9 & 4 &  &  &  & 1 & 3 & \\
-\hline
- &  &  &  &  &  &  &  & \\
-\hline
- &  &  &  & 7 & 6 &  &  & 2\\
-\hline
-\hline
- & 8 &  &  & 1 &  &  &  & \\
-\hline
- & 3 & 2 &  &  &  &  &  & \\
-\hline
- &  &  & 2 &  &  &  & 6 & \\
-\hline
-\hline
- &  &  &  & 5 &  & 4 &  & \\
-\hline
- &  &  &  &  & 8 &  &  & 7\\
-\hline
- &  & 6 & 3 &  & 4 &  &  & 8\\
-\hline
-\hline
-\begin{comment}
-.94...13.
-.........
-....76..2
-.8..1....
-.32......
-...2...6.
-....5.4..
-.....8..7
-..63.4..8
-\end{comment}
-\end{tabular}
-\end{center}
+\caption{Example of a Sudoku. From the first line of "sudoku\_training.txt". }
+    \label{fig:SudokuStart}
+    \begin{comment}
+
+    .94...13.
+    .........
+    ....76..2
+    .8..1....
+    .32......
+    ...2...6.
+    ....5.4..
+    .....8..7
+    ..63.4..8
+    \end{comment}
+    \begin{center}
+        \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+        \hline
+        \hline
+         & 9 & 4 &  &  &  & 1 & 3 & \\
+        \hline
+         &  &  &  &  &  &  &  & \\
+        \hline
+         &  &  &  & 7 & 6 &  &  & 2\\
+        \hline
+        \hline
+         & 8 &  &  & 1 &  &  &  & \\
+        \hline
+         & 3 & 2 &  &  &  &  &  & \\
+        \hline
+         &  &  & 2 &  &  &  & 6 & \\
+        \hline
+        \hline
+         &  &  &  & 5 &  & 4 &  & \\
+        \hline
+         &  &  &  &  & 8 &  &  & 7\\
+        \hline
+         &  & 6 & 3 &  & 4 &  &  & 8\\
+        \hline
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 \section{Sudoku as a Constraint Satisfaction Problem}
 
@@ -129,7 +134,7 @@ A completed (9x9) Sudoku puzzle has the numbers 1 to 9 appearing exactly once in
 
 When we consider the Sudoku as a CSP with a sequence of variables, we can create a search tree for this CSP. Here the nodes of the tree are CSP's and the root is our starting CSP (i.e. the initial Sudoku). See also Figure~\ref{fig:basic_tree}. First constraint propagation is applied to the current CSP. Then, if the resulting CSP is not a leaf, one of its variables is split up. For every value in its domain, a new child will be added to the tree. This process contintues until the leaf is a correct solution (i.e. all variables are instantiated and adhere to the constraints).
 
-\begin{figure}
+\begin{figure}[htbp]
 \begin{center}
 \includegraphics{tree.png}
 \caption{Example of a CSP search tree. From Constraint Programming - lecture 3 (CSP) Algorithms. }
