@@ -133,16 +133,161 @@
 
 \begin{frame}{CSP as tree}
 
-  \begin{figure}[htbp]
+\begin{figure}[htbp]
+
 \begin{center}
 \includegraphics{tree.png}
-\caption{Example of a CSP search tree. From Constraint Programming - lecture 3 (CSP) Algorithms. }
-\label{fig:basic_tree}
 \end{center}
+
 \end{figure}
 
 \end{frame}
 
+\section{Experiment}
+%%% Torec stuff
+\subsection[Techniques]{Techniques}
+
+\begin{frame}{Tree search}
+
+Basic Depth-First Backtracking algorithm from Assignment description.
+
+\end{frame}
+
+\begin{frame}{Constraint propagation}
+
+\begin{itemize}
+\item General
+    \begin{itemize}
+    \item Revise
+    \end{itemize}
+\item Specific
+    \begin{itemize}
+    \item Hidden Singles
+    \item Naked Pairs
+    \item Hidden Pairs
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Revise}
+
+\begin{itemize}
+\item Arc consistency
+\begin{itemize}
+    \item Check constraints between multiple variables
+\end{itemize}
+\item Revise
+\begin{itemize}
+    \item Remove incompatible values from domains
+\end{itemize}
+\item AC-3
+\begin{itemize}
+    \item Repeat revise (intelligently) until there is no more domain reduction
+\end{itemize}
+\end{itemize}
+
+\begin{table}[htbp]
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}\{1, 2, 3, 4, 5, 6, 7, 8, 9\} & 9 & 4 &  &  &  & 1 & 3 & \\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[htbp]
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Hidden Singles}
+\begin{table}[htbp]
+
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+\begin{table}
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}7 & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+\end{frame}
+
+\begin{frame}{Naked Pairs}
+
+\begin{table}[htbp]
+
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \{2, 5, 7\} & 9 & 4 & \cellcolor[gray]{0.7}\{2, 5\} & \cellcolor[gray]{0.7}\{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[htbp]
+
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}7 & 9 & 4 & \{2, 5\} & \{2, 5\} & \cellcolor[gray]{0.7} 6 & 1 & 3 & \cellcolor[gray]{0.7} 8\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+\end{frame}
+
+\begin{frame}{Hidden Pairs}
+\begin{table}[htbp]
+
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[htbp]
+
+    \begin{center}
+
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[gray]{0.7}\{7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \cellcolor[gray]{0.7}\{7, 8\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{frame}
+
+%%% Armon stuff
+\subsection[Results]{Results}
 \begin{frame}{Results: Optimizations}
 
 \begin{table}
@@ -236,6 +381,15 @@ x & x & x & x & \cellcolor{red!50}{26s} & \cellcolor{red!50}{26s} \\ % training_
 
 \end{frame}
 
+\section{Conclusions}
+
+\begin{frame}
+\begin{itemize}
+\item Conclusie 1 ...
+\item Conclusie 2 ...
+\item Conclusie 3 ...
+\end{itemize}
+\end{frame}
 
 \end{document}
 
