@@ -145,7 +145,7 @@ When we consider the Sudoku as a CSP with a sequence of variables, we can create
 
 \subsection{The Backtracking Algorithm}
 
-For creation and traversal of our Search Tree, we started with the backtracking algorithm as described in the assignment description.
+For creation and traversal of our Search Tree, we started with the backtracking algorithm as described in the assignment description and shown in Figure~\ref{code:BT}.
 
 \begin{figure}
 \begin{verbatim}
@@ -224,7 +224,7 @@ This is one of the most powerful techniques available in solving Sudokus. A succ
 \subsubsection{Constraint Propagation : Naked Pairs}
 
 Naked Pairs is the third constraint propagation technique we introduce in our programme. Similarly to the previously discussed technique, we look for values that are only possible in certain cells. However, with naked pairs, we look for a combination of two values in a set of constrained variables (i.e. row,column,region).
-Take the example in Table~\ref{tab:nakedpairs}. Cells 4 and 5 of this example contain the same pair of values. This means that these values must be in these two cells and thus they can be removed from the other variables' domains. The example then provides us a lot of new givens after applying this technique.
+Take the example in Table~\ref{tab:nakedpairs}. Cells 4 and 5 of this example contain the same pair of values. This means that these values must be in these two cells and thus they can be removed from the other variables' domains. The example then provides us a lot of new givens after applying this technique, shown in Table~\ref{tab:nakedpairs_after}.
 While it is made-up, Table~\ref{tab:nakedpairs} still shows that the technique has the potential to be a powerful constraint propagater as well. We combine it together with Revise and the other constraint propagation techniques.
 
 \begin{table}[htbp]
@@ -239,10 +239,22 @@ While it is made-up, Table~\ref{tab:nakedpairs} still shows that the technique h
     \end{center}
 \end{table}
 
+\begin{table}[htbp]
+    \caption{Fictional row of a Sudoku. Corresponds to Table~\ref{tab:nakedpairs} after application of the naked pairs technique.}
+    \label{tab:nakedpairs_after}
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor{red!75!white}7 & 9 & 4 & \{2, 5\} & \{2, 5\} & \cellcolor{red!50!white} 6 & 1 & 3 & \cellcolor{red!25!white} 8\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
 \subsubsection{Constraint Propagation : Hidden Pairs}
 
 Naked Pairs is the final constraint propagation technique we introduce in our programme. This technique is similar to hidden singles, however, now we look for unique pairs of hidden values instead of singles.
-Take the example in Table~\ref{tab:hiddenpairs}. Cells 1 and 9 of this example contain a pair of values (7 and 8) that are not found anywhere else. This means that these values must be in these two cells and thus their domains can be reduced to these two values.
+Take the example in Table~\ref{tab:hiddenpairs}. Cells 1 and 9 of this example contain a pair of values (7 and 8) that are not found anywhere else. This means that these values must be in these two cells and thus their domains can be reduced to these two values. This is shown in Table~\ref{tab:hiddenpairs_after}.
 
 \begin{table}[htbp]
     \caption{Fictional row of a Sudoku. Colored cells represent a naked pair.}
@@ -251,6 +263,18 @@ Take the example in Table~\ref{tab:hiddenpairs}. Cells 1 and 9 of this example c
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
         \cellcolor[wave]{459}\{2, 5, 6, 7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \cellcolor[wave]{540}\{2, 5, 6, 7, 8\}\\
+        \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[htbp]
+    \caption{Fictional row of a Sudoku. Corresponds to Table~\ref{tab:hiddenpairs} after application of the hidden pairs technique.}
+    \label{tab:hiddenpairs_after}
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \cellcolor[wave]{378}\{7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \cellcolor[wave]{400}\{7, 8\}\\
         \hline
         \end{tabular}
     \end{center}
@@ -292,9 +316,9 @@ Sudokus are implemented as a HashMap mapping cellnumbers to lists of values. If 
 
 The backtracking algorithm is implemented in a seperate Solver class. This class also contains methods for applying the three heuristics, since they affect the way the algorithm branches.
 
-We have made three runnable classes: Main, MainST and Timer. MainST executes the normal solving process. The difference between Main and MainST is that Main is multithreaded. The Timer class contains code for experimenten with different options in an automated way and averaging runtimes over a certain number of runs.
+We have made three runnable classes: Main, MainST and Timer. MainST executes the normal solving process. The difference between Main and MainST is that Main is multithreaded. The Timer class contains code for experiments with different options in an automated way and averaging runtimes over a certain number of runs.
 
-Calling java with the -server argument causes our program to run about three times faster than without. The difference is in the number of the optimizations the Java interpreter performs during the compilation to native bytecode. While the server compiler is supposed to start slower and run faster than the client compiler (http://java.sun.com/products/hotspot/whitepaper.html\#server), with our program the only noticable difference is the faster runtime.
+Calling java with the -server argument causes our program to run about three times faster than without. The difference is in the number of the optimizations the Java interpreter performs during the compilation to native bytecode. While the server compiler is supposed to start slower and run faster than the client compiler\footnote{http://java.sun.com/products/hotspot/whitepaper.html\#server}, with our program the only noticable difference is the faster runtime.
 
 \section{Results}
 
