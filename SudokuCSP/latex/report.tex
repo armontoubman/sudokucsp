@@ -311,7 +311,7 @@ In the actual implementation of these heuristics, there will also be time lost o
 
 \section{Implementation}
 
-The solver was written in Java. A prototype was written in Groovy, but the dynamic typing caused a lot of overhead: it took the Groovy prototype 2 minutes and 27 seconds to solve 10 Sudokus, while the Java rewrite solved the same Sudokus in 1 second. The fastest version of our program does include some Groovy to help with threading.
+The solver was written in Java (JDK version 1.6). A prototype was written in Groovy, but the dynamic typing caused a lot of overhead: it took the Groovy prototype 2 minutes and 27 seconds to solve 10 Sudokus, while the Java rewrite solved the same Sudokus in 1 second. The fastest version of our program does include some Groovy to help with threading.
 
 Sudokus are implemented as a HashMap mapping cellnumbers to lists of values. If the list contains only one value, that value is considered as assigned to that cell. Otherwise the cell is a variable. This map is contained in a Sudoku class together with Sudoku-specific such as consistency checks, the revise and hidden pair/hidden single/naked pair methods and many helper functions. For speed, often-needed values such as the rownumber of a certain cell and all the cells in a certain column are hardcoded into immutable arrays.
 
@@ -319,11 +319,14 @@ The backtracking algorithm is implemented in a seperate Solver class. This class
 
 We have made three runnable classes: Main, MainST and Timer. MainST executes the normal solving process. The difference between Main and MainST is that Main is multithreaded. The Timer class contains code for experiments with different options in an automated way and averaging runtimes over a certain number of runs.
 
-Calling java with the -server argument causes our program to run about three times faster than without. The difference is in the number of the optimizations the Java interpreter performs during the compilation to native bytecode. While the server compiler is supposed to start slower and run faster than the client compiler\footnote{http://java.sun.com/products/hotspot/whitepaper.html\#server}, with our program the only noticable difference is the faster runtime.
+Calling java with the -server argument causes our program to run about three times faster than without. The difference is in the number of the optimizations the Java interpreter performs during the compilation to native bytecode. While the server compiler is supposed to start slower and run faster than the client compiler\footnote{See \url{http://java.sun.com/products/hotspot/whitepaper.html\#server}}, with our program the only noticable difference is the faster runtime.
 
 \section{Results}
 
-Zoiets:
+To compare the effectiveness of our optimizations, we performed several tests. Two sets of Sudokus were used: sudoku\_training (from Blackboard) containing 1010 Sudokus of unknown difficulty, and top95, a set containing the 95 most difficult known Sudokus (retrieved from ??????????). All tests were performed on a desktop PC with an AMD Phenom II 720BE triple core processor running at 2.8GHz and 4GB RAM.
+
+The first test was comparing the runtimes of combinations of Hidden Singles, Hidden Pairs and Naked Pairs together with Revise. Because of time constraints, we did not test the top95 set without optimizations. It can be expected that the runtime of the top95 set without Revise compared to with Revise would be relatively greater than the difference between running sudoku\_training with and without Revise. This is because without optimizations, the Backtracking algorithm tries to solve the Sudokus purely by branching on all possible values for variable cells. The Sudokus in the top95 set all have very few givens (17, some maybe a few more), requiring more branching and backtracking to solve than the sudoku\_training set.
+Table~\ref{tab:tech_results} shows the results of tests with Revise and combinations of Hidden Singles, Hidden Pairs and Naked Pairs. Table~\ref{tab:heur_results} shows the results of tests with Revise and combinations of our heuristics. Table~\ref{tab:hs+heur_results} shows the results of tests with Revise, Hidden Singles and combinations of our heuristics. The last tests were to see if the effect of the heuristics changes with the use of an extra optimization.
 
 \begin{table}[htbp]
 \begin{center}
@@ -331,8 +334,10 @@ Zoiets:
 \hline
  Revise & Hidden Singles & Hidden Pairs & Naked Pairs & sudoku\_training & top95 \\
 \hline
+ &  &  &  & ??? & $*$ \\ % training_rv=597.091732188 9m57s
 x &  &  &  & 8m56s & 1h55m25s \\ % training_rv=536.094290474, top95_rv=6924.5242909
 x & x & x & x & 25s & 10s \\ % training_rv_hs_hp_np_h13=25.511620738333335, top95_rv_hs_hp_np=9.685215524666667
+x & x & x & x & 8s $**$ & 8s $**$ \\ 
 x & x &  &  & 29s & 47s \\ % training_rv_hs=29.234435128, top95_rv_hs=47.415598335
 x & x &  & x & 23s & 21s \\ % training_rv_hs_np=23.296235251333332,, top95_rv_hs_np=20.824697618666665
 x & x & x &  & 28s & 16s \\ % training_rv_hs_hp=27.667227801666666,  top95_rv_hs_hp=15.692717729
@@ -342,7 +347,7 @@ x &  &  & x & 1m17s & 19m32s \\ % training_rv_np=76.90551903866667, top95_rv_np=
 \hline
 \end{tabular}
 \end{center}
-\caption{The runtimes of our program using two different Sudoku sets with the different optimizations enabled (indicated with an x) or disabled. The times were averaged over three runs, except the revise-only trial which was only performed once.}
+\caption{The runtimes of our program using two different Sudoku sets with the different optimizations enabled (indicated with an x) or disabled. The times were averaged over three runs, except the revise-only trial and the trial with no optimizations which were only performed once.\\ $*$ = not run \\ $**$ = multithreaded}
 \label{tab:tech_results}
 \end{table}
 
@@ -382,7 +387,14 @@ x & x & x & x & 29s & 52s \\ % training_rv_hs_h13=29.857984153, top95_rv_hs_h13=
 \label{tab:hs+heur_results}
 \end{table}
 
+\section{Discussion}
+
+The most interesting result is that we have brought the runtime of solving the top95 set from nearly 2 hours with only Revise to 10 seconds with all optimizations on, as can be seen in Table~\ref{tab:tech_results}. For the sudoku\_training set the result is still great but less dramatic: from 9 minutes to 25 seconds with all optimizations on. Interestingly enough, from the same table can be seen that if we do not apply the Hidden Pairs method on sudoku\_training, our solver manage to scrape off another 2 seconds. It seems on this set, the Hidden Pairs method adds more computing time than it substracts.
+Another interesting result, which can be seen in Tables~\ref{tab:heur_results} and \ref{tab:hs+heur_results}, is that the heuristics are all counterproductive. Either they are simply not effective or our implementation is not efficient enough.
+
 \section{Conclusion}
+
+We have written a Sudoku solver that treats Sudoku puzzles as CSPs and increased its performance by applying established CSP and Sudoku solving techniques. Unfortunately, our own heuristics had no positive effect.
 
 \bibliographystyle{plainnat}
 \bibliography{ref}
