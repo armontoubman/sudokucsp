@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Experimenten
  */
 
 package sudokucsp;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author Armon
+ * @author Armon Toubman, Torec Luik
  */
 class Timer {
 
@@ -41,8 +40,8 @@ class Timer {
         
         results = new HashMap<String, Double>();
         
-        training = readSudokus("sudoku_training.txt");
-        top95 = readSudokus("top95.txt");
+        training = readSudokus(args[0]);
+        //top95 = readSudokus("top95.txt");
         
       /* gedaan
         //
@@ -105,7 +104,7 @@ class Timer {
       */
         // {top95_rv_hs_hp_np=9.685215524666667, top95_rv_hs_hp_np_h13=9.13048304, training_rv_hs_hp_np_h1=26.819459991, training_rv_hs_hp_np_h3=25.575965089666667, top95_rv_hs_hp_np_h1=9.618339162333333, top95_rv_hs_hp_np_h3=9.190885884666669, training_rv_hs_hp_np_h13=25.511620738333335, training_rv_hs_hp_np=26.050099973333335}
         
-      /* gedaan
+      /* gedaan*/
         //
         Solver.HIDDENSINGLES = true;
         test("rv_hs");
@@ -135,7 +134,7 @@ class Timer {
         Solver.HIDDENSINGLES = false;
         Solver.NAKEDPAIRS = true;
         test("rv_hp_np");
-      */
+      /**/
         //{top95_rv_hp_np=230.84322473, training_rv_hp=489.462033154, training_rv_hp_np=81.19639021366667, top95_rv_hp=1596.8818117199999, training_rv_hs_hp=27.667227801666666, training_rv_hs_np=23.296235251333332, top95_rv_hs_hp=15.692717729, top95_rv_hs_np=20.824697618666665, training_rv_np=76.90551903866667, training_rv_hs=29.234435128, top95_rv_np=1172.4098914453334, top95_rv_hs=47.415598335}
         
     }
@@ -202,7 +201,7 @@ class Timer {
     {
         System.out.print(name+" ");
         results.put("training_"+name, go(training));
-        results.put("top95_"+name, go(top95));
+        //results.put("top95_"+name, go(top95));
         System.out.println();
         System.out.println(results);
     }

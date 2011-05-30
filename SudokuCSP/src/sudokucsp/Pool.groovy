@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Threadpool
  */
 
 package sudokucsp
@@ -9,7 +8,7 @@ import java.util.concurrent.*;
 
 /**
  *
- * @author Armon
+ * @author Armon Toubman, Torec Luik
  */
 class Pool {
     ExecutorService pool;
