@@ -325,7 +325,7 @@ Calling java with the -server argument causes our program to run about three tim
 To compare the effectiveness of our optimizations, we performed several tests. Two sets of Sudokus were used: sudoku\_training (from Blackboard) containing 1010 Sudokus of unknown difficulty, and top95, a set containing the 95 most difficult known Sudokus\footnote{\url{http://magictour.free.fr/top95}: benchmark on Sudoku fora \url{http://www.setbb.com/sudoku/}}. All tests were performed on a desktop PC with an AMD Phenom II 720BE triple core processor running at 2.8GHz and 4GB RAM.
 
 The first test was comparing the runtimes of combinations of Hidden Singles, Hidden Pairs and Naked Pairs together with Revise. Because of time constraints, we did not test the top95 set without optimizations. It can be expected that the runtime of the top95 set without Revise compared to with Revise would be relatively greater than the difference between running sudoku\_training with and without Revise. This is because without optimizations, the Backtracking algorithm tries to solve the Sudokus purely by branching on all possible values for variable cells. The Sudokus in the top95 set all have very few givens (17, some maybe a few more), requiring more branching and backtracking to solve than the sudoku\_training set.
-Table~\ref{tab:tech_results} shows the results of tests with Revise and combinations of Hidden Singles, Hidden Pairs and Naked Pairs. Table~\ref{tab:heur_results} shows the results of tests with Revise and combinations of our heuristics. Table~\ref{tab:hs+heur_results} shows the results of tests with Revise, Hidden Singles and combinations of our heuristics. The last tests were to see if the effect of the heuristics changes with the use of an extra optimization.
+Table~\ref{tab:tech_results} shows the results of tests with Revise and combinations of Hidden Singles, Hidden Pairs and Naked Pairs. Table~\ref{tab:heur_results} shows the results of tests with Revise and combinations of our heuristics. Table~\ref{tab:hs+heur_results} shows the results of tests with Revise, Hidden Singles and combinations of our heuristics. These tests were to see if the effect of the heuristics changes with the use of an extra optimization. Table~\ref{tab:alles_aan} shows our runtimes with all optimizations and heuristics enabled.
 
 \begin{table}[hp]
 \begin{center}
@@ -400,12 +400,15 @@ x & x & x & x & x & x & 8s $*$ & 3s $*$ \\
 
 \section{Discussion}
 \label{sec:disc}
-The most interesting result is that we have brought the runtime of solving the top95 set from nearly 2 hours with only Revise to 10 seconds with all optimizations on, as can be seen in Table~\ref{tab:tech_results}. For the sudoku\_training set the result is still great but less dramatic: from 9 minutes to 25 seconds with all optimizations on. Interestingly enough, from the same table can be seen that if we do not apply the Hidden Pairs method on sudoku\_training, our solver manage to scrape off another 2 seconds. It seems on this set, the Hidden Pairs method adds more computing time than it substracts. This is in contrast to the top95 training set, which gets computed twice as fast with the added use of the Hidden Pairs technique.
-Another interesting result, which can be seen in Tables~\ref{tab:heur_results} and \ref{tab:hs+heur_results}, is that !>!>!>\textcolor{red}{OUR HEURISTICS WORK ON TOP95}<!<!<!
+The most interesting result is that we have brought the runtime of solving the top95 set from nearly 2 hours with only Revise to 7 seconds (3 seconds multithreaded) with all optimizations and heuristics on, as can be seen in Table~\ref{tab:tech_results} and Table~\ref{tab:alles_aan}. For the sudoku\_training set the result is still great but less dramatic: from 9 minutes to 20 seconds (8 multithreaded). The effect of Hidden Pairs on the top95 set is also remarkable, reducing the runtime from 2 hours to 30 minutes.
+It is also good to see that our heuristics are doing well. Even without optimizations (apart from Revise) both Heuristic 1 and 3 reduce the solving time significantly.
+Finally, because the optimizations and heuristics manage to reduce the solving times a great deal on their own, it is almost surprising that the lowest runtime was achieved by activating all options. This means that all parts have some effect, even when combined.
 
 \section{Conclusion}
 \label{sec:concl}
-We have written a Sudoku solver that treats Sudoku puzzles as CSPs and increased its performance by applying established CSP and Sudoku solving techniques.
+We have written a Sudoku solver that treats Sudoku puzzles as CSPs and increased its performance by applying established CSP and Sudoku solving techniques. Our custom heuristics also have a significant effect on the performance. The lowest runtimes were achieved by combining all optimizations and heuristics.
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{ref}
