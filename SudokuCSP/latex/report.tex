@@ -283,22 +283,9 @@ Take the example in Table~\ref{tab:hiddenpairs}. Cells 1 and 9 of this example c
 \label{sec:heur}
 An important part of tree search is the manner in which it is traversed. Basic strategies include Depth-First and Breadth-First, the first being implemented in the BT algorithm from Figure~\ref{code:BT}. However, these are highly inefficient when the search space grows, so we need extra functions like constraint propagation to reduce the search space. Another possibility for search space reduction is the use of heuristics.
 In general, when we apply a heuristic, we rank the nodes in the tree based on the heuristic and traverse the node with the smallest value first. It is dubbed Best-First tree traversal. For the optimization of our CSP problem solver, we thought of the following heuristics:
-\begin{comment}
- * Heuristics : informed guess of the next step to be taken (domain dependent)
-     * I.e. combine depth-first met wat slimme breadth-first
-     * f(n) = g(n) + h(n) : g(n) = depth of node n, h(n) = heuristic value ?
-     * Kunnen g(n) nog wel even overslaan, hoeven we geen score systeem te hebben
-     * Mogelijke opties:
-     *  H1: Kies Node eerder, hoe minder kinderen het heeft
-     *  H2: Kies Node eerder, hoe meer zijn values al voorkomen in de Sudoku
-     *  H3: Kies Node eerder, hoe meer constrained deze is (som values in row/col/reg)
-     *  H4: Diepte constrainen, bvb via g(n). Misschien zijn andere nodes eerder opgelost.
-     *  H5: ... andere maten die zouden kunnen aangeven of iets dichter bij solution komt.
-     *
-\end{comment}
 \begin{itemize}
-\item Pick first the variable with the smallest domain.
-\item Pick first the variable with most number of constraints.
+\item H1: Pick first the variable with the smallest domain.
+\item H3: Pick first the variable with most number of constraints.
 \end{itemize}
 
 By picking a variable with a smaller domain first, this variable should be decided upon earlier than one with a greater domain. By solving a variable, we constrain the rest of the Sudoku more and thereby can probably reduce other domains, et cetera.
