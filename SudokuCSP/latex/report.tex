@@ -322,18 +322,18 @@ Calling java with the -server argument causes our program to run about three tim
 
 \section{Results}
 
-To compare the effectiveness of our optimizations, we performed several tests. Two sets of Sudokus were used: sudoku\_training (from Blackboard) containing 1010 Sudokus of unknown difficulty, and top95, a set containing the 95 most difficult known Sudokus\footnote{\url{http://magictour.free.fr/top95} - a benchmark on the Sudoku forums at \url{http://www.setbb.com/sudoku/}}. All tests were performed on a desktop PC with an AMD Phenom II 720BE triple core processor running at 2.8GHz and 4GB RAM.
+To compare the effectiveness of our optimizations, we performed several tests. Two sets of Sudokus were used: sudoku\_training (from Blackboard) containing 1010 Sudokus of unknown difficulty, and top95, a set containing the 95 most difficult known Sudokus\footnote{\url{http://magictour.free.fr/top95}: benchmark on Sudoku fora \url{http://www.setbb.com/sudoku/}}. All tests were performed on a desktop PC with an AMD Phenom II 720BE triple core processor running at 2.8GHz and 4GB RAM.
 
 The first test was comparing the runtimes of combinations of Hidden Singles, Hidden Pairs and Naked Pairs together with Revise. Because of time constraints, we did not test the top95 set without optimizations. It can be expected that the runtime of the top95 set without Revise compared to with Revise would be relatively greater than the difference between running sudoku\_training with and without Revise. This is because without optimizations, the Backtracking algorithm tries to solve the Sudokus purely by branching on all possible values for variable cells. The Sudokus in the top95 set all have very few givens (17, some maybe a few more), requiring more branching and backtracking to solve than the sudoku\_training set.
 Table~\ref{tab:tech_results} shows the results of tests with Revise and combinations of Hidden Singles, Hidden Pairs and Naked Pairs. Table~\ref{tab:heur_results} shows the results of tests with Revise and combinations of our heuristics. Table~\ref{tab:hs+heur_results} shows the results of tests with Revise, Hidden Singles and combinations of our heuristics. The last tests were to see if the effect of the heuristics changes with the use of an extra optimization.
 
-\begin{table}[htbp]
+\begin{table}[hp]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
  Revise & Hidden Singles & Hidden Pairs & Naked Pairs & sudoku\_training & top95 \\
 \hline
- &  &  &  & ??? & $*$ \\ % training_rv=597.091732188 9m57s
+ &  &  &  & 9m49s & $*$ \\ % training_norv=589.495531305
 x &  &  &  & 8m56s & 1h55m25s \\ % training_rv=536.094290474, top95_rv=6924.5242909
 x & x & x & x & 25s & 10s \\ % training_rv_hs_hp_np_h13=25.511620738333335, top95_rv_hs_hp_np=9.685215524666667
 x & x & x & x & 8s $**$ & 8s $**$ \\
@@ -350,7 +350,7 @@ x &  &  & x & 1m17s & 19m32s \\ % training_rv_np=76.90551903866667, top95_rv_np=
 \label{tab:tech_results}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[hp]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
@@ -367,7 +367,7 @@ x & x & x & 1m45s & 9m9s \\ % training_rv_h13=104.98554738766667, top95_rv_h13=5
 \label{tab:heur_results}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[hp]
 \begin{center}
 \begin{tabular}{c c c c c c}
 \hline
