@@ -25,6 +25,10 @@ class Timer {
 
     void start(String[] args)
     {
+        System.out.println("***Timer***");
+        
+        Solver.PRINT = false;
+        
         Solver.REVISE = true;
         Solver.HIDDENSINGLES = false;
         Solver.NAKEDPAIRS = false;

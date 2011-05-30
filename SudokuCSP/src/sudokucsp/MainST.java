@@ -20,6 +20,7 @@ class MainST {
 
     void start(String[] args)
     {
+        System.out.println("***MainST***");
 
         //
         // Formaliteiten om te kijken of alles klopt

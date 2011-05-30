@@ -22,6 +22,7 @@ class Main {
 
     void start(String[] args)
     {
+        System.out.println("***Main***");
 
         //
         // Formaliteiten om te kijken of alles klopt
