@@ -83,8 +83,6 @@
 \begin{frame}{Sudoku}
 
 \begin{table}[htbp]
-\caption{Example of a Sudoku. From the first line of "sudoku\_training.txt". }
-    \label{tab:sudoku_initial}
         \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
         \hline
         \hline
@@ -147,11 +145,38 @@
 %%% Torec stuff
 \subsection[Techniques]{Techniques}
 
+\begin{frame}
+\begin{center}
+\structure{\Huge \insertsubsection}
+\end{center}
+\end{frame}
+
 \begin{frame}{Tree search}
 
-Basic Depth-First Backtracking algorithm from Assignment description.
+We start with the basic Depth-First Backtracking algorithm.
+
+We add:
+\begin{itemize}
+\item Heuristics
+\item Constraint Propagation
+\end{itemize}
 
 \end{frame}
+
+\begin{frame}{Heuristics}
+
+\begin{itemize}
+\item From Depth-First to Best-First!
+\item Heuristics
+\begin{itemize}
+    \item H1: Smallest domain
+    \item H3: Most constrained
+    \item H13: Combine H1 \& H3
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
 
 \begin{frame}{Constraint propagation}
 
@@ -187,6 +212,10 @@ Basic Depth-First Backtracking algorithm from Assignment description.
 \end{itemize}
 \end{itemize}
 
+\end{frame}
+
+\begin{frame}{Revise in action}
+
 \begin{table}[htbp]
     \begin{center}
 
@@ -197,41 +226,45 @@ Basic Depth-First Backtracking algorithm from Assignment description.
         \end{tabular}
     \end{center}
 \end{table}
-
+\uncover<2->{
 \begin{table}[htbp]
     \begin{center}
 
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
         \hline
         \end{tabular}
     \end{center}
 \end{table}
-
+}
 \end{frame}
 
 \begin{frame}{Hidden Singles}
+
 \begin{table}[htbp]
 
     \begin{center}
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
         \hline
         \end{tabular}
     \end{center}
 \end{table}
+\uncover<2->{
 \begin{table}
     \begin{center}
 
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \cellcolor[gray]{0.7}7 & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
+        \cellcolor[gray]{0.7}7 & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
         \hline
         \end{tabular}
     \end{center}
 \end{table}
+}
+
 \end{frame}
 
 \begin{frame}{Naked Pairs}
@@ -242,38 +275,41 @@ Basic Depth-First Backtracking algorithm from Assignment description.
 
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \{2, 5, 7\} & 9 & 4 & \cellcolor[gray]{0.7}\{2, 5\} & \cellcolor[gray]{0.7}\{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
+        7 & 9 & 4 & \cellcolor[gray]{0.7}\{2, 5\} & \cellcolor[gray]{0.7}\{2, 5\} & \{2, 5, 6\} & 1 & 3 & \{2, 5, 8\}\\
         \hline
         \end{tabular}
     \end{center}
 \end{table}
-
+\uncover<2->{
 \begin{table}[htbp]
 
     \begin{center}
 
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        \cellcolor[gray]{0.7}7 & 9 & 4 & \{2, 5\} & \{2, 5\} & \cellcolor[gray]{0.7} 6 & 1 & 3 & \cellcolor[gray]{0.7} 8\\
+        7 & 9 & 4 & \{2, 5\} & \{2, 5\} & \cellcolor[gray]{0.7} 6 & 1 & 3 & \cellcolor[gray]{0.7} 8\\
         \hline
         \end{tabular}
     \end{center}
 \end{table}
+}
 \end{frame}
 
 \begin{frame}{Hidden Pairs}
+
 \begin{table}[htbp]
 
     \begin{center}
-
+\scalebox{0.8}{
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
         \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{2, 5\} & \{2, 5\} & \{2, 5, 6\} & 1 & 3 & \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\}\\
         \hline
         \end{tabular}
+}
     \end{center}
 \end{table}
-
+\uncover<2->{
 \begin{table}[htbp]
 
     \begin{center}
@@ -284,10 +320,19 @@ Basic Depth-First Backtracking algorithm from Assignment description.
         \hline
         \end{tabular}
     \end{center}
+\end{table}
+}
 \end{frame}
 
 %%% Armon stuff
 \subsection[Results]{Results}
+
+\begin{frame}
+\begin{center}
+\structure{\Huge \insertsubsection}
+\end{center}
+\end{frame}
+
 \begin{frame}{Results: Optimizations}
 
 \begin{table}
@@ -383,12 +428,24 @@ x & x & x & x & \cellcolor{red!50}{26s} & \cellcolor{red!50}{26s} \\ % training_
 
 \section{Conclusions}
 
-\begin{frame}
+\begin{frame}{Conclusions}
 \begin{itemize}
-\item Conclusie 1 ...
-\item Conclusie 2 ...
-\item Conclusie 3 ...
+\item We created a CSP solver for the Sudoku game in Java
+\item We optimized it using well-known Sudoku specific techniques
+\begin{itemize}
+    \item Hidden Singles
+    \item Naked Pairs
+    \item Hidden Pairs
 \end{itemize}
+\item \& general heuristics
+\begin{itemize}
+    \item H1 : Smallest domain
+    \item H3 : Most constrained
+    \item H13 : H1 \& H3 combined
+\end{itemize}
+\item And we got great results with all of these!
+\end{itemize}
+ 
 \end{frame}
 
 \end{document}
