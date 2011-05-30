@@ -44,10 +44,10 @@ class Timer {
         
         results = new HashMap<String, Double>();
         
-        training = readSudokus("top95.txt"); // << args[0]
+        training = readSudokus(args[0]);
         //top95 = readSudokus("top95.txt");
         
-      /* gedaan
+      /* gedaan*/
         
         Solver.ORDERVARIABLES = true;
         
@@ -69,7 +69,7 @@ class Timer {
         // training_rv_hs_h1=24.783181131333333, training_rv_hs_h3=26.526312118000003, training_rv_hs_h13=25.561958684999997
         // top95_rv_hs_h1=29.532021471666667, top95_rv_hs_h3=37.05672543666666, top95_rv_hs_h13=25.992425686666667
         
-      /* gedaan*/
+      /* gedaan
         Solver.ORDERVARIABLES = true;
         //
         Solver.HEURISTIC3 = false;
@@ -88,6 +88,7 @@ class Timer {
         test("rv_h13");
       /**/
         // training_rv_h13=104.98554738766667, training_rv_h1=104.71135923499999, training_rv_h3=138.14704946666666
+        // top95_rv_h13=548.8695794, top95_rv_h1=336.839012999, top95_rv_h3=551.151111206
         
       /* gedaan
         //
