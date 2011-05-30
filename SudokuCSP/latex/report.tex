@@ -70,27 +70,19 @@ Assignment 2: Sudoku as a CSP}
 \begin{document}
 \maketitle
 
+\begin{abstract}
+We modeled the Sudoku game as a CSP and solved it using a search tree. The initial backtracking algorithm provides awful computation times for this particular problem. We added the general constraint propagation technique AC-3 (MAC) and specific Sudoku-solving techniques to filter the domains of our variables. The results are convincing with the latter techniques, reducing computation time on two testsets respectively from approximately 10 minutes to 10 seconds and 2 hours to 3 seconds.
+\end{abstract}
+
 \section{Introduction}
+\label{sec:intro}
+The popular Sudoku puzzle can be seen as a Constraint Satisfaction Problem (CSP). For this assignment, we will implement a CSP solver for solving Sudoku puzzles, including optimizations specifically for Sudokus. This will be used to find answers to our research question, which is to find an efficient solver for CSP problems. Section~\ref{sec:sudokuCSP} gives a short introduction to Sudokus as CSPs. Section~\ref{sec:search} describes the solving algorithm we used. The optimizations we used are explained in section~\ref{sec:optim}. Implementation details can be found in section~\ref{sec:impl}. Section~\ref{sec:results} provides our experimental setup and findings, while in section~\ref{sec:disc} we discuss the effectiveness of the optimizations. Finally, section~\ref{sec:concl} concludes this report.
 
-The popular Sudoku puzzle can be seen as a Constraint Satisfaction Problem (CSP). For this assignment, we will implement a CSP solver for solving Sudoku puzzles, including optimizations specifically for Sudokus. ***********Section X gives a short introduction to Sudokus as CSPs. Section X describes the solving algorithm we used. The optimizations we used are explained in section X. In section X we compare the effectiveness of the optimizations. Finally, section X concludes this report.*************%aanpassen natuurlijk
-
-Hier een Sudoku template indien nodig:
 \begin{table}[htbp]
-\caption{Example of a Sudoku. From the first line of "sudoku\_training.txt". }
+\caption{An example Sudoku from one of our testsets.}
     \label{tab:sudoku_initial}
-    \begin{comment}
-
-    .94...13.
-    .........
-    ....76..2
-    .8..1....
-    .32......
-    ...2...6.
-    ....5.4..
-    .....8..7
-    ..63.4..8
-    \end{comment}
     \begin{center}
+        \scalebox{0.75}{
         \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
         \hline
         \hline
@@ -115,11 +107,13 @@ Hier een Sudoku template indien nodig:
          &  & 6 & 3 &  & 4 &  &  & 8\\
         \hline
         \hline
-        \end{tabular}
+        \end{tabular}}
     \end{center}
 \end{table}
 
+
 \section{Sudoku as a Constraint Satisfaction Problem}
+\label{sec:sudokuCSP}
 
 A completed (9x9) Sudoku puzzle has the numbers 1 to 9 appearing exactly once in every row, column and region. We can make the following translation from Sudoku to CSP:
 \begin{itemize}
@@ -132,6 +126,7 @@ A completed (9x9) Sudoku puzzle has the numbers 1 to 9 appearing exactly once in
 \end{itemize}
 
 \section{Search Algorithm}
+\label{sec:search}
 
 When we consider the Sudoku as a CSP with a sequence of variables, we can create a search tree for this CSP. Here the nodes of the tree are CSP's and the root is our starting CSP (i.e. the initial Sudoku). See also Figure~\ref{fig:basic_tree}. First constraint propagation is applied to the current CSP. Then, if the resulting CSP is not a leaf, one of its variables is split up. For every value in its domain, a new child will be added to the tree. This process contintues until the leaf is a correct solution (i.e. all variables are instantiated and adhere to the constraints).
 
@@ -144,6 +139,7 @@ When we consider the Sudoku as a CSP with a sequence of variables, we can create
 \end{figure}
 
 \subsection{The Backtracking Algorithm}
+\label{sec:bt}
 
 For creation and traversal of our Search Tree, we started with the backtracking algorithm as described in the assignment description and shown in Figure~\ref{code:BT}.
 
@@ -167,10 +163,12 @@ end BT
 In short, this algorithm takes a cell that is not yet assigned a value, and for each value in its domain creates a new branch in the search tree. The branches recursively create their own branches, forming a search tree. The tree is searched depth-first for a solution. The algorithm terminates if either a solution is found, or no solution exists in the search tree.
 
 \subsection{Optimizations}
+\label{sec:optim}
 
 The Backtracking algorithm is, besides simple and effective, very inefficient. For each open cell in a Sudoku problem, the algorithm will create nine branches (one for each possible value). To solve this, we can use constraint propagation to eliminate a lot of these branches at an early stage. There are also specific Sudoku solving techniques that help rule out possible values from certain variables' domains. Pruning the search tree with these methods results in a smaller search space and therefore lower runtimes of the solver. The idea of using these techniques corresponds to constraint propagation and its application in prop labeling trees citet{Apt2003}. In this section we describe the pruning methods we used in our implementation.
 
 \subsubsection{Constraint Propagation : Revise}
+\label{sec:revise}
 
 Our Revise method is an adjusted version of the AC-3 method as described in \citet{BartakConsistency}.
 In other sources, such as \citet{Apt2003}, constraint propagation in the form of arc consistency (AC) is called MAC (Maintaining Arc Consistency).
@@ -216,14 +214,14 @@ In Table~\ref{tab:sudoku_frstrow_rev}, we can see the revised domains of all cel
 This method could be capable of solving a Sudoku by itself without ever allowing the backtracking algorithm to branch, but it would require the simplest of Sudoku assignments.
 
 \subsubsection{Constraint Propagation : Hidden Singles}
-
+\label{sec:hsingles}
 The greatest influence from our constraint propagation comes from the Sudoku-specific technique 'Hidden Singles'. We have adopted the naming of all Sudoku-specific techniques from \url{learn-sudoku.com}\footnote{\url{http://www.learn-sudoku.com/basic-techniques.html}}, but \url{Brainbashers.com}\footnote{\url{http://www.brainbashers.com/sudokuhelp.asp}} has also been used to gather information.
 
 The technique works as follows: Given a constraint, such as the row of domains in Table~\ref{tab:sudoku_frstrow_rev}, look for any unique values. If a value is unique, such as the 7 in the first cell, we can deduce that this variable should be assigned this value for the constraint to hold.
 This is one of the most powerful techniques available in solving Sudokus. A succesful application of hidden singles will provide a new given value, reducing other variables' domains. As such, when this manner of constraint propagation is applied in combination with the loop of the previously discussed Revise, most of the easier Sudokus can be solved without ever branching out into a tree.
 
 \subsubsection{Constraint Propagation : Naked Pairs}
-
+\label{sec:npairs}
 Naked Pairs is the third constraint propagation technique we introduce in our program. Similarly to the previously discussed technique, we look for values that are only possible in certain cells. However, with naked pairs, we look for a combination of two values in a set of constrained variables (i.e. row,column,region).
 Take the example in Table~\ref{tab:nakedpairs}. Cells 4 and 5 of this example contain the same pair of values. This means that these values must be in these two cells and thus they can be removed from the other variables' domains. The example then provides us a lot of new givens after applying this technique, shown in Table~\ref{tab:nakedpairs_after}.
 While it is made-up, Table~\ref{tab:nakedpairs} still shows that the technique has the potential to be a powerful constraint propagater as well. We combine it together with Revise and the other constraint propagation techniques.
@@ -253,7 +251,7 @@ While it is made-up, Table~\ref{tab:nakedpairs} still shows that the technique h
 \end{table}
 
 \subsubsection{Constraint Propagation : Hidden Pairs}
-
+\label{sec:hpairs}
 Naked Pairs is the final constraint propagation technique we introduce in our program. This technique is similar to hidden singles, however, now we look for unique pairs of hidden values instead of singles.
 Take the example in Table~\ref{tab:hiddenpairs}. Cells 1 and 9 of this example contain a pair of values (7 and 8) that are not found anywhere else. This means that these values must be in these two cells and thus their domains can be reduced to these two values. This is shown in Table~\ref{tab:hiddenpairs_after}.
 
@@ -282,7 +280,7 @@ Take the example in Table~\ref{tab:hiddenpairs}. Cells 1 and 9 of this example c
 \end{table}
 
 \subsubsection{Heuristics}
-
+\label{sec:heur}
 An important part of tree search is the manner in which it is traversed. Basic strategies include Depth-First and Breadth-First, the first being implemented in the BT algorithm from Figure~\ref{code:BT}. However, these are highly inefficient when the search space grows, so we need extra functions like constraint propagation to reduce the search space. Another possibility for search space reduction is the use of heuristics.
 In general, when we apply a heuristic, we rank the nodes in the tree based on the heuristic and traverse the node with the smallest value first. It is dubbed Best-First tree traversal. For the optimization of our CSP problem solver, we thought of the following heuristics:
 \begin{comment}
@@ -310,6 +308,7 @@ The number of constraints on a variable seems similar to the size of one's domai
 In the actual implementation of these heuristics, there will also be time lost on retrieving the heuristical values. Therefore, the heuristics will need to have sufficient initial benefit to create any impact on the actual CSP solver's performance. Also, instead of ordering the variables by their heuristic value, as is usually done in theory, we only keep track of the variable with the lowest score during score computation. In order to capture the best effect from heuristics, we have chosen to apply these two heuristics both separately and together.
 
 \section{Implementation}
+\label{sec:impl}
 
 The solver was written in Java (JDK version 1.6). A prototype was written in Groovy, but the dynamic typing caused a lot of overhead: it took the Groovy prototype 2 minutes and 27 seconds to solve 10 Sudokus, while the Java rewrite solved the same Sudokus in 1 second. The fastest version of our program does include some Groovy to help with threading.
 
@@ -321,6 +320,7 @@ We have made three runnable classes: Main, MainST and Timer. MainST executes the
 Calling java with the -server argument causes our program to run about three times faster than without. The difference is in the number of the optimizations the Java interpreter performs during the compilation to native bytecode. While the server compiler is supposed to start slower and run faster than the client compiler\footnote{See \url{http://java.sun.com/products/hotspot/whitepaper.html\#server}}, with our program the only noticable difference is the faster runtime.
 
 \section{Results}
+\label{sec:results}
 
 To compare the effectiveness of our optimizations, we performed several tests. Two sets of Sudokus were used: sudoku\_training (from Blackboard) containing 1010 Sudokus of unknown difficulty, and top95, a set containing the 95 most difficult known Sudokus\footnote{\url{http://magictour.free.fr/top95}: benchmark on Sudoku fora \url{http://www.setbb.com/sudoku/}}. All tests were performed on a desktop PC with an AMD Phenom II 720BE triple core processor running at 2.8GHz and 4GB RAM.
 
@@ -399,12 +399,12 @@ x & x & x & x & x & x & 8s $*$ & 3s $*$ \\
 \end{table}
 
 \section{Discussion}
-
+\label{sec:disc}
 The most interesting result is that we have brought the runtime of solving the top95 set from nearly 2 hours with only Revise to 10 seconds with all optimizations on, as can be seen in Table~\ref{tab:tech_results}. For the sudoku\_training set the result is still great but less dramatic: from 9 minutes to 25 seconds with all optimizations on. Interestingly enough, from the same table can be seen that if we do not apply the Hidden Pairs method on sudoku\_training, our solver manage to scrape off another 2 seconds. It seems on this set, the Hidden Pairs method adds more computing time than it substracts. This is in contrast to the top95 training set, which gets computed twice as fast with the added use of the Hidden Pairs technique.
 Another interesting result, which can be seen in Tables~\ref{tab:heur_results} and \ref{tab:hs+heur_results}, is that !>!>!>\textcolor{red}{OUR HEURISTICS WORK ON TOP95}<!<!<!
 
 \section{Conclusion}
-
+\label{sec:concl}
 We have written a Sudoku solver that treats Sudoku puzzles as CSPs and increased its performance by applying established CSP and Sudoku solving techniques.
 
 \bibliographystyle{plainnat}
