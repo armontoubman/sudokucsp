@@ -14,7 +14,7 @@ class MainST {
 
     public static void main(String[] args)
     {
-        new Main().start(args);
+        new MainST().start(args);
         //new Main().oude_start(args);
     }
 
