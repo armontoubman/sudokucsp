@@ -36,7 +36,6 @@
   % or whatever (possibly just delete it)
 }
 
-
 \usepackage[english]{babel}
 % or whatever
 
@@ -47,7 +46,7 @@
 \usepackage[T1]{fontenc}
 % Or whatever. Note that the encoding and the font should match. If T1
 % does not look nice, try deleting the line with the fontenc.
-
+\usepackage{colortbl}
 
 \title{Assignment 2}
 
@@ -144,84 +143,97 @@
 
 \end{frame}
 
-\begin{frame}{Make Titles Informative. Use Uppercase Letters.}
+\begin{frame}{Results: Optimizations}
 
-  \begin{itemize}
-  \item
-    Use \texttt{itemize} a lot.
-  \item
-    Use very short sentences or short phrases.
-  \end{itemize}
+\begin{table}
+\begin{center}
+\scalebox{0.7}{
+\begin{tabular}{c c c c c c}
+\hline
+ Revise & Hidden Singles & Hidden Pairs & Naked Pairs & sudoku\_training & top95 \\
+\hline
+ &  &  &  & 9m49s & $*$ \\ % training_norv=589.495531305
+x &  &  &  & 8m56s & 1h55m25s \\ % training_rv=536.094290474, top95_rv=6924.5242909
+x & x & x & x & 25s & \cellcolor{red!50}{10s} \\ % training_rv_hs_hp_np_h13=25.511620738333335, top95_rv_hs_hp_np=9.685215524666667
+x & x &  &  & 29s & 47s \\ % training_rv_hs=29.234435128, top95_rv_hs=47.415598335
+x & x &  & x & \cellcolor{red!50}{23s} & 21s \\ % training_rv_hs_np=23.296235251333332,, top95_rv_hs_np=20.824697618666665
+x & x & x &  & 28s & 16s \\ % training_rv_hs_hp=27.667227801666666,  top95_rv_hs_hp=15.692717729
+x &   & x &  & 8m9s & 26m37s \\ % training_rv_hp=489.462033154, top95_rv_hp=1596.8818117199999
+x &   & x & x & 1m21s & 3m51s \\ % training_rv_hp_np=81.19639021366667, top95_rv_hp_np=230.84322473
+x &  &  & x & 1m17s & 19m32s \\ % training_rv_np=76.90551903866667, top95_rv_np=1172.4098914453334
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
+
 \end{frame}
 
-\begin{frame}{Make Titles Informative.}
+\begin{frame}{Results: Heuristics}
 
-  You can create overlays\dots
-  \begin{itemize}
-  \item using the \texttt{pause} command:
-    \begin{itemize}
-    \item
-      First item.
-      \pause
-    \item    
-      Second item.
-    \end{itemize}
-  \item
-    using overlay specifications:
-    \begin{itemize}
-    \item<3->
-      First item.
-    \item<4->
-      Second item.
-    \end{itemize}
-  \item
-    using the general \texttt{uncover} command:
-    \begin{itemize}
-      \uncover<5->{\item
-        First item.}
-      \uncover<6->{\item
-        Second item.}
-    \end{itemize}
-  \end{itemize}
+\begin{table}
+\begin{center}
+
+\scalebox{0.9}{
+
+\begin{tabular}{c c c c c c}
+\hline
+ Revise & Heuristic 1 & Heuristic 3 & sudoku\_training & top95 \\
+\hline
+x &  &  & 8m56s & 1h55m25s \\ % training_rv=536.094290474, top95_rv=6924.5242909
+x & x &  & 1m45s & 5m37s \\ % training_rv_h1=104.71135923499999, top95_rv_h1=336.839012999
+x &  & x & 2m18s & 9m11s \\ % training_rv_h3=138.14704946666666, top95_rv_h3=551.151111206
+x & x & x & \cellcolor{red!50}{1m45s} & \cellcolor{red!50}{9m9s} \\ % training_rv_h13=104.98554738766667, top95_rv_h13=548.8695794
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
+
 \end{frame}
 
+\begin{frame}{Results: Optimization + Heuristics}
 
-\subsection{Second Subsection}
+\begin{table}
+\begin{center}
 
-\begin{frame}{Make Titles Informative.}
+\scalebox{0.78}{
+
+\begin{tabular}{c c c c c c}
+\hline
+ Revise & Hidden Singles & Heuristic 1 & Heuristic 3 & sudoku\_training & top95 \\
+\hline
+x & x &  &  & 29s & 47s \\ % training_rv_hs=29.234435128, top95_rv_hs=47.415598335
+x & x & x &  & \cellcolor{red!50}{25s} & 30s \\ % training_rv_hs_h1=24.783181131333333, top95_rv_hs_h1=29.532021471666667
+x & x &  & x & 27s & 37s \\ % training_rv_hs_h3=26.526312118000003, top95_rv_hs_h3=37.05672543666666
+x & x & x & x & \cellcolor{red!50}{26s} & \cellcolor{red!50}{26s} \\ % training_rv_hs_h13=25.561958684999997, top95_rv_hs_h13=25.992425686666667
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
+
 \end{frame}
 
-\begin{frame}{Make Titles Informative.}
-\end{frame}
+\begin{frame}{Best results}
 
+\begin{table}
+\begin{center}
 
+\scalebox{1}{
 
-\section*{Summary}
+\begin{tabular}{c c c c c c c c}
+\hline
+ Everything & sudoku\_training & top95 \\
+\hline
+ x & 20s & 7s \\ 
+ x & 8s $*$ & 3s $*$ \\
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
 
-\begin{frame}{Summary}
-
-  % Keep the summary *very short*.
-  \begin{itemize}
-  \item
-    The \alert{first main message} of your talk in one or two lines.
-  \item
-    The \alert{second main message} of your talk in one or two lines.
-  \item
-    Perhaps a \alert{third message}, but not more than that.
-  \end{itemize}
-  
-  % The following outlook is optional.
-  \vskip0pt plus.5fill
-  \begin{itemize}
-  \item
-    Outlook
-    \begin{itemize}
-    \item
-      Something you haven't solved.
-    \item
-      Something else you haven't solved.
-    \end{itemize}
-  \end{itemize}
 \end{frame}
 
 
