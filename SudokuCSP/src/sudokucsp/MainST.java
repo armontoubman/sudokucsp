@@ -58,7 +58,7 @@ class MainST {
         int aantal = 100;
         int i = 0;
         
-        //Solver.PRINT = true;
+        Solver.PRINT = false;
         
         BufferedReader in = null;
         BufferedWriter out = null;
