@@ -44,10 +44,13 @@ class Timer {
         
         results = new HashMap<String, Double>();
         
-        training = readSudokus(args[0]);
+        training = readSudokus("top95.txt"); // << args[0]
         //top95 = readSudokus("top95.txt");
         
       /* gedaan
+        
+        Solver.ORDERVARIABLES = true;
+        
         //
         Solver.HIDDENSINGLES = true;
         Solver.HEURISTIC1 = true;
@@ -62,14 +65,15 @@ class Timer {
         Solver.HEURISTIC3 = false;
         Solver.HEURISTIC13 = true;
         test("rv_hs_h13");
-      */
-        // top95_rv_hs_h3=48.22889132033333, training_rv_hs_h1=29.734570621, top95_rv_hs_h1=49.521653201, top95_rv_hs_h13=51.78545695633333, training_rv_hs_h3=29.912008605, training_rv_hs_h13=29.857984153
+      /**/
+        // training_rv_hs_h1=24.783181131333333, training_rv_hs_h3=26.526312118000003, training_rv_hs_h13=25.561958684999997
+        // top95_rv_hs_h1=29.532021471666667, top95_rv_hs_h3=37.05672543666666, top95_rv_hs_h13=25.992425686666667
         
-      /* gedaan
+      /* gedaan*/
+        Solver.ORDERVARIABLES = true;
         //
-        test("rv");
-        
-        //
+        Solver.HEURISTIC3 = false;
+        Solver.HEURISTIC13 = false;
         Solver.HEURISTIC1 = true;
         test("rv_h1");
         
@@ -82,8 +86,8 @@ class Timer {
         Solver.HEURISTIC3 = false;
         Solver.HEURISTIC13 = true;
         test("rv_h13");
-      */
-        // {top95_rv=6924.5242909, training_rv_h13=540.58733985, top95_rv_h1=7023.125097676, top95_rv_h13=7011.893442942, training_rv_h1=532.882686773, training_rv_h3=543.003054551, training_rv=536.094290474, top95_rv_h3=7060.009184544}
+      /**/
+        // training_rv_h13=104.98554738766667, training_rv_h1=104.71135923499999, training_rv_h3=138.14704946666666
         
       /* gedaan
         //
@@ -108,7 +112,7 @@ class Timer {
       */
         // {top95_rv_hs_hp_np=9.685215524666667, top95_rv_hs_hp_np_h13=9.13048304, training_rv_hs_hp_np_h1=26.819459991, training_rv_hs_hp_np_h3=25.575965089666667, top95_rv_hs_hp_np_h1=9.618339162333333, top95_rv_hs_hp_np_h3=9.190885884666669, training_rv_hs_hp_np_h13=25.511620738333335, training_rv_hs_hp_np=26.050099973333335}
         
-      /* gedaan*/
+      /* gedaan
         //
         Solver.HIDDENSINGLES = true;
         test("rv_hs");
@@ -190,7 +194,7 @@ class Timer {
     double go(ArrayList<String> sudokus)
     {
         double mean = 0.0;
-        int t = 3;
+        int t = 1;
         for(int i=0; i<t; i++)
         {
             System.out.print(i);

@@ -351,6 +351,7 @@ x &  &  & x & 1m17s & 19m32s \\ % training_rv_np=76.90551903866667, top95_rv_np=
 \label{tab:tech_results}
 \end{table}
 
+% deze nog updaten
 \begin{table}[hb]
 \begin{center}
 \begin{tabular}{c c c c c c}
@@ -368,8 +369,6 @@ x & x & x & 9m1s & 1h56m52s \\ % training_rv_h13=540.58733985, top95_rv_h13=7011
 \label{tab:heur_results}
 \end{table}
 
-% , , 
-
 \begin{table}[hb]
 \begin{center}
 \begin{tabular}{c c c c c c}
@@ -377,9 +376,9 @@ x & x & x & 9m1s & 1h56m52s \\ % training_rv_h13=540.58733985, top95_rv_h13=7011
  Revise & Hidden Singles & Heuristic 1 & Heuristic 3 & sudoku\_training & top95 \\
 \hline
 x & x &  &  & 29s & 47s \\ % training_rv_hs=29.234435128, top95_rv_hs=47.415598335
-x & x & x &  & 29s & 50s \\ % training_rv_hs_h1=29.734570621, top95_rv_hs_h1=49.521653201
-x & x &  & x & 30s & 48s \\ % training_rv_hs_h3=29.912008605, top95_rv_hs_h3=48.22889132033333
-x & x & x & x & 29s & 52s \\ % training_rv_hs_h13=29.857984153, top95_rv_hs_h13=51.78545695633333
+x & x & x &  & 25s & 30s \\ % training_rv_hs_h1=24.783181131333333, top95_rv_hs_h1=29.532021471666667
+x & x &  & x & 27s & 37s \\ % training_rv_hs_h3=26.526312118000003, top95_rv_hs_h3=37.05672543666666
+x & x & x & x & 26s & 26s \\ % training_rv_hs_h13=25.561958684999997, top95_rv_hs_h13=25.992425686666667
 \hline
 \end{tabular}
 \end{center}
@@ -390,11 +389,11 @@ x & x & x & x & 29s & 52s \\ % training_rv_hs_h13=29.857984153, top95_rv_hs_h13=
 \section{Discussion}
 
 The most interesting result is that we have brought the runtime of solving the top95 set from nearly 2 hours with only Revise to 10 seconds with all optimizations on, as can be seen in Table~\ref{tab:tech_results}. For the sudoku\_training set the result is still great but less dramatic: from 9 minutes to 25 seconds with all optimizations on. Interestingly enough, from the same table can be seen that if we do not apply the Hidden Pairs method on sudoku\_training, our solver manage to scrape off another 2 seconds. It seems on this set, the Hidden Pairs method adds more computing time than it substracts.
-Another interesting result, which can be seen in Tables~\ref{tab:heur_results} and \ref{tab:hs+heur_results}, is that the heuristics are all counterproductive. Either they are simply not effective or our implementation is not efficient enough.
+Another interesting result, which can be seen in Tables~\ref{tab:heur_results} and \ref{tab:hs+heur_results}, is that OUR HEURISTICS WORK ON TOP95
 
 \section{Conclusion}
 
-We have written a Sudoku solver that treats Sudoku puzzles as CSPs and increased its performance by applying established CSP and Sudoku solving techniques. Unfortunately, our own heuristics had no positive effect.
+We have written a Sudoku solver that treats Sudoku puzzles as CSPs and increased its performance by applying established CSP and Sudoku solving techniques. 
 
 \bibliographystyle{plainnat}
 \bibliography{ref}
