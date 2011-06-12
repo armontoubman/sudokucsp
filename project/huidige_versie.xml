@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logic>
+    <parser-version>2.1</parser-version>
+    <description>ALC Description Logic</description>
+    <connector>
+        <connector-name>not</connector-name>
+        <arity>1</arity>
+        <associative>false</associative>
+        <output-format>~ _</output-format>
+        <priority>0</priority>
+        <connector-comment>Negation / complement</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>and</connector-name>
+        <arity>2</arity>
+        <associative>true</associative>
+        <output-format>_ ^ _</output-format>
+        <priority>0</priority>
+        <connector-comment>And / Intersection</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>or</connector-name>
+        <arity>2</arity>
+        <associative>true</associative>
+        <output-format>_ v _</output-format>
+        <priority>0</priority>
+        <connector-comment>Or / Union</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>some</connector-name>
+        <arity>2</arity>
+        <associative>false</associative>
+        <output-format>_ some _</output-format>
+        <priority>0</priority>
+        <connector-comment>Existential Quantifier / Restriction</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>only</connector-name>
+        <arity>2</arity>
+        <associative>false</associative>
+        <output-format>_ only _</output-format>
+        <priority>0</priority>
+        <connector-comment>Universal Quantifier / Restriction</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>tbox</connector-name>
+        <arity>1</arity>
+        <associative>false</associative>
+        <output-format>T = _</output-format>
+        <priority>0</priority>
+        <connector-comment>TBox</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>true</connector-name>
+        <arity>1</arity>
+        <associative>false</associative>
+        <output-format>TRUE _</output-format>
+        <priority>0</priority>
+        <connector-comment>Truth / Universal Concept</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>false</connector-name>
+        <arity>1</arity>
+        <associative>false</associative>
+        <output-format>FALSE _</output-format>
+        <priority>0</priority>
+        <connector-comment>False / Bottom Concept</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>add</connector-name>
+        <arity>2</arity>
+        <associative>false</associative>
+        <output-format>_ &amp; _</output-format>
+        <priority>0</priority>
+        <connector-comment>List of formulae</connector-comment>
+    </connector>
+    <connector>
+        <connector-name>input</connector-name>
+        <arity>2</arity>
+        <associative>false</associative>
+        <output-format>INPUT: TBox = _; ABox = _</output-format>
+        <priority>0</priority>
+        <connector-comment>Input of both TBox and ABox</connector-comment>
+    </connector>
+    <rule>
+        <rule-name>OrRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>or variable x variable y</parameter>
+        </condition>
+        <action>
+            <action-name>duplicate</action-name>
+            <parameter>copy</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>copy.node</parameter>
+            <parameter>variable y</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>PosRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>pos variable x</parameter>
+        </condition>
+        <action>
+            <action-name>createNewNode</action-name>
+            <parameter>node'</parameter>
+        </action>
+        <action>
+            <action-name>link</action-name>
+            <parameter>node</parameter>
+            <parameter>node'</parameter>
+            <parameter>R</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node'</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>Clash</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>variable x</parameter>
+        </condition>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>not variable x</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>CLASH</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>AddFromList</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>add variable x variable y</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable y</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <strategy>
+        <strategy-name>DefaultStrategy</strategy-name>
+        <strategy-code>repeat
+AddFromList
+end
+repeat
+OrRule
+PosRule
+Clash
+end</strategy-code>
+        <strategy-comment>A default empty strategy that does nothing.</strategy-comment>
+    </strategy>
+    <main-strategy>DefaultStrategy</main-strategy>
+    <testing-formula>
+        <formula-name/>
+        <formula-code>add P or not P pos pos Q</formula-code>
+        <formula-comment/>
+    </testing-formula>
+</logic>
