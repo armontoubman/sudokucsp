@@ -122,6 +122,10 @@
             <parameter>node</parameter>
             <parameter>CLASH</parameter>
         </action>
+        <action>
+            <action-name>stop</action-name>
+            <parameter>node</parameter>
+        </action>
         <rule-comment>Apply Clash-rule; There is a contradiction in the assumptions.</rule-comment>
     </rule>
     <rule>
@@ -192,26 +196,6 @@
         <rule-comment/>
     </rule>
     <rule>
-        <rule-name>TBoxRule</rule-name>
-        <condition>
-            <condition-name>hasElement</condition-name>
-            <parameter>node</parameter>
-            <parameter>tbox variable x</parameter>
-        </condition>
-        <condition>
-            <condition-name>isLinked</condition-name>
-            <parameter>node</parameter>
-            <parameter>node1</parameter>
-            <parameter>StartTableau</parameter>
-        </condition>
-        <action>
-            <action-name>add</action-name>
-            <parameter>node1</parameter>
-            <parameter>variable x</parameter>
-        </action>
-        <rule-comment/>
-    </rule>
-    <rule>
         <rule-name>SomeRule</rule-name>
         <condition>
             <condition-name>hasElement</condition-name>
@@ -255,24 +239,72 @@
         </action>
         <rule-comment/>
     </rule>
+    <rule>
+        <rule-name>TBoxRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>tbox variable x</parameter>
+        </condition>
+        <condition>
+            <condition-name>isAncestor</condition-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+        </condition>
+        <condition>
+            <condition-name>isNewNode</condition-name>
+            <parameter>node2</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node1</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <rule-comment>Transitive?</rule-comment>
+    </rule>
+    <rule>
+        <rule-name>NewBoxRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>tbox variable x</parameter>
+        </condition>
+        <condition>
+            <condition-name>isNewNode</condition-name>
+            <parameter>node1</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node1</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
     <strategy>
-        <strategy-name>DefaultStrategy</strategy-name>
+        <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
-	Initiate
-	AddFromList
+firstRule
+	Clash
 	TBoxRule
-end
-repeat
 	AndRule
 	OrRule
 	OnlyRule
-   	SomeRule
-	Clash
+	SomeRule
 end
+end</strategy-code>
+        <strategy-comment/>
+    </strategy>
+    <strategy>
+        <strategy-name>Strategy</strategy-name>
+        <strategy-code>repeat
+	Initiate
+	AddFromList
+end
+CoreStrat
 </strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
     </strategy>
-    <main-strategy>DefaultStrategy</main-strategy>
+    <main-strategy>Strategy</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>
