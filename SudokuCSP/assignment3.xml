@@ -103,7 +103,7 @@
             <parameter>copy.node</parameter>
             <parameter>variable y</parameter>
         </action>
-        <rule-comment/>
+        <rule-comment>Apply Or-rule; Split into two branches and check each possibility.</rule-comment>
     </rule>
     <rule>
         <rule-name>Clash</rule-name>
@@ -122,7 +122,7 @@
             <parameter>node</parameter>
             <parameter>CLASH</parameter>
         </action>
-        <rule-comment/>
+        <rule-comment>Apply Clash-rule; There is a contradiction in the assumptions.</rule-comment>
     </rule>
     <rule>
         <rule-name>AddFromList</rule-name>
@@ -141,24 +141,156 @@
             <parameter>node</parameter>
             <parameter>variable y</parameter>
         </action>
+        <rule-comment>Assume the single elements of a list of two elements.</rule-comment>
+    </rule>
+    <rule>
+        <rule-name>AndRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>and variable x variable y</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable y</parameter>
+        </action>
+        <rule-comment>Apply And-rule; Both elements are assumed individually.</rule-comment>
+    </rule>
+    <rule>
+        <rule-name>Initiate</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>input variable x variable y</parameter>
+        </condition>
+        <action>
+            <action-name>createNewNode</action-name>
+            <parameter>node1</parameter>
+        </action>
+        <action>
+            <action-name>link</action-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+            <parameter>StartTableau</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node1</parameter>
+            <parameter>variable y</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>TBoxRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>tbox variable x</parameter>
+        </condition>
+        <condition>
+            <condition-name>isLinked</condition-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+            <parameter>StartTableau</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node1</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>SomeRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>some variable r variable c</parameter>
+        </condition>
+        <action>
+            <action-name>createNewNode</action-name>
+            <parameter>nodeS</parameter>
+        </action>
+        <action>
+            <action-name>link</action-name>
+            <parameter>node</parameter>
+            <parameter>nodeS</parameter>
+            <parameter>variable r</parameter>
+        </action>
+        <action>
+            <action-name>add</action-name>
+            <parameter>nodeS</parameter>
+            <parameter>variable c</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>OnlyRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>only variable r variable c</parameter>
+        </condition>
+        <condition>
+            <condition-name>isLinked</condition-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+            <parameter>variable r</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node1</parameter>
+            <parameter>variable c</parameter>
+        </action>
         <rule-comment/>
     </rule>
     <strategy>
         <strategy-name>DefaultStrategy</strategy-name>
         <strategy-code>repeat
-AddFromList
+	Initiate
+	AddFromList
+	TBoxRule
 end
 repeat
-OrRule
-Clash
+	AndRule
+	OrRule
+	OnlyRule
+   	SomeRule
+	Clash
 end
-        </strategy-code>
-        <strategy-comment>A default empty strategy that does nothing.</strategy-comment>
+</strategy-code>
+        <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
     </strategy>
     <main-strategy>DefaultStrategy</main-strategy>
     <testing-formula>
+        <formula-name>Modus Ponens</formula-name>
+        <formula-code>add or not P Q P</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
         <formula-name/>
-        <formula-code>add P or not P P</formula-code>
+        <formula-code>add P or not P and P or P Q</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name/>
+        <formula-code>input add tbox and P Q tbox or not P R or R Q</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>Figure 1</formula-name>
+        <formula-code>input add tbox some S C tbox only R or not C D some R and C D</formula-code>
         <formula-comment/>
     </testing-formula>
 </logic>
