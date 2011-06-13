@@ -106,30 +106,6 @@
         <rule-comment/>
     </rule>
     <rule>
-        <rule-name>PosRule</rule-name>
-        <condition>
-            <condition-name>hasElement</condition-name>
-            <parameter>node</parameter>
-            <parameter>pos variable x</parameter>
-        </condition>
-        <action>
-            <action-name>createNewNode</action-name>
-            <parameter>node'</parameter>
-        </action>
-        <action>
-            <action-name>link</action-name>
-            <parameter>node</parameter>
-            <parameter>node'</parameter>
-            <parameter>R</parameter>
-        </action>
-        <action>
-            <action-name>add</action-name>
-            <parameter>node'</parameter>
-            <parameter>variable x</parameter>
-        </action>
-        <rule-comment/>
-    </rule>
-    <rule>
         <rule-name>Clash</rule-name>
         <condition>
             <condition-name>hasElement</condition-name>
@@ -174,15 +150,15 @@ AddFromList
 end
 repeat
 OrRule
-PosRule
 Clash
-end</strategy-code>
+end
+        </strategy-code>
         <strategy-comment>A default empty strategy that does nothing.</strategy-comment>
     </strategy>
     <main-strategy>DefaultStrategy</main-strategy>
     <testing-formula>
         <formula-name/>
-        <formula-code>add P or not P pos pos Q</formula-code>
+        <formula-code>add P or not P P</formula-code>
         <formula-comment/>
     </testing-formula>
 </logic>
