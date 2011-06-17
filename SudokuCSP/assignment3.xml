@@ -285,7 +285,6 @@
         <strategy-code>repeat
 firstRule
 	Clash
-	TBoxRule
 	AndRule
 	OrRule
 	OnlyRule
