@@ -251,10 +251,6 @@
             <parameter>node</parameter>
             <parameter>node1</parameter>
         </condition>
-        <condition>
-            <condition-name>isNewNode</condition-name>
-            <parameter>node2</parameter>
-        </condition>
         <action>
             <action-name>add</action-name>
             <parameter>node1</parameter>
@@ -280,11 +276,39 @@
         </action>
         <rule-comment/>
     </rule>
+    <rule>
+        <rule-name>TBoxRule2</rule-name>
+        <condition>
+            <condition-name>isLinked</condition-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+            <parameter>variable y</parameter>
+        </condition>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>tbox variable x</parameter>
+        </condition>
+        <condition>
+            <condition-name>isLinked</condition-name>
+            <parameter>node1</parameter>
+            <parameter>node2</parameter>
+            <parameter>variable z</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node2</parameter>
+            <parameter>variable x</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
 firstRule
 	Clash
+	TBoxRule
+	TBoxRule2
 	AndRule
 	OrRule
 	OnlyRule
