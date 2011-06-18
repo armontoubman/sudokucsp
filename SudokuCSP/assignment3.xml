@@ -323,9 +323,22 @@ end</strategy-code>
 	Initiate
 	AddFromList
 end
-CoreStrat
+CoreStrat2
 </strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
+    </strategy>
+    <strategy>
+        <strategy-name>CoreStrat2</strategy-name>
+        <strategy-code>repeat
+	Clash
+  repeat TBoxRule end
+	AndRule
+	OrRule
+	OnlyRule
+	SomeRule
+  repeat TBoxRule end
+end</strategy-code>
+        <strategy-comment/>
     </strategy>
     <main-strategy>Strategy</main-strategy>
     <testing-formula>
