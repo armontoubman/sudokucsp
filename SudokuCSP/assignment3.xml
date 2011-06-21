@@ -276,6 +276,37 @@
         </action>
         <rule-comment/>
     </rule>
+    <rule>
+        <rule-name>Block</rule-name>
+        <condition>
+            <condition-name>contains</condition-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+        </condition>
+        <condition>
+            <condition-name>isLinked</condition-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+            <parameter>variable r</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node1</parameter>
+            <parameter>BLOCKED</parameter>
+        </action>
+        <action>
+            <action-name>link</action-name>
+            <parameter>node</parameter>
+            <parameter>node1</parameter>
+            <parameter>Blocks</parameter>
+        </action>
+        <action>
+            <action-name>stop</action-name>
+            <parameter>node1</parameter>
+        </action>
+        <rule-comment>Block cycles; apply only if no rule but SomeRule is appliable</rule-comment>
+    </rule>
+
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
@@ -291,7 +322,8 @@
 	SomeRule
      TBoxRule
 end
-repeat TBoxRule end</strategy-code>
+repeat TBoxRule end
+Block</strategy-code>
         <strategy-comment/>
     </strategy>
     <strategy>
