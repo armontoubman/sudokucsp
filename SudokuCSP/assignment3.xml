@@ -288,44 +288,76 @@
         </action>
         <rule-comment>Block cycles; apply only if no rule but SomeRule is appliable</rule-comment>
     </rule>
+    <rule>
+        <rule-name>FalsumRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>false variable f</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>FALSE</parameter>
+        </action>
+        <action>
+            <action-name>stop</action-name>
+            <parameter>node</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
+    <rule>
+        <rule-name>TruthRule</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>true variable t</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>variable t</parameter>
+        </action>
+        <action>
+            <action-name>hide</action-name>
+            <parameter>node</parameter>
+            <parameter>true variable t</parameter>
+        </action>
+        <rule-comment>Remove True, add random variable that now counts</rule-comment>
+    </rule>
     <strategy>
         <strategy-name>newStrat</strategy-name>
         <strategy-code>repeat
-repeat
+	repeat
 		Clash
-			TBoxRule
+		TBoxRule
 		AndRule
-			TBoxRule
+		TBoxRule
 		OrRule
-
-			TBoxRule
+		TBoxRule
 		OnlyRule
+	end
+	TBoxRule
+	SomeRule
+	TBoxRule
 end
-			TBoxRule
-			SomeRule
-			TBoxRule
-end
-repeat 
-			TBoxRule
-end
-			Block</strategy-code>
+repeat TBoxRule end
+Block</strategy-code>
         <strategy-comment/>
     </strategy>
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
-	firstRule
-		Clash
-		AndRule
-		OrRule
-		OnlyRule
-		allRules
-			SomeRule
-			TBoxRule
-			Block
-		end
-	end	
+  SomeRule
+  TBoxRule
+  OnlyRule
+  TBoxRule
+  AndRule
+  OrRule
+  repeat TBoxRule end
+  Clash Block
 end
+
 </strategy-code>
         <strategy-comment/>
     </strategy>
@@ -336,8 +368,20 @@ end
 	AddFromList
 	TBoxRule
 end
-newStrat</strategy-code>
+CoreStrat
+</strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
+    </strategy>
+    <strategy>
+        <strategy-name>Strategy2</strategy-name>
+        <strategy-code>repeat
+	Initiate
+	AddFromList
+	TBoxRule
+end
+newStrat
+</strategy-code>
+        <strategy-comment/>
     </strategy>
     <main-strategy>Strategy</main-strategy>
     <testing-formula>
@@ -358,6 +402,11 @@ newStrat</strategy-code>
     <testing-formula>
         <formula-name>Figure 1</formula-name>
         <formula-code>input add tbox some S C tbox only R or not C D some R and C D</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>Exercise 2.1</formula-name>
+        <formula-code>input add tbox some S C tbox only R or false A E some R D</formula-code>
         <formula-comment/>
     </testing-formula>
 </logic>
