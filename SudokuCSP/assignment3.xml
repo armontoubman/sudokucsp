@@ -289,6 +289,29 @@
         <rule-comment>Block cycles; apply only if no rule but SomeRule is appliable</rule-comment>
     </rule>
     <strategy>
+        <strategy-name>newStrat</strategy-name>
+        <strategy-code>repeat
+repeat
+		Clash
+			TBoxRule
+		AndRule
+			TBoxRule
+		OrRule
+
+			TBoxRule
+		OnlyRule
+end
+			TBoxRule
+			SomeRule
+			TBoxRule
+end
+repeat 
+			TBoxRule
+end
+			Block</strategy-code>
+        <strategy-comment/>
+    </strategy>
+    <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
 	firstRule
@@ -315,29 +338,6 @@ end
 end
 newStrat</strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
-    </strategy>
-    <strategy>
-        <strategy-name>newStrat</strategy-name>
-        <strategy-code>repeat
-firstRule
-		Clash
-			TBoxRule
-		AndRule
-			TBoxRule
-		OrRule
-
-			TBoxRule
-		OnlyRule
-end
-			TBoxRule
-			SomeRule
-			TBoxRule
-end
-repeat 
-			TBoxRule
-end
-			Block</strategy-code>
-        <strategy-comment/>
     </strategy>
     <main-strategy>Strategy</main-strategy>
     <testing-formula>
