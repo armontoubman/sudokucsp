@@ -321,26 +321,6 @@
         <rule-comment>Not True is False</rule-comment>
     </rule>
     <strategy>
-        <strategy-name>newStrat</strategy-name>
-        <strategy-code>repeat
-	repeat
-		Clash
-		TBoxRule
-		AndRule
-		TBoxRule
-		OrRule
-		TBoxRule
-		OnlyRule
-	end
-	TBoxRule
-	SomeRule
-	TBoxRule
-end
-repeat TBoxRule end
-Block</strategy-code>
-        <strategy-comment/>
-    </strategy>
-    <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
   TruthRule
@@ -370,17 +350,6 @@ CoreStrat
 </strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
     </strategy>
-    <strategy>
-        <strategy-name>Strategy2</strategy-name>
-        <strategy-code>repeat
-	Initiate
-	AddFromList
-	TBoxRule
-end
-newStrat
-</strategy-code>
-        <strategy-comment/>
-    </strategy>
     <main-strategy>Strategy</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
@@ -406,5 +375,10 @@ newStrat
         <formula-name>Exercise 2.1</formula-name>
         <formula-code>input add tbox some S C tbox only R or false FALSE E some R D</formula-code>
         <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>Exercise 2.2</formula-name>
+        <formula-code>input add add tbox or not C not A tbox or not D only R or A B tbox or not E some R C add and D E only R not B</formula-code>
+        <formula-comment>I think...</formula-comment>
     </testing-formula>
 </logic>
