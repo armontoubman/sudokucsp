@@ -310,14 +310,24 @@
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
 	firstRule
+TBoxRule
 		Clash
+TBoxRule
 		AndRule
+TBoxRule
 		OrRule		
+TBoxRule
 		OnlyRule
-		SomeRule
-	     TBoxRule
-		Block
-	end
+TBoxRule
+		allRules
+			SomeRule
+			TBoxRule
+			Block
+			TBoxRule
+		end
+		repeat TBoxRule end
+	end	
+		repeat TBoxRule end
 end
 </strategy-code>
         <strategy-comment/>
