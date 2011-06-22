@@ -311,19 +311,14 @@
         <condition>
             <condition-name>hasElement</condition-name>
             <parameter>node</parameter>
-            <parameter>true variable t</parameter>
+            <parameter>not true variable t</parameter>
         </condition>
         <action>
             <action-name>add</action-name>
             <parameter>node</parameter>
-            <parameter>variable t</parameter>
+            <parameter>false variable t</parameter>
         </action>
-        <action>
-            <action-name>hide</action-name>
-            <parameter>node</parameter>
-            <parameter>true variable t</parameter>
-        </action>
-        <rule-comment>Remove True, add random variable that now counts</rule-comment>
+        <rule-comment>Not True is False</rule-comment>
     </rule>
     <strategy>
         <strategy-name>newStrat</strategy-name>
@@ -348,6 +343,9 @@ Block</strategy-code>
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
+  TruthRule
+  FalsumRule
+
   SomeRule
   TBoxRule
   OnlyRule
@@ -406,7 +404,7 @@ newStrat
     </testing-formula>
     <testing-formula>
         <formula-name>Exercise 2.1</formula-name>
-        <formula-code>input add tbox some S C tbox only R or false A E some R D</formula-code>
+        <formula-code>input add tbox some S C tbox only R or false FALSE E some R D</formula-code>
         <formula-comment/>
     </testing-formula>
 </logic>
