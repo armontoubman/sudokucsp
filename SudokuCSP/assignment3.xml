@@ -306,24 +306,20 @@
         </action>
         <rule-comment>Block cycles; apply only if no rule but SomeRule is appliable</rule-comment>
     </rule>
-
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
-     TBoxRule
-	Clash
-     TBoxRule
-	AndRule
-     TBoxRule
-	OrRule
-     TBoxRule
-	OnlyRule
-     TBoxRule
-	SomeRule
-     TBoxRule
+	firstRule
+		Clash
+		AndRule
+		OrRule		
+		OnlyRule
+		SomeRule
+	     TBoxRule
+		Block
+	end
 end
-repeat TBoxRule end
-Block</strategy-code>
+</strategy-code>
         <strategy-comment/>
     </strategy>
     <strategy>
@@ -331,6 +327,7 @@ Block</strategy-code>
         <strategy-code>repeat
 	Initiate
 	AddFromList
+	TBoxRule
 end
 CoreStrat
 </strategy-code>
