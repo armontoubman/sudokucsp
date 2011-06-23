@@ -103,7 +103,7 @@
             <parameter>copy.node</parameter>
             <parameter>variable y</parameter>
         </action>
-        <rule-comment>Apply Or-rule; Split into two branches and check each possibility.</rule-comment>
+        <rule-comment>Apply Or-rule; Split into two branches, with each assuming one of the Or variables.</rule-comment>
     </rule>
     <rule>
         <rule-name>Clash</rule-name>
@@ -164,7 +164,7 @@
             <parameter>node</parameter>
             <parameter>variable y</parameter>
         </action>
-        <rule-comment>Apply And-rule; Both elements are assumed individually.</rule-comment>
+        <rule-comment>Apply And-rule; Both elements are now also assumed individually.</rule-comment>
     </rule>
     <rule>
         <rule-name>Initiate</rule-name>
@@ -202,6 +202,11 @@
             <parameter>node</parameter>
             <parameter>some variable r variable c</parameter>
         </condition>
+        <condition>
+            <condition-name>hasNotElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>BLOCKED</parameter>
+        </condition>
         <action>
             <action-name>createNewNode</action-name>
             <parameter>nodeS</parameter>
@@ -217,7 +222,7 @@
             <parameter>nodeS</parameter>
             <parameter>variable c</parameter>
         </action>
-        <rule-comment/>
+        <rule-comment>Prevent further application of the SomeRule if the node is BLOCKED</rule-comment>
     </rule>
     <rule>
         <rule-name>OnlyRule</rule-name>
@@ -237,7 +242,7 @@
             <parameter>node1</parameter>
             <parameter>variable c</parameter>
         </action>
-        <rule-comment/>
+        <rule-comment>Assume variable C if all nodes related via R should have this assumption.</rule-comment>
     </rule>
     <rule>
         <rule-name>TBoxRule</rule-name>
@@ -251,12 +256,16 @@
             <parameter>node</parameter>
             <parameter>node1</parameter>
         </condition>
+        <condition>
+            <condition-name>isNewNode</condition-name>
+            <parameter>node1</parameter>
+        </condition>
         <action>
             <action-name>add</action-name>
             <parameter>node1</parameter>
             <parameter>variable x</parameter>
         </action>
-        <rule-comment>Transitive?</rule-comment>
+        <rule-comment>If node1 has an ancestor with TBox variables, it will assume these as well.</rule-comment>
     </rule>
     <rule>
         <rule-name>Block</rule-name>
@@ -266,10 +275,13 @@
             <parameter>node1</parameter>
         </condition>
         <condition>
-            <condition-name>isLinked</condition-name>
+            <condition-name>isAncestor</condition-name>
             <parameter>node</parameter>
             <parameter>node1</parameter>
-            <parameter>variable r</parameter>
+        </condition>
+        <condition>
+            <condition-name>isNewNode</condition-name>
+            <parameter>node1</parameter>
         </condition>
         <action>
             <action-name>add</action-name>
@@ -282,11 +294,7 @@
             <parameter>node1</parameter>
             <parameter>Blocks</parameter>
         </action>
-        <action>
-            <action-name>stop</action-name>
-            <parameter>node1</parameter>
-        </action>
-        <rule-comment>Block cycles; apply only if no rule but SomeRule is appliable</rule-comment>
+        <rule-comment>Block cycles; BLOCKED node will not use the SomeRule anymore</rule-comment>
     </rule>
     <rule>
         <rule-name>FalsumRule</rule-name>
@@ -304,7 +312,7 @@
             <action-name>stop</action-name>
             <parameter>node</parameter>
         </action>
-        <rule-comment/>
+        <rule-comment>There is a contradiction (like Clash). False cannot be assumed to be True.</rule-comment>
     </rule>
     <rule>
         <rule-name>TruthRule</rule-name>
@@ -329,11 +337,10 @@
   SomeRule
   TBoxRule
   OnlyRule
-  TBoxRule
   AndRule
   OrRule
-  repeat TBoxRule end
-  Clash Block
+  Clash 
+  Block
 end
 
 </strategy-code>
@@ -380,5 +387,10 @@ CoreStrat
         <formula-name>Exercise 2.2</formula-name>
         <formula-code>input add add tbox or not C not A tbox or not D only R or A B tbox or not E some R C add and D E only R not B</formula-code>
         <formula-comment>I think...</formula-comment>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>experiment</formula-name>
+        <formula-code>input tbox some R some S D X</formula-code>
+        <formula-comment>To test the blocking rule</formula-comment>
     </testing-formula>
 </logic>
