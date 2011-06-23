@@ -70,211 +70,152 @@ Assignment 3: Description Logic}
 \begin{document}
 \maketitle
 
-\begin{abstract}
-...
-\end{abstract}
+\section{Tableau algorithm}
+\label{sec:tableau}
 
-\section{Introduction}
-\label{sec:intro}
-... Section~\ref{sec:??}. Section~\ref{sec:??}.
+We use the following mapping from Description Logic to LoTREC. It is similar to the example given in the assignment except for some of the LoTREC displays.
 
-\begin{table}[htbp]
-\caption{Overbodige Sudoku}
-    \label{tab:sudoku_initial}
-    \begin{center}
-        \scalebox{0.75}{
-        \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
-        \hline
-        \hline
-         & 9 & 4 &  &  &  & 1 & 3 & \\
-        \hline
-         &  &  &  &  &  &  &  & \\
-        \hline
-         &  &  &  & 7 & 6 &  &  & 2\\
-        \hline
-        \hline
-         & 8 &  &  & 1 &  &  &  & \\
-        \hline
-         & 3 & 2 &  &  &  &  &  & \\
-        \hline
-         &  &  & 2 &  &  &  & 6 & \\
-        \hline
-        \hline
-         &  &  &  & 5 &  & 4 &  & \\
-        \hline
-         &  &  &  &  & 8 &  &  & 7\\
-        \hline
-         &  & 6 & 3 &  & 4 &  &  & 8\\
-        \hline
-        \hline
-        \end{tabular}}
-    \end{center}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l c c c c c c}
+$\mathcal{ALC}$ syntax & $\neg C$ & $C \sqcap D$ & $C \sqcup D$ & $\exists r.C$ & $\forall r.C$ & $\top \equiv D$\\
+LoTREC connective & \texttt{not} $C$ & \texttt{and} $C D$ & \texttt{or} $C D$ & \texttt{some} $r$ $C$ & \texttt{only} $r$ $C$ & \texttt{tbox} $D$\\
+LoTREC display & $\sim$ $C$ & $C$ $^\wedge$ $D$ & $C$ v $D$ & $r$ some $C$ & $r$ only $C$ & $\top$ = $D$\\
+\end{tabular}
+\end{center}
 \end{table}
 
+To indicate $\top$ and $\bot$ we use two connectors \texttt{true} and \texttt{false}, both with arity 1. The actual variable used with these connectors is disregarded. The representation of lists of formulas and of problem instances are again much like the example:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l c c}
+LoTREC connective & \texttt{add} $\phi$ $\psi$ & \texttt{input} $\mathcal{T}$ $C$\\
+LoTREC display & $\phi$ \& $\psi$ & INPUT: TBox = $\mathcal{T}$; ABox = $C$\\
+\end{tabular}
+\end{center}
+\end{table}
+
+Because the only differences in our encoding and the example encoding in the assignment are in the LoTREC display, the LoTREC input of formulas is done in the same way as the example formula used in Figure 1 and 2 of the assignment:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{c}
+(\{$\top \equiv \exists s.C$, $\top \equiv \forall r.(\neg C \sqcup D)$\}, $\exists r.(C \sqcap D)$)\\
+\texttt{input add tbox some S C tbox only R or not C D some R and C D}\\
+\end{tabular}
+\end{center}
+\end{table}
+
+All connectors, rules, strategies and example formulas can of course be found in our LoTREC file.
 
 \section{Reasoning problems}
-\label{sec:2}
+\label{sec:reasoning}
 
 Solve the following decision problems supporting yourself with your implemen-
 tation of tableau algorithm.
-\begin{itemize}
 
-\item 1. Is 9r:D satisfiable w.r.t. T =
-\begin{itemize}
+\subsection{}
 
-\item 1. State the problem.
-\item 2. Reduce the problem to the corresponding concept satisability problem
-(as shown during the lecture).
-\item 3. Apply the necessary syntactic transformations to the TBox and the con-
-cept so that the conditions (y), listed in the previous task, are satised.
-\item 4. Translate the result into the input formula for your tableau implementa-
-tion. Please, type and save this formula also in your implementation le
-*.xml [LoTREC tab: Predefined Formulas]
-\item 5. Use your implementation of the tableau to compute a tableau tree for this
-formula.
-\item 6. State the result of the computation (is the tableau closed or open?) If the
-tableau is open include a picture of one of its open branches in the report
-[LoTREC menu: Premodels/Export Premodel...].
-4
-\item 7. Based on the result of the computation provide the answers to the fol-
-lowing problems: 1) the original decision problem; 2) the corresponding
-concept satisability problem that you solved with the tableau algorithm.
-
-\end{itemize}
-
-\item 2. Is DuE subsumed by 9r:B in T =
-\begin{itemize}
-
-\item 1. State the problem.
-\item 2. Reduce the problem to the corresponding concept satisability problem
-(as shown during the lecture).
-\item 3. Apply the necessary syntactic transformations to the TBox and the con-
-cept so that the conditions (y), listed in the previous task, are satised.
-\item 4. Translate the result into the input formula for your tableau implementa-
-tion. Please, type and save this formula also in your implementation le
-*.xml [LoTREC tab: Predefined Formulas]
-\item 5. Use your implementation of the tableau to compute a tableau tree for this
-formula.
-\item 6. State the result of the computation (is the tableau closed or open?) If the
-tableau is open include a picture of one of its open branches in the report
-[LoTREC menu: Premodels/Export Premodel...].
-4
-\item 7. Based on the result of the computation provide the answers to the fol-
-lowing problems: 1) the original decision problem; 2) the corresponding
-concept satisability problem that you solved with the tableau algorithm.
-
-\end{itemize}
-\item 3. Is the ABox fC(a)g consistent w.r.t. T =
-\begin{itemize}
-
-\item 1. State the problem.
-\item 2. Reduce the problem to the corresponding concept satisability problem
-(as shown during the lecture).
-\item 3. Apply the necessary syntactic transformations to the TBox and the con-
-cept so that the conditions (y), listed in the previous task, are satised.
-\item 4. Translate the result into the input formula for your tableau implementa-
-tion. Please, type and save this formula also in your implementation le
-*.xml [LoTREC tab: Predefined Formulas]
-\item 5. Use your implementation of the tableau to compute a tableau tree for this
-formula.
-\item 6. State the result of the computation (is the tableau closed or open?) If the
-tableau is open include a picture of one of its open branches in the report
-[LoTREC menu: Premodels/Export Premodel...].
-4
-\item 7. Based on the result of the computation provide the answers to the fol-
-lowing problems: 1) the original decision problem; 2) the corresponding
-concept satisability problem that you solved with the tableau algorithm.
-
-\end{itemize}
-
-\end{itemize}
-
-
-
-\section{??}
-\label{sec:??}
-
-... See also Figure~\ref{fig:??}. 
-
-\begin{figure}[htbp]
 \begin{center}
-\comment{\includegraphics{??}}
-\caption{??}
-\label{fig:??}
+Is $\exists r.D$ satisfiable with regard to $\mathcal{T}$ = \{ $\top \equiv \exists s.C$, $\top \equiv \forall r.(\bot \sqcup E)$ \}?
 \end{center}
-\end{figure}
 
-\subsection{??}
-\label{sec:??}
+\begin{itemize}
 
-... shown in Figure~\ref{code:??}.
+\item 1. State the problem.
+\item 2. Reduce the problem to the corresponding concept satisability problem
+(as shown during the lecture).
+\item 3. Apply the necessary syntactic transformations to the TBox and the con-
+cept so that the conditions (y), listed in the previous task, are satised.
+\item 4. Translate the result into the input formula for your tableau implementa-
+tion. Please, type and save this formula also in your implementation le
+*.xml [LoTREC tab: Predefined Formulas]
+\item 5. Use your implementation of the tableau to compute a tableau tree for this
+formula.
+\item 6. State the result of the computation (is the tableau closed or open?) If the
+tableau is open include a picture of one of its open branches in the report
+[LoTREC menu: Premodels/Export Premodel...].
+4
+\item 7. Based on the result of the computation provide the answers to the fol-
+lowing problems: 1) the original decision problem; 2) the corresponding
+concept satisability problem that you solved with the tableau algorithm.
 
-\begin{figure}
-\begin{verbatim}
-procedure ??
-end ??
-\end{verbatim}
-\caption{??}
-\label{code:??}
-\end{figure}
+\end{itemize}
 
-...
-\subsection{??}
-\label{sec:??}
+\subsection{}
 
-... citet{??}.
+\begin{center}
+Is $D \sqcap E$ subsumed by $\exists r.B$ in $\mathcal{T}$ = \{ $C \sqsubseteq \neg A$, $D \sqsubseteq \forall r.(A \sqcup B)$, $E \sqsubseteq \exists r.C$\}?
+\end{center}
 
-\subsubsection{??}
-\label{sec:??}
+\begin{itemize}
 
-... in \citet{??}.
-In other sources, such as \citet{??}
+\item 1. State the problem.
+\item 2. Reduce the problem to the corresponding concept satisability problem
+(as shown during the lecture).
+\item 3. Apply the necessary syntactic transformations to the TBox and the con-
+cept so that the conditions (y), listed in the previous task, are satised.
+\item 4. Translate the result into the input formula for your tableau implementa-
+tion. Please, type and save this formula also in your implementation le
+*.xml [LoTREC tab: Predefined Formulas]
+\item 5. Use your implementation of the tableau to compute a tableau tree for this
+formula.
+\item 6. State the result of the computation (is the tableau closed or open?) If the
+tableau is open include a picture of one of its open branches in the report
+[LoTREC menu: Premodels/Export Premodel...].
+4
+\item 7. Based on the result of the computation provide the answers to the fol-
+lowing problems: 1) the original decision problem; 2) the corresponding
+concept satisability problem that you solved with the tableau algorithm.
 
-\begin{table}[htbp]
-\caption{??}
-    \label{tab:??}
-    \begin{comment}
-??
-    \end{comment}
-    \begin{center}
-        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-        \hline
-        %\cellcolor[gray]{0.8} & 9 & 4 &  &  &  & 1 & 3 & \\
-        \cellcolor[gray]{0.7} & 9 & 4 &  &  &  & 1 & 3 & \\
-        \hline
-        \end{tabular}
-    \end{center}
-\end{table}
+\end{itemize}
 
-... from Table~\ref{tab:??}
+\subsection{}
 
-\begin{table}[htbp]
-\caption{??}
-    \label{tab:??}
-    \begin{comment}
-    \end{comment}
-    \begin{center}
-        \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-        \hline
-        \cellcolor[gray]{0.7}\{2, 5, 6, 7, 8\} & 9 & 4 & \{5, 8\} & \{2, 8\} & \{2, 5\} & 1 & 3 & \{5, 6\}\\
-        \hline
-        \end{tabular}
-    \end{center}
-\end{table}
+\begin{center}
+Is the ABox \{$C(a)$\} consistent with regard to $\mathcal{T}$ = \{$\top \equiv \forall r.B \sqcap \forall s.C$, $\top \equiv \neg \forall r.(\neg C \sqcap B)$, $\top \equiv \exists s.\top$\}?
+\end{center}
 
-\subsubsection{??}
-\label{sec:??}
+\begin{itemize}
 
-\section{??}
-\label{sec:??}
+\item 1. State the problem.
+\item 2. Reduce the problem to the corresponding concept satisability problem
+(as shown during the lecture).
+\item 3. Apply the necessary syntactic transformations to the TBox and the con-
+cept so that the conditions (y), listed in the previous task, are satised.
+\item 4. Translate the result into the input formula for your tableau implementa-
+tion. Please, type and save this formula also in your implementation le
+*.xml [LoTREC tab: Predefined Formulas]
+\item 5. Use your implementation of the tableau to compute a tableau tree for this
+formula.
+\item 6. State the result of the computation (is the tableau closed or open?) If the
+tableau is open include a picture of one of its open branches in the report
+[LoTREC menu: Premodels/Export Premodel...].
+4
+\item 7. Based on the result of the computation provide the answers to the fol-
+lowing problems: 1) the original decision problem; 2) the corresponding
+concept satisability problem that you solved with the tableau algorithm.
 
-Table~\ref{tab:??}
+\end{itemize}
 
-\section{Discussion}
-\label{sec:disc}
+\section{Strategies}
+\label{sec:strategies}
 
-\section{Conclusion}
-\label{sec:concl}
+\subsection{Blocking}
+
+\subsection{Ordering}
+
+\section{Extensions}
+\label{sec:extensions}
+
+2/3
+
+\subsection{Role inverses}
+
+\subsection{Transitive rules}
+
+\subsection{Role hierarchies}
 
 \bibliographystyle{plainnat}
 \bibliography{ref}
