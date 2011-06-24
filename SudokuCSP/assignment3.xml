@@ -339,9 +339,9 @@ firstRule
   OrRule
   Clash
 allRules
+	Block
 	SomeRule
 	TBoxRule
-	Block
 end 
 end
 end
