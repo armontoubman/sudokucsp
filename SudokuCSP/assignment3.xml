@@ -331,17 +331,22 @@
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
+firstRule
   TruthRule
   FalsumRule
-
-  SomeRule
-  TBoxRule
   OnlyRule
   AndRule
   OrRule
-  Clash 
-  Block
+  Clash
+allRules
+	SomeRule
+	TBoxRule
+	Block
+end 
 end
+end
+
+
 
 </strategy-code>
         <strategy-comment/>
