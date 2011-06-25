@@ -90,6 +90,14 @@
         <priority>0</priority>
         <connector-comment/>
     </connector>
+    <connector>
+        <connector-name>trans</connector-name>
+        <arity>1</arity>
+        <associative>false</associative>
+        <output-format>+_</output-format>
+        <priority>0</priority>
+        <connector-comment/>
+    </connector>
     <rule>
         <rule-name>OrRule</rule-name>
         <condition>
@@ -355,6 +363,25 @@
         </action>
         <rule-comment/>
     </rule>
+    <rule>
+        <rule-name>TransitiveRoleSome</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>trans variable t</parameter>
+        </condition>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>some variable t some variable t variable b</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>some variable t variable b</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
@@ -390,7 +417,7 @@ CoreStrat
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
     </strategy>
     <strategy>
-        <strategy-name>StrategyWithExtensions</strategy-name>
+        <strategy-name>StrategyWithRoleHierarchies</strategy-name>
         <strategy-code>repeat
 	Initiate
 	AddFromList
@@ -415,7 +442,33 @@ end
 </strategy-code>
         <strategy-comment/>
     </strategy>
-    <main-strategy>StrategyWithExtensions</main-strategy>
+    <strategy>
+        <strategy-name>StrategyWithTransitiveRoles</strategy-name>
+        <strategy-code>repeat
+	Initiate
+	AddFromList
+	TBoxRule
+end
+repeat
+firstRule
+  TruthRule
+  FalsumRule
+  TransitiveRoleSome
+  OnlyRule
+  AndRule
+  OrRule
+  Clash
+allRules
+	Block
+	SomeRule
+	TBoxRule
+end 
+end
+end
+</strategy-code>
+        <strategy-comment/>
+    </strategy>
+    <main-strategy>Strategy</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>
@@ -459,6 +512,11 @@ end
     <testing-formula>
         <formula-name>Role Hierarchies</formula-name>
         <formula-code>input tbox some Painted Painting add only Created not Painting subrole Painted Created</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>Transitive Roles</formula-name>
+        <formula-code>input add tbox some HasPart some HasPart some HasPart Component tbox trans HasPart some HasPart Component</formula-code>
         <formula-comment/>
     </testing-formula>
 </logic>
