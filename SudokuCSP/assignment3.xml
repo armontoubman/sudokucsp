@@ -82,6 +82,14 @@
         <priority>0</priority>
         <connector-comment>Input of both TBox and ABox</connector-comment>
     </connector>
+    <connector>
+        <connector-name>subrole</connector-name>
+        <arity>2</arity>
+        <associative>false</associative>
+        <output-format>_ subrole of _</output-format>
+        <priority>0</priority>
+        <connector-comment/>
+    </connector>
     <rule>
         <rule-name>OrRule</rule-name>
         <condition>
@@ -328,6 +336,25 @@
         </action>
         <rule-comment>Not True is False</rule-comment>
     </rule>
+    <rule>
+        <rule-name>SubRoleSome</rule-name>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>subrole variable sub variable super</parameter>
+        </condition>
+        <condition>
+            <condition-name>hasElement</condition-name>
+            <parameter>node</parameter>
+            <parameter>some variable sub variable x</parameter>
+        </condition>
+        <action>
+            <action-name>add</action-name>
+            <parameter>node</parameter>
+            <parameter>some variable super variable x</parameter>
+        </action>
+        <rule-comment/>
+    </rule>
     <strategy>
         <strategy-name>CoreStrat</strategy-name>
         <strategy-code>repeat
@@ -362,7 +389,33 @@ CoreStrat
 </strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
     </strategy>
-    <main-strategy>Strategy</main-strategy>
+    <strategy>
+        <strategy-name>StrategyWithExtensions</strategy-name>
+        <strategy-code>repeat
+	Initiate
+	AddFromList
+	TBoxRule
+end
+repeat
+firstRule
+  TruthRule
+  FalsumRule
+  SubRoleSome
+  OnlyRule
+  AndRule
+  OrRule
+  Clash
+allRules
+	Block
+	SomeRule
+	TBoxRule
+end 
+end
+end
+</strategy-code>
+        <strategy-comment/>
+    </strategy>
+    <main-strategy>StrategyWithExtensions</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>
@@ -397,5 +450,15 @@ CoreStrat
         <formula-name>experiment</formula-name>
         <formula-code>input tbox some R some S D X</formula-code>
         <formula-comment>To test the blocking rule</formula-comment>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>~c or ~d</formula-name>
+        <formula-code>input add tbox some S C tbox some S D only S or not C not D</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>Role Hierarchies</formula-name>
+        <formula-code>input tbox some Painted Painting add only Created not Painting subrole Painted Created</formula-code>
+        <formula-comment/>
     </testing-formula>
 </logic>
