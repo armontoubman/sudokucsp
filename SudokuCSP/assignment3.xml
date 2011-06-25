@@ -383,8 +383,14 @@
         <rule-comment/>
     </rule>
     <strategy>
-        <strategy-name>CoreStrat</strategy-name>
+        <strategy-name>Strategy</strategy-name>
         <strategy-code>repeat
+	Initiate
+	AddFromList
+	TBoxRule
+end
+
+repeat
 firstRule
   TruthRule
   FalsumRule
@@ -399,20 +405,6 @@ allRules
 end 
 end
 end
-
-
-
-</strategy-code>
-        <strategy-comment/>
-    </strategy>
-    <strategy>
-        <strategy-name>Strategy</strategy-name>
-        <strategy-code>repeat
-	Initiate
-	AddFromList
-	TBoxRule
-end
-CoreStrat
 </strategy-code>
         <strategy-comment>Default strategy for description logic. First TBox initiation, then apply all rules.</strategy-comment>
     </strategy>
@@ -423,6 +415,7 @@ CoreStrat
 	AddFromList
 	TBoxRule
 end
+
 repeat
 firstRule
   TruthRule
@@ -449,6 +442,7 @@ end
 	AddFromList
 	TBoxRule
 end
+
 repeat
 firstRule
   TruthRule
@@ -468,7 +462,33 @@ end
 </strategy-code>
         <strategy-comment/>
     </strategy>
-    <main-strategy>Strategy</main-strategy>
+    <strategy>
+        <strategy-name>WrongBlocking</strategy-name>
+        <strategy-code>repeat
+	Initiate
+	AddFromList
+	TBoxRule
+end
+
+repeat
+firstRule
+  TruthRule
+  FalsumRule
+  OnlyRule
+  AndRule
+  OrRule
+  Clash
+allRules
+	Block
+	SomeRule
+	TBoxRule
+end 
+end
+end
+</strategy-code>
+        <strategy-comment/>
+    </strategy>
+    <main-strategy>StrategyWithRoleHierarchies</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>

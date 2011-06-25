@@ -56,6 +56,8 @@
 \usepackage{natbib}
 \usepackage{url}
 
+\usepackage{subfig}
+
 
 %%% END Article customizations
 
@@ -168,18 +170,124 @@ Is the ABox \{$C(a)$\} consistent with regard to $\mathcal{T}$ = \{$\top \equiv 
 
 \subsection{Blocking}
 
+The blocking rule should only be applied when no other rules are applicable on the branch to guarantee termination and completeness of the algorithm. It is easy to show
+
 \subsection{Ordering}
 
 \section{Extensions}
 \label{sec:extensions}
 
-2/3
+We have implemented the Transitive roles and Role hierarchies extensions.
 
-\subsection{Role inverses}
+\subsection{Transitive roles}
 
-\subsection{Transitive rules}
+To implement transitive roles, we added a new operator and a new rule. The operator:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l c}
+LoTREC connective & \texttt{trans} $C$ \\
+LoTREC display & $+C$ \\
+\end{tabular}
+\end{center}
+\end{table}
+
+This unary operator indicates that the argument role is transitive. We have implemented it in such a way that a transitivity statement is given as a seperate statement for the TBox or ABox. We have added a rule \texttt{TransitiveRoleSome} that takes such a transitivity statement and nested \texttt{some} statements that it can process:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l l}
+\texttt{TransitiveRoleSome} & \\
+\hline
+Conditions: & \texttt{hasElement node trans \_t} \\
+ & \texttt{hasElement node some \_t some \_t some \_b} \\
+Actions: & \texttt{add node some \_t \_b} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The application of transitivity can be shown with the example formula from the assignment:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l l}
+TBox & $\exists{}hasPart.(\exists{}hasPart.(\exists{}hasPart.Component))$ \\
+ABox & $\exists{}hasPart.Component$ \\
+\\
+LoTREC input & \texttt{input add tbox trans HasPart} \\
+ & \texttt{tbox some HasPart some HasPart some HasPart Component}\\
+ & \texttt{some HasPart Component} \\
+\end{tabular}
+\end{center}
+\end{table}
+
+The effect is most noticable in the first node of our premodels as shown in Figure~\ref{fig:transitivity}. The transitivity rule breaks down "HasPart some (HasPart some (HasPart some Component))" to "HasPart some (HasPart some Component)" and "HasPart some Component", although the latter is already given by the ABox.
+
+\begin{figure}[h]
+\begin{center}
+\subfloat{
+\includegraphics[scale=0.5]{premodelzondertransitivity}
+}
+\subfloat{
+\includegraphics[scale=0.4]{premodelmettransitivity}
+}
+\caption{On the left, the first node in the premodel without transitivity, using strategy \texttt{Strategy}. On the right, the first node in the premodel without transitivity, using strategy \texttt{Strategy}.}
+\label{fig:transitivity}
+\end{center}
+\end{figure}
 
 \subsection{Role hierarchies}
+
+To implement role hierarchies, we added a new operator and a new rule. The operator:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l c}
+LoTREC connective & \texttt{subrole} $C D$ \\
+LoTREC display & $C subrole of D$ \\
+\end{tabular}
+\end{center}
+\end{table}
+
+The application of role hierarchies can be shown with the example formula from the assignment:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l l}
+TBox & $\exists{}Painted.Painting$ \\
+ABox & $\forall{}Created.\neg{}Painting$ \& $Painted\sqsubseteq{}Created$ \\
+\\
+LoTREC input & \texttt{input tbox some Painted Painting} \\
+ & \texttt{add only Created not Painting}\\
+ & \texttt{subrole Painted Created} \\
+\end{tabular}
+\end{center}
+\end{table}
+
+For this formula, the strategy with subroles creates a different premodel than the strategy without subroles. The premodel with subroles creates a clash while the premodel without subroles doesnt. The premodels are shown in Figure \ref{fig:zondersubrole} and \ref{fig:metsubrole}.
+
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.4]{premodelzondersubrole}
+\caption{Premodel of the example formula for Role hierarchies. This premodel was created with the default strategy \texttt{Strategy}. The concept is satisfiable.}
+\label{fig:zondersubrole}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.4]{premodelmetsubrole}
+\caption{Premodel of the example formula for Role hierarchies. This premodel was created with the extended strategy \texttt{StrategyWithRoleHierarchies}. The concept is unsatisfiable.}
+\label{fig:metsubrole}
+\end{center}
+\end{figure}
+
+
+
+$\rightarrow$ references? wat? $\leftarrow$
 
 \bibliographystyle{plainnat}
 \bibliography{ref}
