@@ -1,19 +1,8 @@
-\begin{thebibliography}{2}
+\begin{thebibliography}{0}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
-
-\bibitem[Apt(2003)]{Apt2003}
-Krzysztof Apt.
-\newblock \emph{Principles of Constraint Programming}.
-\newblock Cambridge University Press, Cambridge, 2003.
-\newblock ISBN 0521825830.
-
-\bibitem[Barták(1998)]{BartakConsistency}
-Roman Barták.
-\newblock On-line guide to constraint programming, June 1998.
-\newblock URL \url{http://kti.mff.cuni.cz/~bartak/constraints/index.html}.
 
 \end{thebibliography}
