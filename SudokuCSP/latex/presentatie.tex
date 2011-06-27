@@ -151,20 +151,55 @@ LoTREC display & $\phi$ \& $\psi$ & INPUT: TBox = $\mathcal{T}$; ABox = $C$\\
 
 \begin{frame}{Strategy}
 
-\begin{block}{Strategy}
+\begin{block}{Efficient Strategy}
 repeat [ Initiate AddFromList TBoxRule ] end\\
 repeat\\
 ....firstRule\\
-........TruthRule\\
+........Clash\\
 ........FalsumRule\\
+........TruthRule\\
 ........OnlyRule\\
 ........AndRule\\
 ........OrRule\\
-........Clash\\
 ........allRules [ Block SomeRule TBoxRule ] end \\
 ....end\\
 end
 \end{block}
+
+\end{frame}
+
+\begin{frame}{Ordering}
+\begin{block}{Efficient Strategy}
+\uncover<1>{repeat [ Initiate AddFromList TBoxRule ] end\\}
+\uncover<1->{repeat\\}
+\uncover<2->{....firstRule\\}
+\uncover<2>{........Clash\\}
+\uncover<3>{........FalsumRule\\}
+\uncover<3>{........TruthRule\\}
+\uncover<5>{........OnlyRule\\}
+\uncover<5>{........AndRule\\}
+\uncover<5>{........OrRule\\}
+\uncover<4>{........allRules [ Block SomeRule TBoxRule ] end \\}
+\uncover<2->{....end\\}
+\uncover<1->{end}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Ordering - Example}
+
+\begin{table}[h]
+\begin{center}
+
+\scalebox{1}{
+\begin{tabular}{c}
+($A$, $\neg A$, $B\sqcap (C \sqcup D)$, $\exists X. A \sqcup B$)\\
+\texttt{add add add A not A and B or C D some X or A B}\\
+\end{tabular}
+}
+
+\end{center}
+\end{table}
 
 \end{frame}
 
@@ -189,14 +224,6 @@ repeat\\
 ........Clash\\
 ....end\\
 end
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Efficient Ordering}
-
-\begin{block}{Efficient Ordering}
-???
 \end{block}
 
 \end{frame}
