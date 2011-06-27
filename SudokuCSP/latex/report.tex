@@ -182,6 +182,33 @@ If we process this formula with the default strategy, which we assume to be comp
 
 \subsection{Ordering}
 
+We have to fit nine rules into our strategy: TruthRule, FalsumRule, OnlyRule, AndRule, OrRule, Clash, Block, SomeRule and TBoxRule. The TruthRule might not be necessary in our current setup, but the others all need a place. 
+
+It is most efficient to use a repeated firstRule strategy with Clash as the first rule, because this will allow the algorithm to find a clash as fast as possible and to stop working on that branch. Consider the following strategy: 
+
+\begin{center}
+\texttt{add add add A not A and B or C D some X or A B}
+\end{center} 
+
+Here we are given the formulae "A", "$\neg A$", "$B\sqcap (C \sqcup D)$" and "$\exists X. A \sqcup B$". If Clash is not applied before the AndRule, OrRule and SomeRule, the latter formulae will be looked into first, while we are already given a contradiction. Always applying Clash first can only save space and time. Since FalsumRule is similar to Clash (except we look for a Bottom sign instead of a contradiction), this rule should be applied soon after Clash. Using the firstRule strategy, we make sure these are checked at every possible opportunity.
+If the TruthRule is used, it should be applied next because if it is applicable, it will also stop the algorithm after combining it with the FalsumRule.
+
+At the other end of the strategy, we should find the SomeRule (and its companion rules Block and TBoxRule). The SomeRule has no interaction with the rest of the formulae in the current node and a succesful application will only increase the size of the solution tree. For this reason, it seems beneficial to the size and completion time of the algorithm to first apply all rules that can be applied before using the SomeRule, in the hope of finding a Clash first. The effect of misusing the SomeRule can be found by applying the WrongBlocking strategy to the efficiency-testing formula.
+
+Now we are left with the OnlyRule, the AndRule and the OrRule. From these, the OrRule uses the greatest amount of space by copying the whole tree. As such, it should be applied last of these three, once again in the hopes of finding a Clash earlier. Between the OnlyRule and the AndRule there does not seem to be a lot of difference, seeing as both might produce a contradiction with one application. However, the AndRule will try to fill two lines while the OnlyRule fills only one line.
+
+Thereby, we reason that the most efficient ordering of rules is the following:
+
+\begin{enumerate}
+\item Clash
+\item FalsumRule
+\item TruthRule
+\item OnlyRule
+\item AndRule
+\item OrRule
+\item Block, SomeRule and TBoxRule
+\end{enumerate}
+
 \section{Extensions}
 \label{sec:extensions}
 
