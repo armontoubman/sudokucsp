@@ -512,7 +512,33 @@ end
 </strategy-code>
         <strategy-comment>klopt nog niet</strategy-comment>
     </strategy>
-    <main-strategy>WrongBlocking</main-strategy>
+    <strategy>
+        <strategy-name>EfficientOrdering</strategy-name>
+        <strategy-code>repeat
+	Initiate
+	AddFromList
+	TBoxRule
+end
+
+repeat
+firstRule
+  Clash
+  FalsumRule
+  TruthRule
+  OnlyRule
+  AndRule
+  OrRule
+allRules
+	Block
+	SomeRule
+	TBoxRule
+end 
+end
+end
+</strategy-code>
+        <strategy-comment/>
+    </strategy>
+    <main-strategy>EfficientOrdering</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>
@@ -565,7 +591,12 @@ end
     </testing-formula>
     <testing-formula>
         <formula-name>Wrong Blocking</formula-name>
-        <formula-code>input tbox some R or U V some R V</formula-code>
+        <formula-code>input add add tbox only S some A B tbox not B tbox some R some S X TEST</formula-code>
+        <formula-comment/>
+    </testing-formula>
+    <testing-formula>
+        <formula-name>Efficient Strategy Tester</formula-name>
+        <formula-code>add add add A not A and B or C D some X or A B</formula-code>
         <formula-comment/>
     </testing-formula>
 </logic>
