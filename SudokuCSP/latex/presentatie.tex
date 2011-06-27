@@ -209,13 +209,23 @@ end
 
 %\section{Strategies}
 
-\begin{frame}{Wrong Blocking}
+\begin{frame}{Wrong Blocking - Problem}
+
+The blocking rule must be used only when no other rules, except for possibly the existential rule, 
+
+are applicable on the branch.
+
+Completeness is lost when this is violated.
+
+\end{frame}
+
+\begin{frame}{Wrong Blocking - Strategy}
 
 \begin{block}{Wrong Blocking}
 repeat [ Initiate AddFromList TBoxRule ] end\\
 repeat\\
 ....firstRule\\
-........Block SomeRule TBoxRule\\
+\alert<1>{........Block SomeRule TBoxRule\\}
 ........TruthRule\\
 ........FalsumRule\\
 ........OnlyRule\\
@@ -225,6 +235,23 @@ repeat\\
 ....end\\
 end
 \end{block}
+
+\end{frame}
+
+\begin{frame}{Wrong Blocking - Example}
+
+\begin{itemize}[<+->]
+\item Blocking rule is applied before others. 
+\item Use of Some rule is inhibited prematurely.
+\item Algorithm is falsly satisfied.
+\item Node has to be equal to an ancestor.
+\item Difference with ancestor might be applicability of the Only rule
+\begin{itemize}
+    \item Only rule provides, e.g. "some A B".
+    \item Some rule should have provided "B" to "A".
+    \item If "A" would then already contain "$\neg B$", CLASH!
+\end{itemize}
+\end{itemize}
 
 \end{frame}
 
@@ -356,7 +383,7 @@ LoTREC input & \texttt{input tbox some Painted Painting} \\
 
 \begin{frame}{Conclusions}
 \begin{itemize}
-\item  
+\item We miss the Sudoku $:($
 \end{itemize}
  
 \end{frame}
