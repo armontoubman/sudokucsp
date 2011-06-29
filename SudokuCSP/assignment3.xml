@@ -352,14 +352,21 @@
             <parameter>subrole variable sub variable super</parameter>
         </condition>
         <condition>
-            <condition-name>hasElement</condition-name>
+            <condition-name>isAncestor</condition-name>
             <parameter>node</parameter>
-            <parameter>some variable sub variable x</parameter>
+            <parameter>child</parameter>
+        </condition>
+        <condition>
+            <condition-name>isLinked</condition-name>
+            <parameter>node</parameter>
+            <parameter>child</parameter>
+            <parameter>variable sub</parameter>
         </condition>
         <action>
-            <action-name>add</action-name>
+            <action-name>link</action-name>
             <parameter>node</parameter>
-            <parameter>some variable super variable x</parameter>
+            <parameter>child</parameter>
+            <parameter>variable super</parameter>
         </action>
         <rule-comment/>
     </rule>
@@ -538,7 +545,7 @@ end
 </strategy-code>
         <strategy-comment/>
     </strategy>
-    <main-strategy>EfficientOrdering</main-strategy>
+    <main-strategy>StrategyWithRoleHierarchies</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>

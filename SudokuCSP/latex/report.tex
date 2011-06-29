@@ -285,7 +285,23 @@ LoTREC display & $C subrole of D$ \\
 \end{center}
 \end{table}
 
-The application of role hierarchies can be shown with the example formula from the assignment:
+This operator indicates that $C$ is a subrole of $D$. In other words, conditions that apply to $D$ also apply to all $C$. We use the following rules to process subroles:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l l}
+\texttt{SubRoleSome} & \\
+\hline
+Conditions: & \texttt{hasElement node subrole \_sub \_super} \\
+ & \texttt{isAncestor node child} \\
+ & \texttt{isLinked node child \_sub} \\
+Actions: & \texttt{link node child \_super} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+This rule says: if two worlds are linked with a subrole link, also add the superrole link. The application of role hierarchies can be shown with the example formula from the assignment:
 
 \begin{table}[h]
 \begin{center}
@@ -300,7 +316,7 @@ LoTREC input & \texttt{input tbox some Painted Painting} \\
 \end{center}
 \end{table}
 
-For this formula, the strategy with subroles creates a different premodel than the strategy without subroles. The premodel with subroles creates a clash while the premodel without subroles doesnt. The premodels are shown in Figure \ref{fig:zondersubrole} and \ref{fig:metsubrole}.
+For this formula, the strategy with subroles creates a different premodel than the strategy without subroles. The premodel with subroles creates a clash while the premodel without subroles does not. The premodels are shown in Figure \ref{fig:zondersubrole} and \ref{fig:metsubrole}.
 
 
 
@@ -320,11 +336,7 @@ For this formula, the strategy with subroles creates a different premodel than t
 \end{center}
 \end{figure}
 
-
-
-\textcolor{red}{$\rightarrow$ references? wat? $\leftarrow$}
-
-\bibliographystyle{plainnat}
-\bibliography{ref}
+%\bibliographystyle{plainnat}
+%\bibliography{ref}
 
 \end{document}
