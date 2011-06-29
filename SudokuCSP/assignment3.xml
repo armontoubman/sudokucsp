@@ -322,7 +322,7 @@
         <action>
             <action-name>add</action-name>
             <parameter>node</parameter>
-            <parameter>FALSE</parameter>
+            <parameter>CLASH</parameter>
         </action>
         <action>
             <action-name>stop</action-name>
@@ -537,7 +537,7 @@ firstRule
   OrRule
 allRules
 	Block
-	SomeRule
+	applyOnce SomeRule
 	TBoxRule
 end 
 end
@@ -545,7 +545,7 @@ end
 </strategy-code>
         <strategy-comment/>
     </strategy>
-    <main-strategy>StrategyWithRoleHierarchies</main-strategy>
+    <main-strategy>EfficientOrdering</main-strategy>
     <testing-formula>
         <formula-name>Modus Ponens</formula-name>
         <formula-code>add or not P Q P</formula-code>
@@ -598,7 +598,7 @@ end
     </testing-formula>
     <testing-formula>
         <formula-name>Wrong Blocking</formula-name>
-        <formula-code>input add add tbox only S some A B tbox not B tbox some R some S X TEST</formula-code>
+        <formula-code>input tbox A add only R some R not A some R A</formula-code>
         <formula-comment/>
     </testing-formula>
     <testing-formula>
