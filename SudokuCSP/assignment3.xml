@@ -517,7 +517,7 @@ firstRule
 end
 end
 </strategy-code>
-        <strategy-comment>klopt nog niet</strategy-comment>
+        <strategy-comment/>
     </strategy>
     <strategy>
         <strategy-name>EfficientOrdering</strategy-name>
@@ -543,7 +543,7 @@ end
 end
 end
 </strategy-code>
-        <strategy-comment/>
+        <strategy-comment>Ordering is different than Strategy.</strategy-comment>
     </strategy>
     <main-strategy>EfficientOrdering</main-strategy>
     <testing-formula>
