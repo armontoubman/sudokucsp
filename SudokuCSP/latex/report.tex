@@ -172,13 +172,31 @@ Is the ABox \{$C(a)$\} consistent with regard to $\mathcal{T}$ = \{$\top \equiv 
 
 \subsection{Blocking}
 
-The blocking rule should only be applied when no other rules are applicable on the branch to guarantee termination and completeness of the algorithm. We can show that this is the case using our \texttt{WrongBlocking} strategy. This strategy has the blocking rule at the beginning of the strategy instead of at the end. Also, compared to our default strategy \texttt{Strategy}, the blocking rule, some rule and tbox rule are no longer in an \texttt{allRules} block. To show the difference we use this formula (in the LoTREC file under Predefined formulas, Wrong Blocking):
+The blocking rule should only be applied when no other rules are applicable on the branch to guarantee termination and completeness of the algorithm. We can show that this is the case using our \texttt{WrongBlocking} strategy. This strategy has the blocking rule at the beginning of the strategy instead of at the end. Also, compared to our default strategy \texttt{Strategy}, the blocking rule, some rule and tbox rule are no longer in an \texttt{allRules} block. Because we use repeated \texttt{firstRule} in our strategy, \texttt{block} will fire directly after \texttt{someRule}. This causes nodes to be blocked prematurely, thus being unable to use another someRule. To show what kind of effect this can have, we use this formula (in the LoTREC file under Predefined formulas, Wrong Blocking):
 
 \begin{center}
-\texttt{input tbox some R or U V some R V}
+\texttt{input tbox A add only R some R not A some R A}
 \end{center}
 
-If we process this formula with the default strategy, which we assume to be complete and sound, we get a forest with 36 premodel trees. However, if we process the same formula with the wrongly blocking strategy, we get only 16 premodel trees. This strategy is obviously not exploring some premodels that the default strategy is. In other words, the wrongly blocking strategy does not guarantee completeness.
+If we process this formula with the default strategy, which we assume to be complete and sound, we will get a clash involving A and $\neg A$. However, if we process the same formula with the wrongly blocking strategy, the second node will be blocked before it can fire its \texttt{some R not A} formula. Therefor, it will not create a new node where the contradiction with relation to A is found, and it will say that this formula is satisfiable while it actually is not.
+
+What went wrong here, is that by checking the \texttt{Block} rule too early, its precondition that the target node is contained by an ancestor was falsly satisfied. Instead, the \texttt{onlyRule} would provide this node with a new \texttt{someRule} that was not yet included in its ancestor. In our example, it turned out that this rule would eventually create a Clash, thereby making the whole formula insatisfiable.
+ 
+ \begin{figure}[htbp]
+ \begin{minipage}[b]{0.45\linewidth}
+ \centering
+ \includegraphics[scale=0.2]{premodelRightBlocking.png}
+ \caption{Closed Premodel from LoTREC using the \texttt{Wrong Blocking} formula and the \texttt{EfficientOrdering} strategy.}
+ \label{fig:rightBlock}
+ \end{minipage}
+ \hspace{0.5cm}
+ \begin{minipage}[b]{0.45\linewidth}
+ \centering
+ \includegraphics[scale=0.2]{premodelWrongBlocking.png}
+ \caption{Open Premodel from LoTREC using the \texttt{Wrong Blocking} formula and the \texttt{WrongBlocking} strategy.}
+ \label{fig:wrongBlock}
+ \end{minipage}
+ \end{figure}
 
 \subsection{Ordering}
 
