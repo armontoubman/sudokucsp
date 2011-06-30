@@ -116,19 +116,66 @@ All connectors, rules, strategies and example formulas can of course be found in
 \section{Reasoning problems}
 \label{sec:reasoning}
 
-Solve the following decision problems supporting yourself with your implemen-
-tation of tableau algorithm.
+We will solve the following three decision problems with help of our tableau algorithm implementation. To do this, we need a strategy for applying the rules. We have chosen to use the \texttt{EfficientOrdering} strategy (found in our LoTREC file) for computing these answers. The strategy is as follows:
+
+\begin{center}
+\begin{itemize}
+\item repeat
+
+\begin{itemize}
+	\item Initiate
+	\item AddFromList
+	\item TBoxRule
+\end{itemize}
+
+\item end
+\end{itemize}
+
+\begin{itemize}
+\item repeat
+
+\begin{itemize}
+	\item firstRule
+
+\begin{itemize}
+		\item Clash
+		\item FalsumRule
+		\item TruthRule
+		\item OnlyRule
+		\item AndRule
+		\item OrRule
+		\item allRules
+		\begin{itemize}
+			\item Block
+			\item applyOnce SomeRule
+			\item TBoxRule
+		\end{itemize}
+		\item end
+\end{itemize}
+
+	\item end
+\end{itemize}
+
+\item end
+\end{itemize}
+\end{center}
+
+More information on the ordering of the rules in this strategy can be found in Section~\ref{sec:Ordering}. The specifics of these rules can be found in our LoTREC file. In general, the first repeat will make sure that our input is transformed from their TBox and ABox to given start formulae. The second repeat will apply all rules needed to verify satisfiability of this set of formulae. A node within a branch can only be closed with either Clash or the FalsumRule. This strategy is used to provide answers to the following 3 reasoning tasks:
 
 \subsection{}
 
-\begin{center}
-Is $\exists r.D$ satisfiable with regard to $\mathcal{T}$ = \{ $\top \equiv \exists s.C$, $\top \equiv \forall r.(\bot \sqcup E)$ \}?
-\end{center}
+%\begin{center}
+%Is $\exists r.D$ satisfiable with regard to $\mathcal{T}$ = \{ $\top \equiv \exists s.C$, $\top \equiv \forall r.(\bot \sqcup E)$ \}?
+%\end{center}
 
 \begin{enumerate}
-\item State the problem.
-\item Reduce the problem to the corresponding concept satisfiability problem (as shown during the lecture).
+\item Is $\exists r.D$ satisfiable with regard to $\mathcal{T}$ = \{ $\top \equiv \exists s.C$, $\top \equiv \forall r.(\bot \sqcup E)$ \}?
+\item Already reduced to the concept satisfiability problem. 
 \item Apply the necessary syntactic transformations to the TBox and the concept so that the conditions, listed in the previous task, are satisfied.
+\begin{itemize}
+	\item 	Replace every C = D uit Tbox T with C [ D and D [ C
+	\item Replace every C [ D uit Tbox T with T = NNF (~C U D) (negation normal form: ~ ( some R C ) = only R ~C   eeeeeeeen ~ (only R C) = some R ~C etc.)
+\end{itemize}
 \item Translate the result into the input formula for your tableau implementation. Please, type and save this formula also in your implementation file *.xml [LoTREC tab: Predefined Formulas]
 \item Use your implementation of the tableau to compute a tableau tree for this formula.
 \item State the result of the computation (is the tableau closed or open?) If the tableau is open include a picture of one of its open branches in the report [LoTREC menu: Premodels/Export Premodel...].
@@ -199,6 +246,7 @@ What went wrong here, is that by checking the \texttt{Block} rule too early, its
  \end{figure}
 
 \subsection{Ordering}
+\label{sec:Ordering}
 
 We have to fit nine rules into our strategy: TruthRule, FalsumRule, OnlyRule, AndRule, OrRule, Clash, Block, SomeRule and TBoxRule. The TruthRule might not be necessary in our current setup, but the others all need a place. 
 
