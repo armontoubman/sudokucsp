@@ -547,26 +547,6 @@ end
     </strategy>
     <main-strategy>EfficientOrdering</main-strategy>
     <testing-formula>
-        <formula-name>Modus Ponens</formula-name>
-        <formula-code>add or not P Q P</formula-code>
-        <formula-comment/>
-    </testing-formula>
-    <testing-formula>
-        <formula-name/>
-        <formula-code>add P or not P and P or P Q</formula-code>
-        <formula-comment/>
-    </testing-formula>
-    <testing-formula>
-        <formula-name/>
-        <formula-code>input add tbox and P Q tbox or not P R or R Q</formula-code>
-        <formula-comment/>
-    </testing-formula>
-    <testing-formula>
-        <formula-name>Figure 1</formula-name>
-        <formula-code>input add tbox some S C tbox only R or not C D some R and C D</formula-code>
-        <formula-comment/>
-    </testing-formula>
-    <testing-formula>
         <formula-name>Exercise 2.1</formula-name>
         <formula-code>input add tbox some S C tbox only R or false FALSE E some R D</formula-code>
         <formula-comment/>
@@ -577,13 +557,8 @@ end
         <formula-comment/>
     </testing-formula>
     <testing-formula>
-        <formula-name>experiment</formula-name>
-        <formula-code>input tbox some R some S D X</formula-code>
-        <formula-comment>To test the blocking rule</formula-comment>
-    </testing-formula>
-    <testing-formula>
-        <formula-name>~c or ~d</formula-name>
-        <formula-code>input add tbox some S C tbox some S D only S or not C not D</formula-code>
+        <formula-name>Exercise 2.3</formula-name>
+        <formula-code>input add add tbox and only R B only S C tbox some R or C not B tbox some S true TRUE C</formula-code>
         <formula-comment/>
     </testing-formula>
     <testing-formula>
