@@ -573,8 +573,8 @@ end
     </testing-formula>
     <testing-formula>
         <formula-name>Exercise 2.2</formula-name>
-        <formula-code>input add add tbox or not C not A tbox or not D only R or A B tbox or not E some R C add and D E only R not B</formula-code>
-        <formula-comment>I think...</formula-comment>
+        <formula-code>input add add tbox or not C not A tbox or not D only R or A B tbox or not E some R C and and D E only R not B</formula-code>
+        <formula-comment/>
     </testing-formula>
     <testing-formula>
         <formula-name>experiment</formula-name>
